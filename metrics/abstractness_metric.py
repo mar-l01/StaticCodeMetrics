@@ -1,10 +1,14 @@
 import glob
 import pandas as pd
 import re
+import sys
+
+# make utility scripts visible
+sys.path.append('../utils/')
+import FileUtility as fut
 
 
 ALLOWED_FILE_EXTENSIONS = ['hpp', 'h']
-PATH_DELIMITER = '\\'
 
 # [\w()]* handles the __ declspec(dllexport)-part of class definition:
 # e.g. class __declspec(dllexport) ModbusTcpClient
@@ -22,16 +26,7 @@ NAMESPACE_IDENTIFIER = '^(\s*namespace)\s*\w*\s*'
 class AbstractnessMetric:
     def __init__(self, dir_path):
         self._dir_path = dir_path
-        self._list_of_files = []
         self._interface_class_matrix = pd.DataFrame(index=['N_a', 'N_c'], dtype=int)
-
-    def _create_list_of_code_files(self):
-        ''' sum-up the total number of header-files, containing the class definition, found in the given directory '''
-        for extension in ALLOWED_FILE_EXTENSIONS:
-            dir_content = [file for file in glob.glob(self._dir_path + "**/*."+extension, recursive=True)]
-            
-            # add files of given extension to list
-            self._list_of_files += [file for file in dir_content]
 
 
     def _get_number_of_interfaces_and_classes_of_file(self, file_path):
@@ -77,14 +72,6 @@ class AbstractnessMetric:
         return nb_interfaces, nb_classes
 
 
-    def _get_filename(self, filepath):
-        ''' return solely the filename including the extension '''
-        # get last part of file_path
-        filename = filepath.split(PATH_DELIMITER)[-1]
-
-        return filename
-
-
     def _search_files_for_interfaces(self):
         ''' iterate through all files and get their interfaces / abstract class definitons '''
         nb_interfaces_in_files = 0
@@ -97,7 +84,7 @@ class AbstractnessMetric:
             nb_classes_in_files += nb_classes
 
             # add amount of interfaces and classes to matrix
-            self._interface_class_matrix[self._get_filename(file)] = [nb_interfaces, nb_classes]
+            self._interface_class_matrix[fut.extract_filename(file)] = [nb_interfaces, nb_classes]
 
 
     def _calculate_abstractness_for_each_file(self):
@@ -124,17 +111,20 @@ class AbstractnessMetric:
 
 
     def compute_abstractness(self):
-        ''' encapsulate all methods necessary to compute the abstractness values for each file '''
-        self._create_list_of_code_files()
-        self._search_files_for_interfaces()
-        
+        ''' encapsulate all methods necessary to compute the abstractness values for each file:
+        1) get all code file which are considered for calculating the metric
+        2) extract all interfaces/abstract classed from those files
+        3) calculate the abstractness metric '''
+        self._list_of_files = fut.get_all_code_files(self._dir_path, ALLOWED_FILE_EXTENSIONS)
+        self._search_files_for_interfaces()     
         abstractness_metric = self._calculate_abstractness_for_each_file()
+        
         print("---------- ABSTRACTNESS ----------")
         print(abstractness_metric)
         print("---------------------------------")
     
 
 if __name__ == '__main__':
-    directory_path = '../cppmodbus/src/cppmodbus/'
+    directory_path = '../../cppmodbus/src/cppmodbus/'
     abstractnessMetric = AbstractnessMetric(directory_path)
     abstractnessMetric.compute_abstractness()

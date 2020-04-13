@@ -1,10 +1,14 @@
 import glob
 import numpy as np
 import pandas as pd
+import sys
+
+# make utility scripts visible
+sys.path.append('../utils/')
+import FileUtility as fut
 
 
 ALLOWED_FILE_EXTENSIONS = ['cpp', 'hpp', 'c', 'h']
-PATH_DELIMITER = '\\'
 
 # includes-libraries (user/std) in C++ files
 PREFIX_STD_INCLUDE = '#include <'
@@ -14,17 +18,7 @@ PREFIX_USER_INCLUDE = '#include "'
 class StabilityMetric:
     def __init__(self, dir_path):
         self._dir_path = dir_path
-        self._list_of_user_files = []
-        self._list_of_stl_libs = []
-
-    def _create_list_of_code_files(self):
-        ''' sum-up the total number of code-files (header and source) found in the given directory '''
-        for extension in ALLOWED_FILE_EXTENSIONS:
-            dir_content = [file for file in glob.glob(self._dir_path + "**/*."+extension, recursive=True)]
-            
-            # add files of given extension to list
-            self._list_of_user_files += [file for file in dir_content]
-
+        
 
     def _get_includes_of_file(self, file_path):
         ''' return the files included with #include "..." and #include <...> in provided file
@@ -50,16 +44,8 @@ class StabilityMetric:
         ''' create a 2D matrix with dim = m x n, where m is the number of user-included files '''
         m = len(self._list_of_user_files)
         null_matrix = np.zeros((m, m), dtype=int)
-        names = [self._get_filename(filepath) for filepath in self._list_of_user_files]
+        names = [fut.extract_filename(filepath) for filepath in self._list_of_user_files]
         self._include_matrix = pd.DataFrame(null_matrix, index=names, columns=names)
-        
-
-    def _get_filename(self, filepath):
-        ''' return solely the filename including the extension '''
-        # get last part of file_path
-        filename = filepath.split(PATH_DELIMITER)[-1]
-
-        return filename
 
 
     def _fill_include_matrix(self):
@@ -68,7 +54,7 @@ class StabilityMetric:
         # check includes
         for filepath in self._list_of_user_files:
             # get filename which includes the following files
-            including_file = self._get_filename(filepath)
+            including_file = fut.extract_filename(filepath)
 
             # get list of user-includes
             user_includes, stl_includes = self._get_includes_of_file(filepath)
@@ -84,11 +70,13 @@ class StabilityMetric:
 
     def _add_stl_includes(self):
         ''' In order to be able to handle included stl-files, each time an including_file includes stl-files
-        (indicated by #include <...>), they are added to a member-list '''        
+        (indicated by #include <...>), they are added to a member-list '''
+        self._list_of_stl_libs = []
+        
         # check includes
         for filepath in self._list_of_user_files:
             # get filename which includes the following files
-            including_file = self._get_filename(filepath)
+            including_file = fut.extract_filename(filepath)
 
             # get list of stl-includes
             _, stl_includes = self._get_includes_of_file(filepath)
@@ -122,6 +110,7 @@ class StabilityMetric:
 
         # copy to get names in actual order
         i = fan_in
+        i = i.rename(index='Instability-Metrix')
 
         # compute instability metric for each row
         for index in range(len(fan_in)):
@@ -131,18 +120,18 @@ class StabilityMetric:
 
     def compute_instability(self):
         ''' encapsulate all methods necessary to compute the instability values for each component '''
-        self._create_list_of_code_files()
+        self._list_of_user_files = fut.get_all_code_files(self._dir_path, ALLOWED_FILE_EXTENSIONS)
         self._create_user_include_matrix()
         self._add_stl_includes()
         self._fill_include_matrix()
-
         instability_metric = self._calculate_instability_for_each_file()
+        
         print("---------- INSTABILITY ----------")
         print(instability_metric)
         print("---------------------------------")
     
 
 if __name__ == '__main__':
-    directory_path = '../cppmodbus/src/cppmodbus/'
+    directory_path = '../../cppmodbus/src/cppmodbus/'
     stabilityMetric = StabilityMetric(directory_path)
     stabilityMetric.compute_instability()
