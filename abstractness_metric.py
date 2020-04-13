@@ -1,5 +1,4 @@
 import glob
-import numpy as np
 import pandas as pd
 import re
 
@@ -120,9 +119,7 @@ class AbstractnessMetric:
                 a[index] = 0
             else:
                 a[index] = n_a[index] / n_c[index]
-
-        print(a)
-
+                
         return a
 
 
@@ -130,7 +127,11 @@ class AbstractnessMetric:
         ''' encapsulate all methods necessary to compute the abstractness values for each file '''
         self._create_list_of_code_files()
         self._search_files_for_interfaces()
-        self._calculate_abstractness_for_each_file()
+        
+        abstractness_metric = self._calculate_abstractness_for_each_file()
+        print("---------- ABSTRACTNESS ----------")
+        print(abstractness_metric)
+        print("---------------------------------")
     
 
 if __name__ == '__main__':
