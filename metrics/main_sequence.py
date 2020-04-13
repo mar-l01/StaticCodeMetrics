@@ -55,8 +55,18 @@ def plot_metrics(dir_path):
     instability, abstractness = calculate_main_sequence(dir_path)
 
     # plot figure
-    plt.plot([0,1], [1,0], color='red') # Main Sequence
-    plt.scatter(instability, abstractness)
+    ax = plt.gca()
+    ax.set_xlim((0, 1))
+    ax.set_ylim((0, 1))
+    ax.plot([0,1], [1,0], color='red') # Main Sequence
+    ax.add_artist(plt.Circle((0, 0), .5, alpha=.3, color='r', label="test")) # zone of pain
+    ax.annotate("Zone of Pain", xy=(.1, .2), fontsize=10)
+    ax.add_artist(plt.Circle((1, 1), .5, alpha=.3, color='r')) # zone of uselessness
+    ax.annotate("Zone of Uselessness", xy=(.65, .8), fontsize=10)
+    ax.scatter(instability, abstractness)
+    ax.set_xlabel('I', fontsize=18)
+    ax.set_ylabel('A', fontsize=18)
+    
     plt.show()
 
 
