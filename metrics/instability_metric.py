@@ -15,7 +15,7 @@ PREFIX_STD_INCLUDE = '#include <'
 PREFIX_USER_INCLUDE = '#include "'
 
 
-class StabilityMetric:
+class InstabilityMetric:
     def __init__(self, dir_path):
         self._dir_path = dir_path
         
@@ -110,7 +110,7 @@ class StabilityMetric:
 
         # copy to get names in actual order
         i = fan_in
-        i = i.rename(index='Instability-Metrix')
+        i = i.rename(index='Instability-Metric')
 
         # compute instability metric for each row
         for index in range(len(fan_in)):
@@ -125,13 +125,15 @@ class StabilityMetric:
         self._add_stl_includes()
         self._fill_include_matrix()
         instability_metric = self._calculate_instability_for_each_file()
-        
-        print("---------- INSTABILITY ----------")
-        print(instability_metric)
-        print("---------------------------------")
+
+        return instability_metric
     
 
 if __name__ == '__main__':
     directory_path = '../../cppmodbus/src/cppmodbus/'
-    stabilityMetric = StabilityMetric(directory_path)
-    stabilityMetric.compute_instability()
+    instabilityMetric = InstabilityMetric(directory_path)
+    instability_metric = instabilityMetric.compute_instability()
+
+    print("---------- INSTABILITY ----------")
+    print(instability_metric)
+    print("---------------------------------")

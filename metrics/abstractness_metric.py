@@ -118,13 +118,15 @@ class AbstractnessMetric:
         self._list_of_files = fut.get_all_code_files(self._dir_path, ALLOWED_FILE_EXTENSIONS)
         self._search_files_for_interfaces()     
         abstractness_metric = self._calculate_abstractness_for_each_file()
-        
-        print("---------- ABSTRACTNESS ----------")
-        print(abstractness_metric)
-        print("---------------------------------")
+
+        return abstractness_metric
     
 
 if __name__ == '__main__':
     directory_path = '../../cppmodbus/src/cppmodbus/'
     abstractnessMetric = AbstractnessMetric(directory_path)
-    abstractnessMetric.compute_abstractness()
+    abstractness_metric = abstractnessMetric.compute_abstractness()
+
+    print("---------- ABSTRACTNESS ----------")
+    print(abstractness_metric)
+    print("---------------------------------")
