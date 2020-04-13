@@ -4,9 +4,11 @@ import pandas as pd
 
 
 ALLOWED_FILE_EXTENSIONS = ['cpp', 'hpp', 'c', 'h']
+PATH_DELIMITER = '\\'
+
+# includes-libraries (user/std) in C++ files
 PREFIX_STD_INCLUDE = '#include <'
 PREFIX_USER_INCLUDE = '#include "'
-PATH_DELIMITER = '\\'
 
 
 class StabilityMetric:
@@ -121,9 +123,9 @@ class StabilityMetric:
         # copy to get names in actual order
         i = fan_in
 
-        # compute instability metrix for each row
-        for index, row in enumerate(fan_in):
-            i[index] = fan_out[index] / (row + fan_out[index]) 
+        # compute instability metric for each row
+        for index in range(len(fan_in)):
+            i[index] = fan_out[index] / (fan_in[index] + fan_out[index]) 
 
         return i
 
