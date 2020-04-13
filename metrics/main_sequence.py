@@ -54,16 +54,25 @@ def plot_metrics(dir_path):
     - x-axis denotes the Instability '''
     instability, abstractness = calculate_main_sequence(dir_path)
 
-    # plot figure
     ax = plt.gca()
+
+    # x/y range from 0 to 1
     ax.set_xlim((0, 1))
     ax.set_ylim((0, 1))
-    ax.plot([0,1], [1,0], color='red') # Main Sequence
-    ax.add_artist(plt.Circle((0, 0), .5, alpha=.3, color='r', label="test")) # zone of pain
+
+    # Main Sequence
+    ax.plot([0,1], [1,0], color='red')
+    # zone of pain
+    ax.add_artist(plt.Circle((0, 0), .5, alpha=.3, color='r', label="test"))
     ax.annotate("Zone of Pain", xy=(.1, .2), fontsize=10)
-    ax.add_artist(plt.Circle((1, 1), .5, alpha=.3, color='r')) # zone of uselessness
+
+    # zone of uselessness
+    ax.add_artist(plt.Circle((1, 1), .5, alpha=.3, color='r'))
     ax.annotate("Zone of Uselessness", xy=(.65, .8), fontsize=10)
+
+    # x = instability, y = abstractness
     ax.scatter(instability, abstractness)
+    
     ax.set_xlabel('I', fontsize=18)
     ax.set_ylabel('A', fontsize=18)
     
