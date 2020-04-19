@@ -6,6 +6,10 @@ The development of these algorithms was inspired by the book **Clean Architectur
 
 - Calculation of abstractness A: A = N_a / N_c, where N_a denotes the number of interfaces or abstract classes inside a file / component and N_c the number of classes inside a file / component.
 
+- Distance D: D = |A + I - 1|, where a value of 0 indicates the file / component lies on the _Main Sequence_ and a value of 1 denotes a file being far away of it.
+
+- Main Sequence: A linear line going from point _(0,1)_ to _(1,0)_, where the coordinates _(a,i)_ describe the value of Abstractness and the value of Instability, respectively. Both points given describe the most desireable points for a file / component: either maximal stable & abstract or maximal unstable & concrete. For all files / components given it is desireable to be on or close to the Main Sequence.
+
 ## Development status
 Currently, the instability and abstractness metric can be computed on C++ files only.
 
