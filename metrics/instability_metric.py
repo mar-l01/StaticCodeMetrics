@@ -127,13 +127,3 @@ class InstabilityMetric:
         instability_metric = self._calculate_instability_for_each_file()
 
         return instability_metric
-    
-
-if __name__ == '__main__':
-    directory_path = '../../cppmodbus/src/cppmodbus/'
-    instabilityMetric = InstabilityMetric(directory_path)
-    instability_metric = instabilityMetric.compute_instability()
-
-    print("---------- INSTABILITY ----------")
-    print(instability_metric)
-    print("---------------------------------")

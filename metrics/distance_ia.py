@@ -36,9 +36,3 @@ class DistanceIA:
         plt.ylabel('[D]istance', fontsize=18)
 
         plt.show()
-
-
-if __name__ == '__main__':
-    directory_path = '../../cppmodbus/src/cppmodbus/'
-    distanceIA = DistanceIA(directory_path)
-    distanceIA.plot_distance()

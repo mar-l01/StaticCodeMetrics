@@ -120,13 +120,3 @@ class AbstractnessMetric:
         abstractness_metric = self._calculate_abstractness_for_each_file()
 
         return abstractness_metric
-    
-
-if __name__ == '__main__':
-    directory_path = '../../cppmodbus/src/cppmodbus/'
-    abstractnessMetric = AbstractnessMetric(directory_path)
-    abstractness_metric = abstractnessMetric.compute_abstractness()
-
-    print("---------- ABSTRACTNESS ----------")
-    print(abstractness_metric)
-    print("---------------------------------")
