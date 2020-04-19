@@ -1,4 +1,5 @@
 import unittest
+import warnings
 import sys
 
 # make utility scripts visible
@@ -22,6 +23,24 @@ class TestFileUtility(unittest.TestCase):
         '''
         returned_type = fut.get_all_code_files('../', [])
         self.assertIsInstance(returned_type, list)
+
+    def test__get_all_code_files__None_list_type(self):
+        '''
+        Test that an empty list is returned, although
+        an invalid type is provided, and a warning is thrown
+        '''
+        with warnings.catch_warnings(record=True) as w:
+            # Cause all warnings to always be triggered.
+            warnings.simplefilter("always")
+
+            returned_type = fut.get_all_code_files('../', None)
+            self.assertIsInstance(returned_type, list)
+            
+            assert len(w) == 1
+            assert 'Returning empty list..' in str(w[-1].message)
+
+    
+
 
 if __name__ == '__main__':
     unittest.main()
