@@ -37,6 +37,9 @@ def get_instability_and_abstractness_metric(dir_path):
 def pad_data_series_with_default_values(data_series, data_series_to_pad):
     ''' pad data_series_to_pad with default values to be the same size as data_series
     and contain the same index-names, too. Return the padded data-series '''
+    if not isinstance(data_series, type(pd.Series(dtype=float))) or not isinstance(data_series_to_pad, type(pd.Series(dtype=float))):
+        return pd.Series(dtype=float)
+
     padded_data_series = data_series_to_pad
     for index_name in data_series.index:
         if index_name not in data_series_to_pad:
@@ -47,7 +50,10 @@ def pad_data_series_with_default_values(data_series, data_series_to_pad):
 
 def reorder_data_series_elements(data_series, data_series_to_reorder):
     ''' order elements in data_series_to_reorder the same way as they are in data_series '''
-    ordered_data_series = pd.Series(dtype=int)
+    if not isinstance(data_series, type(pd.Series(dtype=float))) or not isinstance(data_series_to_reorder, type(pd.Series(dtype=float))):
+        return pd.Series(dtype=float)
+        
+    ordered_data_series = pd.Series(dtype=float)
     for index_name in data_series.index:
         ordered_data_series[index_name] = data_series_to_reorder[index_name]
 

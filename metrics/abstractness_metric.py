@@ -90,7 +90,7 @@ class AbstractnessMetric:
     def _calculate_abstractness_for_each_file(self):
         ''' calculate the abstractness metric using A = Na / Nc:
         0 -> no abstract classes, 1 -> only abstract classes.
-        info: sicne it might be possible that some files do not contain any class definition at all
+        info: since it might be possible that some files do not contain any class definition at all
         each division checks for a division through zero '''
         n_a = self._interface_class_matrix.loc['N_a', :]
         n_c = self._interface_class_matrix.loc['N_c', :]
