@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import unittest
+from unittest.mock import patch
 import warnings
 import sys
 
@@ -87,6 +88,18 @@ class TestDataSeriesUtilityGetInstabilityAndAbstractnessMetric(unittest.TestCase
         self.assertIsInstance(returned_abstractness_metric, type(pd.Series(dtype=float)))
         self.assertEqual(returned_instability_metric.dtype, float)
         self.assertEqual(returned_abstractness_metric.dtype, float)
+
+    @patch('DataSeriesUtility.reorder_data_series_elements')
+    def testCorrectFunctionCallsWithEmptyFilePath(self, mocked_reorder_func):
+        '''
+        Test that the correct function is invoked when an empty filepath was provided
+        '''
+        # assert mocks
+        self.assertIs(dsu.reorder_data_series_elements, mocked_reorder_func)
+
+        # call function to test
+        returned_i_metric, returned_a_metric = dsu.get_instability_and_abstractness_metric('')
+        mocked_reorder_func.assert_called_once()
 
 
 class TestDataSeriesUtilityPadDataSeriesWithDefaultValues(unittest.TestCase):
