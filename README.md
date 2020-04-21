@@ -1,4 +1,7 @@
 # StaticCodeMetrics
+
+![Python application](https://github.com/Markus2101/StaticCodeMetrics/workflows/Python%20application/badge.svg?branch=master)
+
 This repository provides helper-functions to compute static code metrics like, for instance, instability and abstractness of files and components. 
 The development of these algorithms was inspired by the book **Clean Architecture** written by **Robert C. Martin** (https://www.amazon.com/dp/0134494164).
 
