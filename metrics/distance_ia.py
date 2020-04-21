@@ -4,7 +4,7 @@ import numpy as np
 import sys
 
 # make utility scripts visible
-sys.path.append('../utils/')
+sys.path.append('utils/')
 import DataSeriesUtility as dsu
 
 

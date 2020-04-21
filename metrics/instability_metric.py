@@ -4,7 +4,7 @@ import pandas as pd
 import sys
 
 # make utility scripts visible
-sys.path.append('../utils/')
+sys.path.append('utils/')
 import FileUtility as fut
 
 

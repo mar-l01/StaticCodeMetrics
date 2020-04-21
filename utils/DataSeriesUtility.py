@@ -2,7 +2,7 @@ import pandas as pd
 import sys
 
 # make metric scripts visible
-sys.path.append('../metrics/')
+sys.path.append('metrics/')
 from instability_metric import InstabilityMetric
 from abstractness_metric import AbstractnessMetric
 

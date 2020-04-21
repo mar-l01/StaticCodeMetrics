@@ -5,13 +5,11 @@ from unittest.mock import patch
 import warnings
 import sys
 
-# make utility scripts visible
-sys.path.append('../utils/')
+sys.path.append('utils/')
 import FileUtility as fut
 import DataSeriesUtility as dsu
 
-# make metric scripts visible
-sys.path.append('../metrics/')
+sys.path.append('metrics/')
 from instability_metric import InstabilityMetric
 from abstractness_metric import AbstractnessMetric
 
@@ -198,5 +196,14 @@ class TestReorderDataSeriesElements(unittest.TestCase):
             self.assertEqual(returned_reorderd_data_series[index], data_series[index])    
 
 
-if __name__ == '__main__':
-    unittest.main()
+# create TestSuite with above TestCases
+suite = unittest.TestSuite()
+suite.addTests(unittest.makeSuite(TestFileUtilityGetAllCodeFiles))
+suite.addTests(unittest.makeSuite(TestFileUtilityExtractFileName))
+suite.addTests(unittest.makeSuite(TestDataSeriesUtilityGetInstabilityAndAbstractnessMetric))
+suite.addTests(unittest.makeSuite(TestDataSeriesUtilityPadDataSeriesWithDefaultValues))
+suite.addTests(unittest.makeSuite(TestReorderDataSeriesElements))
+
+# run TestSuite
+unittest.TextTestRunner(verbosity=2).run(suite)
+
