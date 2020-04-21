@@ -2,6 +2,7 @@ import glob
 import pandas as pd
 import re
 import sys
+import warnings
 
 # make utility scripts visible
 sys.path.append('utils/')
@@ -40,34 +41,38 @@ class AbstractnessMetric:
         counter_namespaces = 0
         counter_curly_braces = 0
 
-        with open(file_path, 'r') as file:
-            for line in file:
-                # increment / decrement counter for curly braces
-                if '{' in line:
-                    counter_curly_braces += 1
+        try:
+            with open(file_path, 'r') as file:
+                for line in file:
+                    # increment / decrement counter for curly braces
+                    if '{' in line:
+                        counter_curly_braces += 1
 
-                if '}' in line:
-                    counter_curly_braces -= 1
-                    # check for end of class and reset flag
-                    if counter_curly_braces == counter_namespaces:
-                        class_definition_found = False
+                    if '}' in line:
+                        counter_curly_braces -= 1
+                        # check for end of class and reset flag
+                        if counter_curly_braces == counter_namespaces:
+                            class_definition_found = False
 
-                # find namespace
-                if re.match(NAMESPACE_IDENTIFIER, line):
-                    counter_namespaces += 1
-                    
-                # find class
-                if re.match(CLASS_IDENTIFIER, line):
-                    # indicate inside class definition
-                    class_definition_found = True
-                    nb_classes += 1
-                    
-                # find one abstract method
-                if class_definition_found:
-                    if re.match(ABSTRACT_METHOD_IDENTIFIER, line):
-                        # one virtual = 0 method is sufficient for an abstract class
-                        nb_interfaces += 1
-                        class_definition_found = False
+                    # find namespace
+                    if re.match(NAMESPACE_IDENTIFIER, line):
+                        counter_namespaces += 1
+                        
+                    # find class
+                    if re.match(CLASS_IDENTIFIER, line):
+                        # indicate inside class definition
+                        class_definition_found = True
+                        nb_classes += 1
+                        
+                    # find one abstract method
+                    if class_definition_found:
+                        if re.match(ABSTRACT_METHOD_IDENTIFIER, line):
+                            # one virtual = 0 method is sufficient for an abstract class
+                            nb_interfaces += 1
+                            class_definition_found = False
+
+        except FileNotFoundError as ex:
+            warnings.warn('{} ...returning default values'.format(ex))
 
         return nb_interfaces, nb_classes
 
