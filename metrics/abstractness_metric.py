@@ -28,6 +28,7 @@ class AbstractnessMetric:
     def __init__(self, dir_path):
         self._dir_path = dir_path
         self._interface_class_matrix = pd.DataFrame(index=['N_a', 'N_c'], dtype=int)
+        self._list_of_files = []
 
 
     def _get_number_of_interfaces_and_classes_of_file(self, file_path):
@@ -79,14 +80,8 @@ class AbstractnessMetric:
 
     def _search_files_for_interfaces(self):
         ''' iterate through all files and get their interfaces / abstract class definitons '''
-        nb_interfaces_in_files = 0
-        nb_classes_in_files = 0
-        
         for file in self._list_of_files:
             nb_interfaces, nb_classes = self._get_number_of_interfaces_and_classes_of_file(file)
-
-            nb_interfaces_in_files += nb_interfaces
-            nb_classes_in_files += nb_classes
 
             # add amount of interfaces and classes to matrix
             self._interface_class_matrix[fut.extract_filename(file)] = [nb_interfaces, nb_classes]

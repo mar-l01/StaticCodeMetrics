@@ -1,7 +1,8 @@
 import numpy as np
+import os
 import pandas as pd
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 import sys
 import warnings
 
@@ -69,6 +70,53 @@ class TestAbstractnessMetricGetNumberOfInterfacesAndClassesOfFile(unittest.TestC
         self.assertEqual(returned_nb_classes, 1)
 
 
+class TestAbstractnessMetricSearchFilesForInterfaces(unittest.TestCase):
+    @patch('abstractness_metric.AbstractnessMetric._get_number_of_interfaces_and_classes_of_file')
+    def testCorrectNumberOfFunctionCalls(self, mocked_a_get_func):
+        '''
+        Test that mocked function is called as often as files are present in the given directory
+        '''
+        # assert mocks
+        self.assertIs(AbstractnessMetric._get_number_of_interfaces_and_classes_of_file, mocked_a_get_func)
+        
+        # set dummy return values of mocked function
+        mocked_a_get_func.return_value = 0,1
+        
+        # create object and call function to test
+        abstractness_metric = createUUT(TEST_CODE_FILES)
+        with patch.object(abstractness_metric, '_list_of_files', os.listdir(TEST_CODE_FILES)):
+            abstractness_metric._search_files_for_interfaces()      
+
+        # assert that function was called 2 times
+        expected_nb_method_calls = len(os.listdir(TEST_CODE_FILES))
+        self.assertEqual(mocked_a_get_func.call_count, expected_nb_method_calls)
+        
+    @patch('abstractness_metric.AbstractnessMetric._get_number_of_interfaces_and_classes_of_file')
+    @patch('FileUtility.extract_filename')
+    def testCorrectSettingOfCellsInMatrix(self, mocked_fut_func, mocked_a_get_func):
+        '''
+        Test that a correct cell is set in the member-matrix
+        '''
+        # assert mocks
+        self.assertIs(fut.extract_filename, mocked_fut_func)
+        self.assertIs(AbstractnessMetric._get_number_of_interfaces_and_classes_of_file, mocked_a_get_func)
+        
+        # set dummy return values of mocked function
+        mocked_fut_func.side_effect = ['row1', 'row2']
+        mocked_a_get_func.side_effect = [(0,1), (2,3)]
+        
+        # create object and call function to test
+        abstractness_metric = createUUT(TEST_CODE_FILES)
+        with patch.object(abstractness_metric, '_list_of_files', os.listdir(TEST_CODE_FILES)):
+            abstractness_metric._search_files_for_interfaces()
+        
+        # assert correct setting of matrix
+        self.assertEqual(abstractness_metric._interface_class_matrix['row1']['N_a'], 0)
+        self.assertEqual(abstractness_metric._interface_class_matrix['row1']['N_c'], 1)
+        self.assertEqual(abstractness_metric._interface_class_matrix['row2']['N_a'], 2)
+        self.assertEqual(abstractness_metric._interface_class_matrix['row2']['N_c'], 3)
+
+
 class TestAbstractnessMetricComputeAbstractness(unittest.TestCase):
     @patch('FileUtility.get_all_code_files')
     @patch('abstractness_metric.AbstractnessMetric._search_files_for_interfaces')
@@ -116,6 +164,7 @@ class TestAbstractnessMetricComputeAbstractness(unittest.TestCase):
 # create TestSuite with above TestCases
 suite = unittest.TestSuite()
 suite.addTests(unittest.makeSuite(TestAbstractnessMetricGetNumberOfInterfacesAndClassesOfFile))
+suite.addTests(unittest.makeSuite(TestAbstractnessMetricSearchFilesForInterfaces))
 suite.addTests(unittest.makeSuite(TestAbstractnessMetricComputeAbstractness))
 
 # run TestSuite
