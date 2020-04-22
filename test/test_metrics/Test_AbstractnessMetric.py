@@ -2,7 +2,7 @@ import numpy as np
 import os
 import pandas as pd
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 import sys
 import warnings
 
@@ -117,6 +117,28 @@ class TestAbstractnessMetricSearchFilesForInterfaces(unittest.TestCase):
         self.assertEqual(abstractness_metric._interface_class_matrix['row2']['N_c'], 3)
 
 
+class TestAbstractnessMetricCalculateAbstractnessForEachFile(unittest.TestCase):
+    def testCorrectCalculation(self):
+        '''
+        Test that a the abstractness metric is computed correctly
+        '''
+        # create matrix mock
+        matrix_mock = pd.DataFrame(index=['N_a', 'N_c'], dtype=int)
+        matrix_mock['row1'] = [1, 1]
+        matrix_mock['row2'] = [2, 3]
+        matrix_mock['row3'] = [0, 0]
+        
+        # create object and call function to test
+        abstractness_metric = createUUT()
+        with patch.object(abstractness_metric, '_interface_class_matrix', matrix_mock):
+            returned_matrix = abstractness_metric._calculate_abstractness_for_each_file()
+
+            # assert correct computation of abstractness metric
+            self.assertEqual(returned_matrix['row1'], 1)
+            self.assertEqual(returned_matrix['row2'], (2/3))
+            self.assertEqual(returned_matrix['row3'], 0)
+
+
 class TestAbstractnessMetricComputeAbstractness(unittest.TestCase):
     @patch('FileUtility.get_all_code_files')
     @patch('abstractness_metric.AbstractnessMetric._search_files_for_interfaces')
@@ -164,6 +186,7 @@ class TestAbstractnessMetricComputeAbstractness(unittest.TestCase):
 # create TestSuite with above TestCases
 suite = unittest.TestSuite()
 suite.addTests(unittest.makeSuite(TestAbstractnessMetricGetNumberOfInterfacesAndClassesOfFile))
+suite.addTests(unittest.makeSuite(TestAbstractnessMetricCalculateAbstractnessForEachFile))
 suite.addTests(unittest.makeSuite(TestAbstractnessMetricSearchFilesForInterfaces))
 suite.addTests(unittest.makeSuite(TestAbstractnessMetricComputeAbstractness))
 

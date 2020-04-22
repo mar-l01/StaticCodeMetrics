@@ -95,9 +95,10 @@ class AbstractnessMetric:
         n_a = self._interface_class_matrix.loc['N_a', :]
         n_c = self._interface_class_matrix.loc['N_c', :]
 
-        # copy to get names in actual order and rename resulting array
+        # copy to get names in actual order, rename resulting array and change it's type accordingly
         a = n_a
         a = a.rename(index='Abstractness-Metric')
+        a = a.astype(float)
 
         # compute instability metrix for each row
         for index in range(len(n_a)):
