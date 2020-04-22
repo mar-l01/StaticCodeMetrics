@@ -2,6 +2,7 @@ import glob
 import numpy as np
 import pandas as pd
 import sys
+import warnings
 
 # make utility scripts visible
 sys.path.append('utils/')
@@ -26,16 +27,20 @@ class InstabilityMetric:
         user_include_list = []
         stl_include_list = []
 
-        with open(file_path, 'r') as file:
-            for line in file:
-                if line.startswith(PREFIX_USER_INCLUDE):
-                    # ignore ending " to get the pure filename
-                    include_filename = line[len(PREFIX_USER_INCLUDE):].strip()[:-1]
-                    user_include_list.append(include_filename)
-                elif line.startswith(PREFIX_STD_INCLUDE):
-                    # ignore ending > to get the pure filename
-                    include_filename = line[len(PREFIX_STD_INCLUDE):].strip()[:-1]
-                    stl_include_list.append(include_filename)
+        try:
+            with open(file_path, 'r') as file:
+                for line in file:
+                    if line.startswith(PREFIX_USER_INCLUDE):
+                        # ignore ending " to get the pure filename
+                        include_filename = line[len(PREFIX_USER_INCLUDE):].strip()[:-1]
+                        user_include_list.append(include_filename)
+                    elif line.startswith(PREFIX_STD_INCLUDE):
+                        # ignore ending > to get the pure filename
+                        include_filename = line[len(PREFIX_STD_INCLUDE):].strip()[:-1]
+                        stl_include_list.append(include_filename)
+                        
+        except FileNotFoundError as ex:
+            warnings.warn('{} ...returning default values'.format(ex))
 
         return user_include_list, stl_include_list
     

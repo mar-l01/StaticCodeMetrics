@@ -14,7 +14,7 @@ from abstractness_metric import AbstractnessMetric
 from abstractness_metric import ALLOWED_FILE_EXTENSIONS
 
 # constants
-TEST_CODE_FILES = 'test/files/'
+TEST_CODE_FILES = 'test/files/abstractness_metric_test_files/'
 ABSTRACT_CLASS_FILE = TEST_CODE_FILES + 'abstract_class.h'
 NON_ABSTRACT_CLASS_FILE = TEST_CODE_FILES + 'non_abstract_class.h'
 
