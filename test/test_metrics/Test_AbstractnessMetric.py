@@ -87,9 +87,9 @@ class TestAbstractnessMetricSearchFilesForInterfaces(unittest.TestCase):
         with patch.object(abstractness_metric, '_list_of_files', os.listdir(TEST_CODE_FILES)):
             abstractness_metric._search_files_for_interfaces()      
 
-        # assert that function was called 2 times
-        expected_nb_method_calls = len(os.listdir(TEST_CODE_FILES))
-        self.assertEqual(mocked_a_get_func.call_count, expected_nb_method_calls)
+            # assert that function was called 2 times
+            expected_nb_method_calls = len(os.listdir(TEST_CODE_FILES))
+            self.assertEqual(mocked_a_get_func.call_count, expected_nb_method_calls)
         
     @patch('abstractness_metric.AbstractnessMetric._get_number_of_interfaces_and_classes_of_file')
     @patch('FileUtility.extract_filename')
@@ -110,11 +110,11 @@ class TestAbstractnessMetricSearchFilesForInterfaces(unittest.TestCase):
         with patch.object(abstractness_metric, '_list_of_files', os.listdir(TEST_CODE_FILES)):
             abstractness_metric._search_files_for_interfaces()
         
-        # assert correct setting of matrix
-        self.assertEqual(abstractness_metric._interface_class_matrix['row1']['N_a'], 0)
-        self.assertEqual(abstractness_metric._interface_class_matrix['row1']['N_c'], 1)
-        self.assertEqual(abstractness_metric._interface_class_matrix['row2']['N_a'], 2)
-        self.assertEqual(abstractness_metric._interface_class_matrix['row2']['N_c'], 3)
+            # assert correct setting of matrix
+            self.assertEqual(abstractness_metric._interface_class_matrix['row1']['N_a'], 0)
+            self.assertEqual(abstractness_metric._interface_class_matrix['row1']['N_c'], 1)
+            self.assertEqual(abstractness_metric._interface_class_matrix['row2']['N_a'], 2)
+            self.assertEqual(abstractness_metric._interface_class_matrix['row2']['N_c'], 3)
 
 
 class TestAbstractnessMetricCalculateAbstractnessForEachFile(unittest.TestCase):

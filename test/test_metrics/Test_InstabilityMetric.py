@@ -100,8 +100,8 @@ class TestInstabilityMetricCreateUserIncludeMatrix(unittest.TestCase):
         with patch.object(instability_metric, '_list_of_user_files', os.listdir(TEST_CODE_FILES)):
             instability_metric._create_user_include_matrix()
             
-        # assert correct size of matrix
-        self.assertEqual(instability_metric._include_matrix.shape, instability_metric._include_matrix.shape)
+            # assert correct size of matrix
+            self.assertEqual(instability_metric._include_matrix.shape, instability_metric._include_matrix.shape)
         
     @patch('FileUtility.extract_filename')
     def testCorrectIndexAndColumnLabelsOfMatrix(self, mocked_fut_func):
@@ -120,17 +120,50 @@ class TestInstabilityMetricCreateUserIncludeMatrix(unittest.TestCase):
         with patch.object(instability_metric, '_list_of_user_files', os.listdir(TEST_CODE_FILES)):
             instability_metric._create_user_include_matrix()
         
-        # assert correct labeling
-        for i, row_label in enumerate(instability_metric._include_matrix.index):
-            self.assertEqual(row_label, expected_filenames[i])
-        for i, column_label in enumerate(instability_metric._include_matrix.columns):
-            self.assertEqual(column_label, expected_filenames[i])
+            # assert correct labeling
+            for i, row_label in enumerate(instability_metric._include_matrix.index):
+                self.assertEqual(row_label, expected_filenames[i])
+            for i, column_label in enumerate(instability_metric._include_matrix.columns):
+                self.assertEqual(column_label, expected_filenames[i])
+            
+
+class TestInstabilityMetricFillIncludeMatrix(unittest.TestCase):
+    @patch('FileUtility.extract_filename')
+    @patch('instability_metric.InstabilityMetric._get_includes_of_file')
+    def testTestNoIncludes(self, mocked_i_func, mocked_fut_func):
+        '''
+        Test that the member-matrix remains unchanged (only 0s), if no include files are found
+        '''
+        # assert mocks
+        self.assertIs(fut.extract_filename, mocked_fut_func)  
+        self.assertIs(InstabilityMetric._get_includes_of_file, mocked_i_func)
         
+        # define dummy return values (a different one for each call to this mock)
+        expected_filenames = ['file{}'.format(i) for i in range(len(os.listdir(TEST_CODE_FILES)))]
+        mocked_fut_func.side_effect = expected_filenames
+        
+        empty_user_include_list, empty_std_include_list = [], []
+        mocked_i_func.return_value = empty_user_include_list, empty_std_include_list
+        
+        expected_include_matrix = pd.DataFrame(np.zeros((3, 3)), dtype=int)
+        
+        # create object and call function to test, member-variable is empty
+        instability_metric = createUUT()
+        with patch.object(instability_metric, '_list_of_user_files', os.listdir(TEST_CODE_FILES)):
+            with patch.object(instability_metric, '_include_matrix', expected_include_matrix):
+                instability_metric._fill_include_matrix()
+            
+                # assert that nothing is called and the matrix is contains 0s only
+                mocked_fut_func.assert_called()
+                mocked_i_func.assert_called()
+                self.assertTrue(instability_metric._include_matrix.equals(expected_include_matrix))
+     
 
 # create TestSuite with above TestCases
 suite = unittest.TestSuite()
 suite.addTests(unittest.makeSuite(TestInstabilityMetricGetIncludesOfFile))
 suite.addTests(unittest.makeSuite(TestInstabilityMetricCreateUserIncludeMatrix))
+suite.addTests(unittest.makeSuite(TestInstabilityMetricFillIncludeMatrix))
 
 # run TestSuite
 unittest.TextTestRunner(verbosity=2).run(suite)
