@@ -19,6 +19,7 @@ PREFIX_USER_INCLUDE = '#include "'
 class InstabilityMetric:
     def __init__(self, dir_path):
         self._dir_path = dir_path
+        self._list_of_user_files = []
         
 
     def _get_includes_of_file(self, file_path):
