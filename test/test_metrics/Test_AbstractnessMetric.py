@@ -10,10 +10,12 @@ import FileUtility as fut
 
 sys.path.append('metrics/')
 from abstractness_metric import AbstractnessMetric
+from abstractness_metric import ALLOWED_FILE_EXTENSIONS
 
 # constants
-ABSTRACT_CLASS_FILE = 'test/files/abstract_class.h'
-NON_ABSTRACT_CLASS_FILE = 'test/files/non_abstract_class.h'
+TEST_CODE_FILES = 'test/files/'
+ABSTRACT_CLASS_FILE = TEST_CODE_FILES + 'abstract_class.h'
+NON_ABSTRACT_CLASS_FILE = TEST_CODE_FILES + 'non_abstract_class.h'
 
 
 def createUUT(dir_path=''):
@@ -67,7 +69,6 @@ class TestAbstractnessMetricGetNumberOfInterfacesAndClassesOfFile(unittest.TestC
         self.assertEqual(returned_nb_classes, 1)
 
 
-
 class TestAbstractnessMetricComputeAbstractness(unittest.TestCase):
     @patch('FileUtility.get_all_code_files')
     @patch('abstractness_metric.AbstractnessMetric._search_files_for_interfaces')
@@ -89,7 +90,28 @@ class TestAbstractnessMetricComputeAbstractness(unittest.TestCase):
         mocked_fut_get_func.assert_called_once()
         mocked_a_search_func.assert_called_once()
         mocked_a_calc_func.assert_called_once()
+        
+    @patch('FileUtility.get_all_code_files')
+    @patch('abstractness_metric.AbstractnessMetric._search_files_for_interfaces')
+    @patch('abstractness_metric.AbstractnessMetric._calculate_abstractness_for_each_file')
+    def testCorrectFunctionCallsWithNonEmptyFilePath(self, mocked_a_calc_func, mocked_a_search_func, mocked_fut_get_func):
+        '''
+        Test that the correct functions are invoked when a non-empty filepath was provided
+        '''
+        # assert mocks
+        self.assertIs(AbstractnessMetric._calculate_abstractness_for_each_file, mocked_a_calc_func)
+        self.assertIs(AbstractnessMetric._search_files_for_interfaces, mocked_a_search_func)
+        self.assertIs(fut.get_all_code_files, mocked_fut_get_func)
 
+        # create object and call function to test
+        abstractness_metric = createUUT(TEST_CODE_FILES)
+        abstractness_metric.compute_abstractness()
+
+        # assert function calls
+        mocked_fut_get_func.assert_called_once_with(TEST_CODE_FILES, ALLOWED_FILE_EXTENSIONS)
+        mocked_a_search_func.assert_called_once()
+        mocked_a_calc_func.assert_called_once()
+        
 
 # create TestSuite with above TestCases
 suite = unittest.TestSuite()
