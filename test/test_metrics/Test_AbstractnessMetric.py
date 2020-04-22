@@ -11,6 +11,17 @@ import FileUtility as fut
 sys.path.append('metrics/')
 from abstractness_metric import AbstractnessMetric
 
+# constants
+ABSTRACT_CLASS_FILE = 'test/files/abstract_class.h'
+NON_ABSTRACT_CLASS_FILE = 'test/files/non_abstract_class.h'
+
+
+def createUUT(dir_path=''):
+    ''' 
+    Returns an initialized object to test
+    '''
+    return AbstractnessMetric(dir_path)
+
 
 class TestAbstractnessMetricGetNumberOfInterfacesAndClassesOfFile(unittest.TestCase):
     def testEmptyFilePath(self):
@@ -21,8 +32,8 @@ class TestAbstractnessMetricGetNumberOfInterfacesAndClassesOfFile(unittest.TestC
             # Cause all warnings to always be triggered.
             warnings.simplefilter("always")
 
-            # create object with empty filepath and call function to test
-            abstractness_metric = AbstractnessMetric('')
+            # create object and call function to test
+            abstractness_metric = createUUT()
             returned_nb_interfaces, returned_nb_classes = abstractness_metric._get_number_of_interfaces_and_classes_of_file('')
 
             # assert correct result
@@ -30,6 +41,30 @@ class TestAbstractnessMetricGetNumberOfInterfacesAndClassesOfFile(unittest.TestC
             self.assertEqual(returned_nb_classes, 0)        
             self.assertEqual(len(w), 1)
             self.assertTrue('...returning default values' in str(w[-1].message))
+            
+    def testAbstractClassFile(self):
+        '''
+        Test that an abstract class is recognized successfully
+        '''
+        # create object and call function to test
+        abstractness_metric = createUUT()
+        returned_nb_interfaces, returned_nb_classes = abstractness_metric._get_number_of_interfaces_and_classes_of_file(ABSTRACT_CLASS_FILE)
+
+        # assert correct result
+        self.assertEqual(returned_nb_interfaces, 1)
+        self.assertEqual(returned_nb_classes, 1)  
+        
+    def testNonAbstractClassFile(self):
+        '''
+        Test that no abstract class is found
+        '''
+        # create object and call function to test
+        abstractness_metric = createUUT()
+        returned_nb_interfaces, returned_nb_classes = abstractness_metric._get_number_of_interfaces_and_classes_of_file(NON_ABSTRACT_CLASS_FILE)
+
+        # assert correct result
+        self.assertEqual(returned_nb_interfaces, 0)
+        self.assertEqual(returned_nb_classes, 1)
 
 
 
@@ -46,8 +81,8 @@ class TestAbstractnessMetricComputeAbstractness(unittest.TestCase):
         self.assertIs(AbstractnessMetric._search_files_for_interfaces, mocked_a_search_func)
         self.assertIs(fut.get_all_code_files, mocked_fut_get_func)
 
-        # create object with empty filepath and call function to test
-        abstractness_metric = AbstractnessMetric('')
+        # create object and call function to test
+        abstractness_metric = createUUT()
         abstractness_metric.compute_abstractness()
 
         # assert function calls

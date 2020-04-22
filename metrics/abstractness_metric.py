@@ -17,8 +17,8 @@ CLASS_IDENTIFIER = '\s*(class|struct)\s*[\w()]*\s*\w+\s*'
 
 # abstract methods in C++ are typically denoted by setting a virtual method equal to 0:
 # e.g. virtual void anAbstractMethod() = 0;
-# it start with (virtual) and ends with (= 0;)
-ABSTRACT_METHOD_IDENTIFIER = '^(\s*virtual)\s+\w+\s*\w*\((.|\s)*\)\s*(=\s*0\s*;)$'
+# it starts with (virtual) and ends with (= 0;)
+ABSTRACT_METHOD_IDENTIFIER = '^(\s*virtual)\s+\w+\s*\w*\((.|\s)*\)\s*\w*\s*(=\s*0\s*;)$'
 
 # namespaces are indicated by namespace namespaceX
 NAMESPACE_IDENTIFIER = '^(\s*namespace)\s*\w*\s*'
