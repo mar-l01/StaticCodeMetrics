@@ -35,3 +35,5 @@ jobs:
       run: |
         python test/test_utils/Test_FileUtility.py
         python test/test_utils/Test_DataSeriesUtility.py
+        python test/test_metrics/Test_AbstractnessMetric.py
+        python test/test_metrics/Test_InstabilityMetric.py
