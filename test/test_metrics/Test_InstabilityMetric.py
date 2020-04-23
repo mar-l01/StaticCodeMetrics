@@ -130,7 +130,7 @@ class TestInstabilityMetricCreateUserIncludeMatrix(unittest.TestCase):
 class TestInstabilityMetricFillIncludeMatrix(unittest.TestCase):
     @patch('FileUtility.extract_filename')
     @patch('instability_metric.InstabilityMetric._get_includes_of_file')
-    def testTestNoIncludes(self, mocked_i_func, mocked_fut_func):
+    def testCheckMatrixIfNoIncludes(self, mocked_i_func, mocked_fut_func):
         '''
         Test that the member-matrix remains unchanged (only 0s), if no include files are found
         '''
@@ -145,19 +145,65 @@ class TestInstabilityMetricFillIncludeMatrix(unittest.TestCase):
         empty_user_include_list, empty_std_include_list = [], []
         mocked_i_func.return_value = empty_user_include_list, empty_std_include_list
         
+        mocked_include_matrix = pd.DataFrame(np.zeros((3, 3)), dtype=int)
         expected_include_matrix = pd.DataFrame(np.zeros((3, 3)), dtype=int)
         
         # create object and call function to test, member-variable is empty
         instability_metric = createUUT()
         with patch.object(instability_metric, '_list_of_user_files', os.listdir(TEST_CODE_FILES)):
-            with patch.object(instability_metric, '_include_matrix', expected_include_matrix):
+            with patch.object(instability_metric, '_include_matrix', mocked_include_matrix):
                 instability_metric._fill_include_matrix()
             
-                # assert that nothing is called and the matrix is contains 0s only
+                # assert that mocks are called and the matrix contains 0s only
                 mocked_fut_func.assert_called()
                 mocked_i_func.assert_called()
                 self.assertTrue(instability_metric._include_matrix.equals(expected_include_matrix))
-     
+                
+    @patch('FileUtility.extract_filename')
+    @patch('instability_metric.InstabilityMetric._get_includes_of_file')
+    def testCheckMatrixIfIncludes(self, mocked_i_func, mocked_fut_func):
+        '''
+        Test that the correct member-matrix is returned, if include files are found
+        '''
+        # assert mocks
+        self.assertIs(fut.extract_filename, mocked_fut_func)  
+        self.assertIs(InstabilityMetric._get_includes_of_file, mocked_i_func)
+        
+        # define dummy return values (a different one for each call to the mocks)
+        expected_filenames = ['file{}'.format(i) for i in range(len(os.listdir(TEST_CODE_FILES)))]
+        mocked_fut_func.side_effect = expected_filenames
+        # each pair defines the respective user or std-lib include files returned by mock
+        user_and_std_include_list = [([], ['std_lib']), (['file1'], []), (['file1', 'file2'], ['std_out'])]
+        mocked_i_func.side_effect = user_and_std_include_list
+        
+        # matrix of shape (m x n), with m being #user-includes and n being (#user-includes + +std-includes)
+        expected_std_includes = ['std_lib', 'std_out']
+        mocked_include_matrix = pd.DataFrame(np.zeros((3, 5)), index=expected_filenames, columns=expected_filenames + 
+            expected_std_includes, dtype=int)
+        initial_include_matrix = pd.DataFrame(np.zeros((3, 5)), index=expected_filenames, columns=expected_filenames + 
+            expected_std_includes, dtype=int)
+        
+        # create object and call function to test, member-variable is empty
+        instability_metric = createUUT()
+        with patch.object(instability_metric, '_list_of_user_files', os.listdir(TEST_CODE_FILES)):
+            with patch.object(instability_metric, '_include_matrix', mocked_include_matrix):
+                instability_metric._fill_include_matrix()
+            
+                # assert that mocks are called and the matrix contains 0s only
+                mocked_fut_func.assert_called()
+                mocked_i_func.assert_called()
+                self.assertFalse(instability_metric._include_matrix.equals(initial_include_matrix))
+                
+                # iterate through matrix and check for 1s and 0s
+                for i, row_label in enumerate(instability_metric._include_matrix.index):
+                    for column_label in instability_metric._include_matrix.columns:
+                        # matrix[i][j] should contain 1 iff j is contained in i-th tuple of 'user_and_std_include_list' above
+                        expected_entry = 0
+                        if column_label in user_and_std_include_list[i][0] or column_label in user_and_std_include_list[i][1]:
+                            expected_entry = 1
+                        
+                        self.assertEqual(instability_metric._include_matrix.loc[row_label, column_label], expected_entry)
+                    
 
 # create TestSuite with above TestCases
 suite = unittest.TestSuite()
