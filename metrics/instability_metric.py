@@ -96,7 +96,7 @@ class InstabilityMetric:
         self._list_of_stl_libs = list(set(self._list_of_stl_libs))
         
         for stl_included_file in self._list_of_stl_libs:
-            self._include_matrix.loc[:, stl_include_file] = pd.Series(np.zeros(len(self._include_matrix.index)), dtype=int)
+            self._include_matrix.loc[:, stl_included_file] = pd.Series(np.zeros(len(self._include_matrix.index)), dtype=int)
 
 
     def _get_all_fan_in(self):
