@@ -124,7 +124,11 @@ class InstabilityMetric:
 
         # compute instability metric for each row
         for index in range(len(fan_in)):
-            i[index] = fan_out[index] / (fan_in[index] + fan_out[index]) 
+            # prevent division through 0
+            if fan_out[index] == 0 and fan_in[index] == 0:
+                i[index] = 0
+            else:
+                i[index] = fan_out[index] / (fan_in[index] + fan_out[index]) 
 
         return i
 
