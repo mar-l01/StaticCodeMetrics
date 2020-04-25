@@ -121,6 +121,7 @@ class InstabilityMetric:
         # copy to get names in actual order
         i = fan_in
         i = i.rename(index='Instability-Metric')
+        i = i.astype(float)
 
         # compute instability metric for each row
         for index in range(len(fan_in)):

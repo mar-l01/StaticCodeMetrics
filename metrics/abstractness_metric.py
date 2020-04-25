@@ -100,7 +100,7 @@ class AbstractnessMetric:
         a = a.rename(index='Abstractness-Metric')
         a = a.astype(float)
 
-        # compute instability metrix for each row
+        # compute abstractness metric for each row
         for index in range(len(n_a)):
             # prevent division through 0
             if n_c[index] == 0:

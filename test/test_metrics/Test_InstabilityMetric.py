@@ -370,6 +370,64 @@ class TestInstabilityMetricCalculateInstabilityForEachFile(unittest.TestCase):
         # assert correct computation of instability metric
         for i in range(len(returned_matrix.index)):
             self.assertEqual(returned_matrix[i], (expected_sum_fan_out[i] / (expected_sum_fan_in[i] + expected_sum_fan_out[i])))
+            
+      
+class TestInstabilityMetricComputeInstability(unittest.TestCase):
+    @patch('FileUtility.get_all_code_files')
+    @patch('instability_metric.InstabilityMetric._create_user_include_matrix')
+    @patch('instability_metric.InstabilityMetric._add_stl_includes')
+    @patch('instability_metric.InstabilityMetric._fill_include_matrix')
+    @patch('instability_metric.InstabilityMetric._calculate_instability_for_each_file')
+    def testCorrectFunctionCallsWithEmptyFilePath(self, mocked_i_calc_func, mocked_i_fill_func, mocked_i_add_func, 
+    mocked_i_create_func, mocked_fut_get_func):
+        '''
+        Test that the correct functions are invoked when an empty filepath was provided
+        '''
+        # assert mocks
+        self.assertIs(InstabilityMetric._calculate_instability_for_each_file, mocked_i_calc_func)
+        self.assertIs(InstabilityMetric._fill_include_matrix, mocked_i_fill_func)
+        self.assertIs(InstabilityMetric._add_stl_includes, mocked_i_add_func)
+        self.assertIs(InstabilityMetric._create_user_include_matrix, mocked_i_create_func)
+        self.assertIs(fut.get_all_code_files, mocked_fut_get_func)
+
+        # create object and call function to test
+        instability_metric = createUUT()
+        instability_metric.compute_instability()
+
+        # assert function calls
+        mocked_fut_get_func.assert_called_once()
+        mocked_i_create_func.assert_called_once()
+        mocked_i_add_func.assert_called_once()
+        mocked_i_fill_func.assert_called_once()
+        mocked_i_calc_func.assert_called_once()
+        
+    @patch('FileUtility.get_all_code_files')
+    @patch('instability_metric.InstabilityMetric._create_user_include_matrix')
+    @patch('instability_metric.InstabilityMetric._add_stl_includes')
+    @patch('instability_metric.InstabilityMetric._fill_include_matrix')
+    @patch('instability_metric.InstabilityMetric._calculate_instability_for_each_file')
+    def testCorrectFunctionCallsWithNonEmptyFilePath(self, mocked_i_calc_func, mocked_i_fill_func, mocked_i_add_func, 
+    mocked_i_create_func, mocked_fut_get_func):
+        '''
+        Test that the correct functions are invoked when a correct filepath was provided
+        '''
+        # assert mocks
+        self.assertIs(InstabilityMetric._calculate_instability_for_each_file, mocked_i_calc_func)
+        self.assertIs(InstabilityMetric._fill_include_matrix, mocked_i_fill_func)
+        self.assertIs(InstabilityMetric._add_stl_includes, mocked_i_add_func)
+        self.assertIs(InstabilityMetric._create_user_include_matrix, mocked_i_create_func)
+        self.assertIs(fut.get_all_code_files, mocked_fut_get_func)
+
+        # create object and call function to test
+        instability_metric = createUUT(TEST_CODE_FILES)
+        instability_metric.compute_instability()
+
+        # assert function calls
+        mocked_fut_get_func.assert_called_once()
+        mocked_i_create_func.assert_called_once()
+        mocked_i_add_func.assert_called_once()
+        mocked_i_fill_func.assert_called_once()
+        mocked_i_calc_func.assert_called_once()
 
 
 # create TestSuite with above TestCases
@@ -381,6 +439,7 @@ suite.addTests(unittest.makeSuite(TestInstabilityMetricAddStlIncludes))
 suite.addTests(unittest.makeSuite(TestInstabilityMetricGetAllFanIn))
 suite.addTests(unittest.makeSuite(TestInstabilityMetricGetAllFanOut))
 suite.addTests(unittest.makeSuite(TestInstabilityMetricCalculateInstabilityForEachFile))
+suite.addTests(unittest.makeSuite(TestInstabilityMetricComputeInstability))
 
 # run TestSuite
 unittest.TextTestRunner(verbosity=2).run(suite)
