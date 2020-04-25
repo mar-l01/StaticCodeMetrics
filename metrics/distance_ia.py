@@ -11,6 +11,9 @@ import DataSeriesUtility as dsu
 class DistanceIA:
     def __init__(self, dir_path):
         self._dir_path = dir_path
+        self._instability_metric = None
+        self._abstractness_metric = None
+        self._distance = None
 
 
     def _calculate_distance(self):
