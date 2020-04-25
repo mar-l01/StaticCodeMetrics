@@ -269,6 +269,37 @@ class TestInstabilityMetricAddStlIncludes(unittest.TestCase):
                 mocked_i_func.assert_called()
                 self.assertEqual(instability_metric._include_matrix.shape, expected_include_matrix_shape)
                 
+    @patch('FileUtility.extract_filename')
+    @patch('instability_metric.InstabilityMetric._get_includes_of_file')
+    def testNoDuplicatedStlIncludes(self, mocked_i_func, mocked_fut_func):
+        '''
+        Test that duplicated stl-includes are added as a single column
+        '''
+        # assert mocks
+        self.assertIs(fut.extract_filename, mocked_fut_func)  
+        self.assertIs(InstabilityMetric._get_includes_of_file, mocked_i_func)
+        
+        # define dummy return values (a different one for each call to the mocks)
+        expected_filenames = ['file{}'.format(i) for i in range(len(os.listdir(TEST_CODE_FILES)))]
+        mocked_fut_func.side_effect = expected_filenames
+        # each pair defines the respective user or std-lib included files returned by mock
+        user_and_std_include_list = [([], ['std_lib']), (['file1'], []), (['file1', 'file2'], ['std_lib'])]
+        mocked_i_func.side_effect = user_and_std_include_list
+        
+        mocked_include_matrix = pd.DataFrame(np.zeros((3, 3)), dtype=int)
+        expected_include_matrix_shape = (3, 4)
+        
+        # create object and call function to test, member-variable is empty
+        instability_metric = createUUT()
+        with patch.object(instability_metric, '_list_of_user_files', os.listdir(TEST_CODE_FILES)):
+            with patch.object(instability_metric, '_include_matrix', mocked_include_matrix):
+                instability_metric._add_stl_includes()
+            
+                # assert that mocks are called and the matrix was extended by 1 column only
+                mocked_fut_func.assert_called()
+                mocked_i_func.assert_called()
+                self.assertEqual(instability_metric._include_matrix.shape, expected_include_matrix_shape)
+                
 
 # create TestSuite with above TestCases
 suite = unittest.TestSuite()
