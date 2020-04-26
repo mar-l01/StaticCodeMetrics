@@ -29,8 +29,8 @@ class TestDistanceIACalculateDistance(unittest.TestCase):
         mocked_a_metric = pd.Series(np.array([.3, 1., .0, 1., .8, .2]))
         expected_calc_distance = abs(mocked_i_metric + mocked_a_metric - 1)
 
+        # create object and call function to test
         distance_ia = createUUT()
-
         with patch.object(distance_ia, '_instability_metric', mocked_i_metric):
             with patch.object(distance_ia, '_abstractness_metric', mocked_a_metric):
                 distance_ia._calculate_distance()
@@ -66,7 +66,8 @@ class TestDistanceIAPlotDistance(unittest.TestCase):
         mocked_d_func.return_value = mocked_distance
         
         expected_ind = np.arange(mocked_distance.size)
-             
+        
+        # create object and call function to test  
         distance_ia = createUUT()
         with patch.object(distance_ia, '_distance', mocked_distance):
             distance_ia.plot_distance()
@@ -107,6 +108,7 @@ class TestDistanceIAPlotDistance(unittest.TestCase):
         mocked_d_func.return_value = mocked_distance    
         expected_ind = np.arange(mocked_distance.size)
              
+        # create object and call function to test
         distance_ia = createUUT()
         with patch.object(distance_ia, '_distance', mocked_distance):
             distance_ia.plot_distance()
