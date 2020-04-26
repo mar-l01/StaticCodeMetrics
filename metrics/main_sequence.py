@@ -4,6 +4,7 @@ from abstractness_metric import AbstractnessMetric
 import matplotlib.pyplot as plt
 import pandas as pd
 import sys
+import warnings
 
 # make utility scripts visible
 sys.path.append('utils/')
@@ -80,6 +81,11 @@ class MainSequence:
         # create a map which assigns file/component names to their coordinates
         self._names_map = [(n, (x, y)) for n, x, y in zip(self._instability_metric.index, self._instability_metric, self._abstractness_metric)]
         
+        # check for empty name map
+        if self._names_map == []:
+            warnings.warn('"self._names_map" is empty...returning directly')
+            return
+        
         # create basic layout format
         ax = self._layout_ax()
         
@@ -93,6 +99,6 @@ class MainSequence:
 
 
 if __name__ == '__main__':
-    directory_path = '../cppmodbus/src/cppmodbus/'
+    directory_path = '../src/cppmodbus/'
     mainSequence = MainSequence(directory_path)
     mainSequence.plot_metrics()

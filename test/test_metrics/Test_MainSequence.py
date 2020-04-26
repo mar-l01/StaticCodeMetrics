@@ -5,6 +5,7 @@ import pandas as pd
 import unittest
 from unittest.mock import patch
 import sys
+import warnings
 
 # make utility scripts visible
 sys.path.append('utils/')
@@ -22,6 +23,44 @@ def createUUT():
 
 
 class TestMainSequencePlotMetrics(unittest.TestCase):
+    @patch('DataSeriesUtility.get_instability_and_abstractness_metric')
+    @patch('matplotlib.axes.Axes.scatter')
+    @patch('matplotlib.pyplot.show')
+    @patch('main_sequence.MainSequence._define_motion_annotation_callback')
+    @patch('main_sequence.MainSequence._layout_ax')
+    def testEmptyNamesList(self, mocked_ms_func, mocked_ms_cb_func, mocked_show_func, mocked_scatter_func,
+    mocked_dsu_func):
+        '''
+        Test that function returns if MainSequence._names_map is empty
+        '''
+        # assert mocks
+        self.assertIs(dsu.get_instability_and_abstractness_metric, mocked_dsu_func)
+        self.assertIs(axs.Axes.scatter, mocked_scatter_func)
+        self.assertIs(plt.show, mocked_show_func) # mock this function to no show the plotted window
+        self.assertIs(MainSequence._define_motion_annotation_callback, mocked_ms_cb_func)
+        self.assertIs(MainSequence._layout_ax, mocked_ms_func)
+        
+        # use empty data frames to create empty names-map
+        mocked_dsu_func.return_value = pd.DataFrame(), pd.DataFrame()
+        
+
+        with warnings.catch_warnings(record=True) as w:
+            # Cause all warnings to always be triggered.
+            warnings.simplefilter("always")
+
+            # create object and call function to test
+            main_sequence = createUUT()
+            main_sequence.plot_metrics()
+
+            # assert correct result (no further function calls)
+            mocked_ms_func.assert_not_called()
+            mocked_scatter_func.assert_not_called()
+            mocked_ms_cb_func.assert_not_called()
+            mocked_show_func.assert_not_called()
+            self.assertEqual(len(w), 1)
+            self.assertTrue('"self._names_map" is empty...returning directly' in str(w[-1].message))
+        
+
     @patch('DataSeriesUtility.get_instability_and_abstractness_metric')
     @patch('matplotlib.axes.Axes.scatter')
     @patch('matplotlib.pyplot.show')
