@@ -64,12 +64,12 @@ class MainSequence:
         ''' fill displayed diagram with a mouse-event to show annotations within it '''
         fig = plt.gcf()
         fig.canvas.set_window_title('Main Sequence')
-        
+
         # check for empty name map
         if self._names_map == []:
             warnings.warn('"self._names_map" is empty...returning directly, no motion_notifiy_event connected')
             return
-         
+
         # initial setting of annotated point
         self._annotated_point = ax.annotate(*self._names_map[0])
         self._annotated_point.set_visible(False)
