@@ -112,7 +112,7 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
                 # assert function calls
                 mocked_coll_cont_func.assert_called_once()
                 mocked_ax_anno_func.assert_not_called()
-                mocked_txt_get_vis_func.assert_called_once()
+                mocked_txt_get_vis_func.assert_called() # called several times
                 mocked_txt_set_vis_func.assert_called() # called several times
                 mocked_fig_draw_func.assert_called_once()
 
