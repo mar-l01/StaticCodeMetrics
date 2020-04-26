@@ -33,6 +33,7 @@ class MainSequence:
                     self._annotated_point.set_visible(False)
                     fig.canvas.draw_idle()
 
+
     def _layout_ax(self):
         ''' creates and returns the basic layout of the diagram displayed '''
         ax = plt.gca()
@@ -43,7 +44,7 @@ class MainSequence:
 
         # Main Sequence
         ax.plot([0,1], [1,0], marker='x', color='red')
-        
+
         # zone of pain
         ax.add_artist(plt.Circle((0, 0), .5, alpha=.3, color='r', label="test"))
         ax.annotate("Zone of Pain", xy=(.1, .2), fontsize=10)
@@ -55,22 +56,22 @@ class MainSequence:
         # label x and y
         ax.set_xlabel('[I]nstability', fontsize=18)
         ax.set_ylabel('[A]bstractness', fontsize=18)
-        
+
         return ax
-    
-    
+
+
     def _define_motion_annotation_callback(self, ax, sc):
         ''' fill displayed diagram with a mouse-event to show annotations within it '''
         # annotate points if one hovers over it with the mouse
         self._annotated_point = ax.annotate(*self._names_map[0])
         self._annotated_point.set_visible(False)
-        
+
         # callback executed at each mouse motion event
         annotation_callback = lambda event: self._annotate_point(event, ax, sc)
 
         fig = plt.gcf()
         fig.canvas.set_window_title('Main Sequence')
-        fig.canvas.mpl_connect("motion_notify_event", lambda event: annotation_callback(event))    
+        fig.canvas.mpl_connect("motion_notify_event", lambda event: annotation_callback(event))
 
 
     def plot_metrics(self):
@@ -80,18 +81,18 @@ class MainSequence:
         self._instability_metric, self._abstractness_metric = dsu.get_instability_and_abstractness_metric(self._dir_path)
         # create a map which assigns file/component names to their coordinates
         self._names_map = [(n, (x, y)) for n, x, y in zip(self._instability_metric.index, self._instability_metric, self._abstractness_metric)]
-        
+
         # check for empty name map
         if self._names_map == []:
             warnings.warn('"self._names_map" is empty...returning directly')
             return
-        
+
         # create basic layout format
         ax = self._layout_ax()
-        
+
         # x = instability, y = abstractness
         sc = ax.scatter(self._instability_metric, self._abstractness_metric)
-        
+
         # use a motion-event to display annotations
         self._define_motion_annotation_callback(ax, sc)
 

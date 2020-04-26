@@ -20,6 +20,28 @@ def createUUT():
     Returns an initialized object to test (no directory-path required for testing)
     '''
     return MainSequence('')
+    
+    
+class TestMainSequenceDefineMotionAnnotationCallback(unittest.TestCase):
+    def testInitialSettingOfAnnotationPoint(self):
+        '''
+        Test that the annotation point is set initally and invisible
+        '''         
+        # create mock values
+        mocked_ax = plt.gca()
+        mocked_scatter = mocked_ax.scatter(pd.Series(dtype=float), pd.Series(dtype=float))       
+        mocked_names_map = [('test-annotation', (0, 1))] # one element enough to test initial setting (:= [0])
+        expected_annotated_point = mocked_ax.annotate(*mocked_names_map[0])
+        
+        # create object and call function to test  
+        main_sequence = createUUT()
+        with patch.object(main_sequence, '_names_map', mocked_names_map):
+            main_sequence._define_motion_annotation_callback(mocked_ax, mocked_scatter)
+            
+            # assert correct setting of annotation point
+            self.assertEqual(expected_annotated_point.xy, main_sequence._annotated_point.xy)
+            self.assertEqual(expected_annotated_point.get_text(), main_sequence._annotated_point.get_text())
+            self.assertFalse(main_sequence._annotated_point.get_visible())
 
 
 class TestMainSequencePlotMetrics(unittest.TestCase):
@@ -81,9 +103,12 @@ class TestMainSequencePlotMetrics(unittest.TestCase):
         # create return values for mocked functions
         mocked_i_metric = pd.Series(np.array([.6, .0, .1, 1., .0, .5]))
         mocked_a_metric = pd.Series(np.array([.3, 1., .0, 1., .8, .2]))
+        mocked_names_map = [(n, (x, y)) for n, x, y in zip(mocked_i_metric.index, mocked_i_metric, mocked_a_metric)]
+           
+        # assign mocked return values to mocks          
         mocked_dsu_func.return_value = mocked_i_metric, mocked_a_metric
         mocked_ms_func.return_value = plt.gca()
-        mocked_names_map = [(n, (x, y)) for n, x, y in zip(mocked_i_metric.index, mocked_i_metric, mocked_a_metric)]
+
         
         # create object and call function to test  
         main_sequence = createUUT()
@@ -145,6 +170,7 @@ class TestMainSequencePlotMetrics(unittest.TestCase):
 # create TestSuite with above TestCases
 suite = unittest.TestSuite()
 suite.addTests(unittest.makeSuite(TestMainSequencePlotMetrics))
+suite.addTests(unittest.makeSuite(TestMainSequenceDefineMotionAnnotationCallback))
 
 # run TestSuite
 unittest.TextTestRunner(verbosity=2).run(suite)
