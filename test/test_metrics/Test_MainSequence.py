@@ -24,6 +24,100 @@ def createUUT():
     return MainSequence('')
 
 
+class TestMainSequenceLayoutAx(unittest.TestCase):
+    @patch('matplotlib.axes.Axes.set_xlim')
+    @patch('matplotlib.axes.Axes.set_ylim')
+    @patch('matplotlib.axes.Axes.plot')
+    @patch('matplotlib.axes.Axes.add_artist')
+    @patch('matplotlib.axes.Axes.annotate')
+    @patch('matplotlib.axes.Axes.set_xlabel')
+    @patch('matplotlib.axes.Axes.set_ylabel')
+    def testCorrectFunctionCalls(self, mocked_ax_ylabel_func, mocked_ax_xlabel_func, mocked_ax_anno_func, mocked_ax_add_art_func,
+    mocked_ax_plot_func, mocked_ax_ylim_func, mocked_ax_xlim_func):
+        '''
+        Test that correct functions are invoked
+        '''
+        # assert mocks
+        self.assertIs(axs.Axes.set_xlim, mocked_ax_xlim_func)
+        self.assertIs(axs.Axes.set_ylim, mocked_ax_ylim_func)
+        self.assertIs(axs.Axes.plot, mocked_ax_plot_func)
+        self.assertIs(axs.Axes.add_artist, mocked_ax_add_art_func)
+        self.assertIs(axs.Axes.annotate, mocked_ax_anno_func)
+        self.assertIs(axs.Axes.set_xlabel, mocked_ax_xlabel_func)
+        self.assertIs(axs.Axes.set_ylabel, mocked_ax_ylabel_func)
+        
+        # create object and call function to test
+        main_sequence = createUUT()
+        returned_ax = main_sequence._layout_ax()
+        
+        # assert correct function calls        
+        mocked_ax_xlim_func.assert_called_once()
+        mocked_ax_ylim_func.assert_called_once()
+        mocked_ax_plot_func.assert_called_once()
+        self.assertEqual(2, mocked_ax_add_art_func.call_count) # called twice
+        self.assertEqual(2, mocked_ax_anno_func.call_count) # called twice
+        mocked_ax_xlabel_func.assert_called_once()
+        mocked_ax_ylabel_func.assert_called_once()
+
+    @patch('matplotlib.axes.Axes.set_xlim')
+    @patch('matplotlib.axes.Axes.set_ylim')
+    @patch('matplotlib.axes.Axes.plot')
+    @patch('matplotlib.axes.Axes.add_artist')
+    @patch('matplotlib.axes.Axes.annotate')
+    @patch('matplotlib.axes.Axes.set_xlabel')
+    @patch('matplotlib.axes.Axes.set_ylabel')
+    def testCorrectFunctionCallArguments(self, mocked_ax_ylabel_func, mocked_ax_xlabel_func, mocked_ax_anno_func, mocked_ax_add_art_func,
+    mocked_ax_plot_func, mocked_ax_ylim_func, mocked_ax_xlim_func):
+        '''
+        Test that correct functions are invoked
+        '''
+        # assert mocks
+        self.assertIs(axs.Axes.set_xlim, mocked_ax_xlim_func)
+        self.assertIs(axs.Axes.set_ylim, mocked_ax_ylim_func)
+        self.assertIs(axs.Axes.plot, mocked_ax_plot_func)
+        self.assertIs(axs.Axes.add_artist, mocked_ax_add_art_func)
+        self.assertIs(axs.Axes.annotate, mocked_ax_anno_func)
+        self.assertIs(axs.Axes.set_xlabel, mocked_ax_xlabel_func)
+        self.assertIs(axs.Axes.set_ylabel, mocked_ax_ylabel_func)
+        
+        # create object and call function to test
+        main_sequence = createUUT()
+        returned_ax = main_sequence._layout_ax()
+        
+        # assert call-arguments (Axes.set_xlim)
+        call_args, _ = mocked_ax_xlim_func.call_args
+        self.assertEqual((0,1), call_args[0])
+        
+        # assert call-arguments (Axes.set_ylim)
+        call_args, _ = mocked_ax_ylim_func.call_args
+        self.assertEqual((0,1), call_args[0])
+        
+        # assert call-arguments (Axes.plot)
+        (call_sp, call_ep), call_kwords = mocked_ax_plot_func.call_args
+        self.assertEqual([0,1], call_sp)
+        self.assertEqual([1,0], call_ep)
+        self.assertEqual('x', call_kwords['marker'])
+        self.assertEqual('red', call_kwords['color'])
+        
+        # assert call-arguments (Axes.add_artist) (both calls)
+        expected_add_artist_calls = [mocked_ax_add_art_func(plt.Circle((0, 0), .5, alpha=.3, color='r')), mocked_ax_add_art_func(plt.Circle((1, 1), .5, alpha=.3, color='r'))]
+        mocked_ax_add_art_func.has_calls(expected_add_artist_calls)
+        
+        # assert call-arguments (Axes.annotate) (both calls)
+        expected_anno_calls = [mocked_ax_anno_func("Zone of Pain", xy=(.1, .2), fontsize=10), mocked_ax_anno_func("Zone of Uselessness", xy=(.65, .8), fontsize=10)]
+        mocked_ax_anno_func.has_calls(expected_anno_calls)
+        
+        # assert call-arguments (Axes.set_xlabel)
+        call_args, call_kword = mocked_ax_xlabel_func.call_args
+        self.assertEqual('[I]nstability', call_args[0])
+        self.assertEqual(18, call_kword['fontsize'])
+
+        # assert call-arguments (Axes.set_ylabel)
+        call_args, call_kword = mocked_ax_ylabel_func.call_args
+        self.assertEqual('[A]bstractness', call_args[0])
+        self.assertEqual(18, call_kword['fontsize'])
+
+
 class TestMainSequenceDefineMotionAnnotationCallback(unittest.TestCase):
     def testInitialSettingOfAnnotationPoint(self):
         '''
@@ -206,6 +300,7 @@ class TestMainSequencePlotMetrics(unittest.TestCase):
 suite = unittest.TestSuite()
 suite.addTests(unittest.makeSuite(TestMainSequencePlotMetrics))
 suite.addTests(unittest.makeSuite(TestMainSequenceDefineMotionAnnotationCallback))
+suite.addTests(unittest.makeSuite(TestMainSequenceLayoutAx))
 
 # run TestSuite
 unittest.TextTestRunner(verbosity=2).run(suite)

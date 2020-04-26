@@ -46,7 +46,7 @@ class MainSequence:
         ax.plot([0,1], [1,0], marker='x', color='red')
 
         # zone of pain
-        ax.add_artist(plt.Circle((0, 0), .5, alpha=.3, color='r', label="test"))
+        ax.add_artist(plt.Circle((0, 0), .5, alpha=.3, color='r'))
         ax.annotate("Zone of Pain", xy=(.1, .2), fontsize=10)
 
         # zone of uselessness
@@ -99,6 +99,6 @@ class MainSequence:
 
 
 if __name__ == '__main__':
-    directory_path = '../src/cppmodbus/'
+    directory_path = '../cppmodbus/src/cppmodbus/'
     mainSequence = MainSequence(directory_path)
     mainSequence.plot_metrics()
