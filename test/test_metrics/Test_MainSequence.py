@@ -39,11 +39,7 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
         self.assertIs(coll.PathCollection.contains, mocked_coll_cont_func)
         self.assertIs(btk.FigureCanvasTkAgg.draw_idle, mocked_fig_draw_func)
         self.assertIs(txt.Text.set_visible, mocked_txt_vis_func)
-        self.assertIs(axs.Axes.annotate, mocked_ax_anno_func)
-        
-        # clear axes and figure to remove interference with method below
-        plt.cla()
-        plt.clf()         
+        self.assertIs(axs.Axes.annotate, mocked_ax_anno_func)      
         
         # create mock values
         mocked_ax = plt.gca()
@@ -69,6 +65,10 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
                 mocked_txt_vis_func.assert_called() # called several times
                 mocked_fig_draw_func.assert_called_once()
 
+        # clear axes and figure to remove interference with method below
+        plt.cla()
+        plt.clf()  
+
     @patch('matplotlib.axes.Axes.annotate')
     @patch('matplotlib.text.Text.set_visible')
     @patch('matplotlib.text.Text.get_visible')
@@ -84,11 +84,7 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
         self.assertIs(btk.FigureCanvasTkAgg.draw_idle, mocked_fig_draw_func)
         self.assertIs(txt.Text.get_visible, mocked_txt_get_vis_func)
         self.assertIs(txt.Text.set_visible, mocked_txt_set_vis_func)
-        self.assertIs(axs.Axes.annotate, mocked_ax_anno_func)
-        
-        # clear axes and figure to remove interference with method above
-        plt.cla()
-        plt.clf()       
+        self.assertIs(axs.Axes.annotate, mocked_ax_anno_func)    
         
         # create mock values
         mocked_ax = plt.gca()
@@ -115,6 +111,10 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
                 mocked_txt_get_vis_func.assert_called() # called several times
                 mocked_txt_set_vis_func.assert_called() # called several times
                 mocked_fig_draw_func.assert_called_once()
+
+        # clear axes and figure to remove interference with method above
+        plt.cla()
+        plt.clf()   
 
 
 class TestMainSequenceLayoutAx(unittest.TestCase):
