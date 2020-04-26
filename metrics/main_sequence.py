@@ -62,16 +62,20 @@ class MainSequence:
 
     def _define_motion_annotation_callback(self, ax, sc):
         ''' fill displayed diagram with a mouse-event to show annotations within it '''
-        # annotate points if one hovers over it with the mouse
+        fig = plt.gcf()
+        fig.canvas.set_window_title('Main Sequence')
+        
+        # check for empty name map
+        if self._names_map == []:
+            warnings.warn('"self._names_map" is empty...returning directly, no motion_notifiy_event connected')
+            return
+         
+        # initial setting of annotated point
         self._annotated_point = ax.annotate(*self._names_map[0])
         self._annotated_point.set_visible(False)
 
         # callback executed at each mouse motion event
-        annotation_callback = lambda event: self._annotate_point(event, ax, sc)
-
-        fig = plt.gcf()
-        fig.canvas.set_window_title('Main Sequence')
-        fig.canvas.mpl_connect("motion_notify_event", lambda event: annotation_callback(event))
+        fig.canvas.mpl_connect("motion_notify_event", lambda event: self._annotate_point(event, ax, sc))
 
 
     def plot_metrics(self):
@@ -81,11 +85,6 @@ class MainSequence:
         self._instability_metric, self._abstractness_metric = dsu.get_instability_and_abstractness_metric(self._dir_path)
         # create a map which assigns file/component names to their coordinates
         self._names_map = [(n, (x, y)) for n, x, y in zip(self._instability_metric.index, self._instability_metric, self._abstractness_metric)]
-
-        # check for empty name map
-        if self._names_map == []:
-            warnings.warn('"self._names_map" is empty...returning directly')
-            return
 
         # create basic layout format
         ax = self._layout_ax()
