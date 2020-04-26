@@ -37,3 +37,5 @@ jobs:
         python test/test_utils/Test_DataSeriesUtility.py
         python test/test_metrics/Test_AbstractnessMetric.py
         python test/test_metrics/Test_InstabilityMetric.py
+        python test/test_metrics/Test_DistanceIA.py
+        python test/test_metrics/Test_MainSequence.py
