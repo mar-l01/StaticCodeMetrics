@@ -1,5 +1,7 @@
 import matplotlib.axes as axs
 import matplotlib.backend_bases as bb
+import matplotlib.backends.backend_tkagg as btk
+import matplotlib.collections as coll
 import matplotlib.pyplot as plt
 import matplotlib.text as txt
 import numpy as np
@@ -22,6 +24,49 @@ def createUUT():
     Returns an initialized object to test (no directory-path required for testing)
     '''
     return MainSequence('')
+
+
+class TestMainSequenceAnnotatePoint(unittest.TestCase):
+    @patch('matplotlib.axes.Axes.annotate')
+    @patch('matplotlib.text.Text.set_visible')
+    @patch('matplotlib.backends.backend_tkagg.FigureCanvasTkAgg.draw_idle')
+    @patch('matplotlib.collections.PathCollection.contains')
+    def testAnnotationIfPointSelected(self, mocked_coll_cont_func, mocked_fig_draw_func, mocked_txt_vis_func, mocked_ax_anno_func):
+        '''
+        Test correct annotation of point
+        '''
+        # assert mocks
+        self.assertIs(coll.PathCollection.contains, mocked_coll_cont_func)
+        self.assertIs(btk.FigureCanvasTkAgg.draw_idle, mocked_fig_draw_func)
+        self.assertIs(txt.Text.set_visible, mocked_txt_vis_func)
+        self.assertIs(axs.Axes.annotate, mocked_ax_anno_func)
+        
+        # create mock values
+        mocked_ax = plt.gca()
+        mocked_ax.set_xlim((0,1))
+        mocked_ax.set_ylim((0,1))
+        mocked_scatter = mocked_ax.scatter(pd.Series([.5], dtype=float), pd.Series([.5], dtype=float))       
+        mocked_names_map = [('test-annotation', (.5, .5))]
+        mocked_mouse_event = bb.MouseEvent('test', plt.gcf().canvas, .5, .5)
+        
+        # assign return values to mock (True -> mouse event contains point to annotate, [0] := 0th element of names-map)
+        mocked_coll_cont_func.return_value = True, {'ind': np.array([0], dtype=int)}
+        
+        fig = plt.gcf()
+
+        # create object
+        main_sequence = createUUT()
+        with patch.object(main_sequence, '_names_map', mocked_names_map):
+            with patch.object(mocked_mouse_event, 'inaxes', mocked_ax):
+                # call function to test
+                main_sequence._annotate_point(mocked_mouse_event, mocked_ax, mocked_scatter)
+
+                # assert function calls
+                mocked_coll_cont_func.assert_called_once()
+                mocked_ax_anno_func.assert_called_once()
+                self.assertTrue(main_sequence._annotated_point.get_visible())
+                mocked_txt_vis_func.assert_called() # called several times
+                mocked_fig_draw_func.assert_called_once()
 
 
 class TestMainSequenceLayoutAx(unittest.TestCase):
@@ -142,7 +187,7 @@ class TestMainSequenceDefineMotionAnnotationCallback(unittest.TestCase):
 
     @patch('matplotlib.backend_bases.FigureCanvasBase.mpl_connect')
     @patch('matplotlib.backend_bases.FigureCanvasBase.set_window_title')
-    @patch('matplotlib.text.Annotation.set_visible')
+    @patch('matplotlib.text.Text.set_visible')
     @patch('matplotlib.axes.Axes.annotate')
     def testEarlyReturnIfEmptyName(self, mocked_anno_func, mocked_vis_func, mocked_set_func, mocked_con_func):
         '''
@@ -150,7 +195,7 @@ class TestMainSequenceDefineMotionAnnotationCallback(unittest.TestCase):
         '''
         # assert mocks
         self.assertIs(axs.Axes.annotate, mocked_anno_func)
-        self.assertIs(txt.Annotation.set_visible, mocked_vis_func)
+        self.assertIs(txt.Text.set_visible, mocked_vis_func)
         self.assertIs(bb.FigureCanvasBase.set_window_title, mocked_set_func)
         self.assertIs(bb.FigureCanvasBase.mpl_connect, mocked_con_func)
 
@@ -298,9 +343,10 @@ class TestMainSequencePlotMetrics(unittest.TestCase):
 
 # create TestSuite with above TestCases
 suite = unittest.TestSuite()
-suite.addTests(unittest.makeSuite(TestMainSequencePlotMetrics))
-suite.addTests(unittest.makeSuite(TestMainSequenceDefineMotionAnnotationCallback))
+suite.addTests(unittest.makeSuite(TestMainSequenceAnnotatePoint))
 suite.addTests(unittest.makeSuite(TestMainSequenceLayoutAx))
+suite.addTests(unittest.makeSuite(TestMainSequenceDefineMotionAnnotationCallback))
+suite.addTests(unittest.makeSuite(TestMainSequencePlotMetrics))
 
 # run TestSuite
 unittest.TextTestRunner(verbosity=2).run(suite)
