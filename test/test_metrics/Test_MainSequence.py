@@ -1,6 +1,5 @@
 import matplotlib.axes as axs
 import matplotlib.backend_bases as bb
-import matplotlib.backends.backend_tkagg as btk
 import matplotlib.collections as coll
 import matplotlib.pyplot as plt
 import matplotlib.text as txt
@@ -31,14 +30,12 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
     @patch('matplotlib.collections.PathCollection.contains')
     @patch('matplotlib.axes.Axes.annotate')
     @patch('matplotlib.text.Text.set_visible')
-    @patch('matplotlib.backends.backend_tkagg.FigureCanvasTkAgg.draw_idle')
-    def testCorrectFunctionCallsIfPointSelected(self, mocked_fig_draw_func, mocked_txt_vis_func, mocked_ax_anno_func,
+    def testCorrectFunctionCallsIfPointSelected(self, mocked_txt_vis_func, mocked_ax_anno_func,
     mocked_coll_cont_func):
         '''
         Test correct function calls if point is contained in scattered point
         '''
         # assert mocks
-        self.assertIs(btk.FigureCanvasTkAgg.draw_idle, mocked_fig_draw_func)
         self.assertIs(txt.Text.set_visible, mocked_txt_vis_func)
         self.assertIs(axs.Axes.annotate, mocked_ax_anno_func)
         self.assertIs(coll.PathCollection.contains, mocked_coll_cont_func)
@@ -66,19 +63,16 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
                     mocked_coll_cont_func.assert_called_once()
                     mocked_ax_anno_func.assert_called_once()
                     mocked_txt_vis_func.assert_called() # called several times
-                    mocked_fig_draw_func.assert_called_once()
 
     @patch('matplotlib.collections.PathCollection.contains')
     @patch('matplotlib.text.Text.set_visible')
     @patch('matplotlib.text.Text.get_visible')
-    @patch('matplotlib.backends.backend_tkagg.FigureCanvasTkAgg.draw_idle')
-    def testCorrectFunctionCallsIfPointNotSelected(self, mocked_fig_draw_func, mocked_txt_get_vis_func, mocked_txt_set_vis_func,
+    def testCorrectFunctionCallsIfPointNotSelected(self, mocked_txt_get_vis_func, mocked_txt_set_vis_func,
     mocked_coll_cont_func):
         '''
         Test correct function calls if point is not contained in any scattered point but in axes-view
         '''
         # assert mocks
-        self.assertIs(btk.FigureCanvasTkAgg.draw_idle, mocked_fig_draw_func)
         self.assertIs(txt.Text.get_visible, mocked_txt_get_vis_func)
         self.assertIs(txt.Text.set_visible, mocked_txt_set_vis_func)
         self.assertIs(coll.PathCollection.contains, mocked_coll_cont_func)
@@ -105,7 +99,6 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
                 mocked_coll_cont_func.assert_called_once()
                 mocked_txt_get_vis_func.assert_called() # called several times
                 mocked_txt_set_vis_func.assert_called() # called several times
-                mocked_fig_draw_func.assert_called_once()
 
 
 class TestMainSequenceLayoutAx(unittest.TestCase):
