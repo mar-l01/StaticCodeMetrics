@@ -2,7 +2,6 @@ from instability_metric import InstabilityMetric
 from abstractness_metric import AbstractnessMetric
 
 import matplotlib.pyplot as plt
-import pandas as pd
 import sys
 import warnings
 
@@ -16,7 +15,6 @@ class MainSequence:
         self._dir_path = dir_path
         self._annotated_point = None
         self._names_map = []
-
 
     def _annotate_point(self, event, ax, sc):
         ''' displays a text, if a user hovers over a point with the mouse '''
@@ -33,7 +31,6 @@ class MainSequence:
                     self._annotated_point.set_visible(False)
                     fig.canvas.draw_idle()
 
-
     def _layout_ax(self):
         ''' creates and returns the basic layout of the diagram displayed '''
         ax = plt.gca()
@@ -43,7 +40,7 @@ class MainSequence:
         ax.set_ylim((0, 1))
 
         # Main Sequence
-        ax.plot([0,1], [1,0], marker='x', color='red')
+        ax.plot([0, 1], [1, 0], marker='x', color='red')
 
         # zone of pain
         ax.add_artist(plt.Circle((0, 0), .5, alpha=.3, color='r'))
@@ -58,7 +55,6 @@ class MainSequence:
         ax.set_ylabel('[A]bstractness', fontsize=18)
 
         return ax
-
 
     def _define_motion_annotation_callback(self, ax, sc):
         ''' fill displayed diagram with a mouse-event to show annotations within it '''
@@ -77,14 +73,14 @@ class MainSequence:
         # callback executed at each mouse motion event
         fig.canvas.mpl_connect("motion_notify_event", lambda event: self._annotate_point(event, ax, sc))
 
-
     def plot_metrics(self):
         ''' show a diagram picturing the Main Sequence, where
         - y-axis denotes the Abstractness
         - x-axis denotes the Instability '''
         self._instability_metric, self._abstractness_metric = dsu.get_instability_and_abstractness_metric(self._dir_path)
         # create a map which assigns file/component names to their coordinates
-        self._names_map = [(n, (x, y)) for n, x, y in zip(self._instability_metric.index, self._instability_metric, self._abstractness_metric)]
+        self._names_map = [(n, (x, y)) for n, x, y in zip(self._instability_metric.index, self._instability_metric, \
+            self._abstractness_metric)]
 
         # create basic layout format
         ax = self._layout_ax()

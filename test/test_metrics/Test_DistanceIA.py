@@ -45,15 +45,15 @@ class TestDistanceIAPlotDistance(unittest.TestCase):
     @patch('matplotlib.pyplot.show')
     @patch('DataSeriesUtility.get_instability_and_abstractness_metric')
     @patch('distance_ia.DistanceIA._calculate_distance')
-    def testCorrectFunctionCalls(self, mocked_d_func, mocked_dsu_func, mocked_show_func, mocked_plot_func,
-    mocked_xticks_func, mocked_ylabel_func):
+    def testCorrectFunctionCalls(self, mocked_d_func, mocked_dsu_func, mocked_show_func, mocked_plot_func, \
+        mocked_xticks_func, mocked_ylabel_func):
         '''
         Test that functions inside this method are called correctly
         '''
         # assert mocks
         self.assertIs(DistanceIA._calculate_distance, mocked_d_func)
         self.assertIs(dsu.get_instability_and_abstractness_metric, mocked_dsu_func)
-        self.assertIs(plt.show, mocked_show_func) # mock this function to no show the plotted window
+        self.assertIs(plt.show, mocked_show_func)  # mock this function to no show the plotted window
         self.assertIs(plt.plot, mocked_plot_func)
         self.assertIs(plt.xticks, mocked_xticks_func)
         self.assertIs(plt.ylabel, mocked_ylabel_func)
@@ -64,8 +64,6 @@ class TestDistanceIAPlotDistance(unittest.TestCase):
         mocked_distance = abs(mocked_i_metric + mocked_a_metric - 1)
         mocked_dsu_func.return_value = mocked_i_metric, mocked_a_metric
         mocked_d_func.return_value = mocked_distance
-
-        expected_ind = np.arange(mocked_distance.size)
 
         # create object and call function to test
         distance_ia = createUUT()
@@ -86,15 +84,15 @@ class TestDistanceIAPlotDistance(unittest.TestCase):
     @patch('matplotlib.pyplot.show')
     @patch('DataSeriesUtility.get_instability_and_abstractness_metric')
     @patch('distance_ia.DistanceIA._calculate_distance')
-    def testCorrectFunctionCallArguments(self, mocked_d_func, mocked_dsu_func, mocked_show_func,
-    mocked_plot_func, mocked_xticks_func, mocked_ylabel_func):
+    def testCorrectFunctionCallArguments(self, mocked_d_func, mocked_dsu_func, mocked_show_func, \
+        mocked_plot_func, mocked_xticks_func, mocked_ylabel_func):
         '''
         Test that functions inside this method are called with correct arguments
         '''
         # assert mocks
         self.assertIs(DistanceIA._calculate_distance, mocked_d_func)
         self.assertIs(dsu.get_instability_and_abstractness_metric, mocked_dsu_func)
-        self.assertIs(plt.show, mocked_show_func) # mock this function to no show the plotted window
+        self.assertIs(plt.show, mocked_show_func)  # mock this function to no show the plotted window
         self.assertIs(plt.plot, mocked_plot_func)
         self.assertIs(plt.xticks, mocked_xticks_func)
         self.assertIs(plt.ylabel, mocked_ylabel_func)
@@ -140,4 +138,3 @@ suite.addTests(unittest.makeSuite(TestDistanceIAPlotDistance))
 
 # run TestSuite
 unittest.TextTestRunner(verbosity=2).run(suite)
-

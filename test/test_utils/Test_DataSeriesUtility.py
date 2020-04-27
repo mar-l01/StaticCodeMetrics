@@ -27,7 +27,8 @@ class TestDataSeriesUtilityGetInstabilityAndAbstractnessMetric(unittest.TestCase
     @patch('DataSeriesUtility.pad_data_series_with_default_values')
     @patch('abstractness_metric.AbstractnessMetric.compute_abstractness')
     @patch('instability_metric.InstabilityMetric.compute_instability')
-    def testCorrectFunctionCallsWithEmptyFilePath(self, mocked_comp_i_func, mocked_comp_a_func, mocked_pad_func, mocked_reorder_func):
+    def testCorrectFunctionCallsWithEmptyFilePath(self, mocked_comp_i_func, mocked_comp_a_func, mocked_pad_func,
+    mocked_reorder_func):
         '''
         Test that the correct functions are invoked (or not invoked) when an empty filepath was provided
         '''
@@ -47,7 +48,8 @@ class TestDataSeriesUtilityGetInstabilityAndAbstractnessMetric(unittest.TestCase
     @patch('DataSeriesUtility.pad_data_series_with_default_values')
     @patch('abstractness_metric.AbstractnessMetric.compute_abstractness')
     @patch('instability_metric.InstabilityMetric.compute_instability')
-    def testCorrectFunctionCallsWithCorrectFilePath(self, mocked_comp_i_func, mocked_comp_a_func, mocked_pad_func, mocked_reorder_func):
+    def testCorrectFunctionCallsWithCorrectFilePath(self, mocked_comp_i_func, mocked_comp_a_func, mocked_pad_func,
+    mocked_reorder_func):
         '''
         Test that the correct functions are invoked when A and I of different size are returned by compute_X function
         '''
@@ -60,7 +62,7 @@ class TestDataSeriesUtilityGetInstabilityAndAbstractnessMetric(unittest.TestCase
         # set return values of mocked functions
         data_series = pd.Series(np.ones(5), dtype=float)
         data_series_to_pad = pd.Series(np.ones(3), dtype=float)
-        padded_data_series = pd.Series([1,1,1,0,0], dtype=float)
+        padded_data_series = pd.Series([1, 1, 1, 0, 0], dtype=float)
         mocked_comp_i_func.return_value = data_series
         mocked_comp_a_func.return_value = data_series_to_pad
         mocked_pad_func.return_value = padded_data_series
@@ -140,4 +142,3 @@ suite.addTests(unittest.makeSuite(TestReorderDataSeriesElements))
 
 # run TestSuite
 unittest.TextTestRunner(verbosity=2).run(suite)
-

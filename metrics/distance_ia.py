@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import pandas as pd
 import numpy as np
 import sys
 
@@ -15,14 +14,12 @@ class DistanceIA:
         self._abstractness_metric = None
         self._distance = None
 
-
     def _calculate_distance(self):
         ''' calculates the distance between Abstractness and Instability of each file/component using
         D = |A+I-1|, with D being in range [0;1] with a
         ...D of 0 indicating that the corresponding file/component lies on the Main Sequence
         ...D of 1 indicating that the corresponding file/component lies far away from the Main Sequence '''
         self._distance = abs(self._abstractness_metric + self._instability_metric - 1)
-
 
     def plot_distance(self):
         ''' show a diagram picturing the distance in each components, where

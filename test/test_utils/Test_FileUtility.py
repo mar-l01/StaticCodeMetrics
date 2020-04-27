@@ -75,4 +75,3 @@ suite.addTests(unittest.makeSuite(TestFileUtilityExtractFileName))
 
 # run TestSuite
 unittest.TextTestRunner(verbosity=2).run(suite)
-

@@ -1,4 +1,3 @@
-import glob
 import pandas as pd
 import re
 import sys
@@ -29,7 +28,6 @@ class AbstractnessMetric:
         self._dir_path = dir_path
         self._interface_class_matrix = pd.DataFrame(index=['N_a', 'N_c'], dtype=int)
         self._list_of_files = []
-
 
     def _get_number_of_interfaces_and_classes_of_file(self, file_path):
         ''' return the number of interfaces or classes present in given file.
@@ -77,7 +75,6 @@ class AbstractnessMetric:
 
         return nb_interfaces, nb_classes
 
-
     def _search_files_for_interfaces(self):
         ''' iterate through all files and get their interfaces / abstract class definitons '''
         for file in self._list_of_files:
@@ -85,7 +82,6 @@ class AbstractnessMetric:
 
             # add amount of interfaces and classes to matrix
             self._interface_class_matrix[fut.extract_filename(file)] = [nb_interfaces, nb_classes]
-
 
     def _calculate_abstractness_for_each_file(self):
         ''' calculate the abstractness metric using A = Na / Nc:
@@ -110,14 +106,13 @@ class AbstractnessMetric:
                 
         return a
 
-
     def compute_abstractness(self):
         ''' encapsulate all methods necessary to compute the abstractness values for each file:
         1) get all code file which are considered for calculating the metric
         2) extract all interfaces/abstract classed from those files
         3) calculate the abstractness metric '''
         self._list_of_files = fut.get_all_code_files(self._dir_path, ALLOWED_FILE_EXTENSIONS)
-        self._search_files_for_interfaces()     
+        self._search_files_for_interfaces()
         abstractness_metric = self._calculate_abstractness_for_each_file()
 
         return abstractness_metric

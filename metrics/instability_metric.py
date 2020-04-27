@@ -1,4 +1,3 @@
-import glob
 import numpy as np
 import pandas as pd
 import sys
@@ -21,7 +20,6 @@ class InstabilityMetric:
         self._dir_path = dir_path
         self._list_of_user_files = []
         self._include_matrix = pd.DataFrame()
-
 
     def _get_includes_of_file(self, file_path):
         ''' return the files included with #include "..." and #include <...> in provided file
@@ -46,14 +44,12 @@ class InstabilityMetric:
 
         return user_include_list, stl_include_list
 
-
     def _create_user_include_matrix(self):
         ''' create a 2D matrix with dim = m x n, where m is the number of user-included files '''
         m = len(self._list_of_user_files)
         null_matrix = np.zeros((m, m), dtype=int)
         names = [fut.extract_filename(filepath) for filepath in self._list_of_user_files]
         self._include_matrix = pd.DataFrame(null_matrix, index=names, columns=names)
-
 
     def _fill_include_matrix(self):
         ''' fill matrix by setting matrix[x,y] to 1 if x includes y for all user-included files, which
@@ -68,12 +64,11 @@ class InstabilityMetric:
 
             # #include "..." usage, fill 1 if needed (row=including_file, column=user_included_file)
             for user_included_file in user_includes:
-                self._include_matrix.at[including_file , user_included_file] = 1
+                self._include_matrix.at[including_file, user_included_file] = 1
 
             # #include <...> usage, fill 1 if needed (row=including_file, column=stl_included_file)
             for stl_included_file in stl_includes:
-                self._include_matrix.at[including_file , stl_included_file] = 1
-
+                self._include_matrix.at[including_file, stl_included_file] = 1
 
     def _add_stl_includes(self):
         ''' In order to be able to handle included stl-files, each time an including_file includes stl-files
@@ -82,9 +77,6 @@ class InstabilityMetric:
 
         # check includes
         for filepath in self._list_of_user_files:
-            # get filename which includes the following files
-            including_file = fut.extract_filename(filepath)
-
             # get list of stl-includes
             _, stl_includes = self._get_includes_of_file(filepath)
 
@@ -98,16 +90,13 @@ class InstabilityMetric:
         for stl_included_file in self._list_of_stl_libs:
             self._include_matrix.loc[:, stl_included_file] = pd.Series(np.zeros(len(self._include_matrix.index)), dtype=int)
 
-
     def _get_all_fan_in(self):
         ''' uses provided data frame to evaluate the fan-in's of each file (:= #1's in row) '''
         return np.sum(self._include_matrix, axis=1)
 
-
     def _get_all_fan_out(self):
         ''' uses provided data frame to evaluate the fan-out's of each file (:= #1's in column) '''
         return np.sum(self._include_matrix, axis=0)
-
 
     def _calculate_instability_for_each_file(self):
         ''' calculate the instability metric using I = fan_out / (fan_in + fan_out):
