@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import unittest
 from unittest.mock import patch
+from unittest.mock import MagicMock
 import sys
 import warnings
 
@@ -27,77 +28,71 @@ def createUUT():
 
 
 class TestMainSequenceAnnotatePoint(unittest.TestCase):
+    @patch('matplotlib.collections.PathCollection.contains')
     @patch('matplotlib.axes.Axes.annotate')
     @patch('matplotlib.text.Text.set_visible')
     @patch('matplotlib.backends.backend_tkagg.FigureCanvasTkAgg.draw_idle')
-    @patch('matplotlib.collections.PathCollection.contains')
-    def testCorrectFunctionCallsIfPointSelected(self, mocked_coll_cont_func, mocked_fig_draw_func, mocked_txt_vis_func, mocked_ax_anno_func):
+    def testCorrectFunctionCallsIfPointSelected(self, mocked_fig_draw_func, mocked_txt_vis_func, mocked_ax_anno_func,
+    mocked_coll_cont_func):
         '''
         Test correct function calls if point is contained in scattered point
         '''
         # assert mocks
-        self.assertIs(coll.PathCollection.contains, mocked_coll_cont_func)
         self.assertIs(btk.FigureCanvasTkAgg.draw_idle, mocked_fig_draw_func)
         self.assertIs(txt.Text.set_visible, mocked_txt_vis_func)
-        self.assertIs(axs.Axes.annotate, mocked_ax_anno_func)      
+        self.assertIs(axs.Axes.annotate, mocked_ax_anno_func)
+        self.assertIs(coll.PathCollection.contains, mocked_coll_cont_func)
         
         # create mock values
         mocked_ax = plt.gca()
         mocked_ax.set_xlim((0,1))
         mocked_ax.set_ylim((0,1))
-        mocked_scatter = mocked_ax.scatter(pd.Series([.5], dtype=float), pd.Series([.5], dtype=float))       
+        mocked_scatter = mocked_ax.scatter(pd.Series([.5], dtype=float), pd.Series([.5], dtype=float))   
+        mocked_coll_cont_func.return_value = True, {'ind': np.array([0], dtype=int)}        
         mocked_names_map = [('test-annotation', (.5, .5))]
-        mocked_mouse_event = bb.MouseEvent('test', plt.gcf().canvas, .5, .5)
-        
-        # assign return values to mock (True -> mouse event contains point to annotate, [0] := 0th element of names-map)
-        mocked_coll_cont_func.return_value = True, {'ind': np.array([0], dtype=int)}
+        mocked_mouse_event = bb.MouseEvent('mocked-mouse-event', plt.gcf().canvas, 322, 242) # (322, 242) := on point(.5|.5)
+        mocked_annotated_point = txt.Annotation('dummy-annotation', (.5, .5))
+        mocked_annotated_point.set_visible(False)
 
         # create object
         main_sequence = createUUT()
-        with patch.object(main_sequence, '_names_map', mocked_names_map):
-            with patch.object(mocked_mouse_event, 'inaxes', mocked_ax):
-                # call function to test
-                main_sequence._annotate_point(mocked_mouse_event, mocked_ax, mocked_scatter)
+        with patch.object(main_sequence, '_annotated_point', mocked_annotated_point):
+            with patch.object(main_sequence, '_names_map', mocked_names_map):
+                with patch.object(mocked_mouse_event, 'inaxes', mocked_ax):
+                    # call function to test
+                    main_sequence._annotate_point(mocked_mouse_event, mocked_ax, mocked_scatter)
 
-                # assert function calls
-                mocked_coll_cont_func.assert_called_once()
-                mocked_ax_anno_func.assert_called_once()
-                mocked_txt_vis_func.assert_called() # called several times
-                mocked_fig_draw_func.assert_called_once()
+                    # assert function calls
+                    mocked_coll_cont_func.assert_called_once()
+                    mocked_ax_anno_func.assert_called_once()
+                    mocked_txt_vis_func.assert_called() # called several times
+                    mocked_fig_draw_func.assert_called_once()
 
-        # clear axes and figure to remove interference with method below
-        plt.cla()
-        plt.clf()
-        plt.close()
-
-    @patch('matplotlib.axes.Axes.annotate')
+    @patch('matplotlib.collections.PathCollection.contains')
     @patch('matplotlib.text.Text.set_visible')
     @patch('matplotlib.text.Text.get_visible')
     @patch('matplotlib.backends.backend_tkagg.FigureCanvasTkAgg.draw_idle')
-    @patch('matplotlib.collections.PathCollection.contains')
-    def testCorrectFunctionCallsIfPointNotSelected(self, mocked_coll_cont_func, mocked_fig_draw_func, mocked_txt_get_vis_func, 
-    mocked_txt_set_vis_func, mocked_ax_anno_func):
+    def testCorrectFunctionCallsIfPointNotSelected(self, mocked_fig_draw_func, mocked_txt_get_vis_func, mocked_txt_set_vis_func,
+    mocked_coll_cont_func):
         '''
         Test correct function calls if point is not contained in any scattered point but in axes-view
         '''
         # assert mocks
-        self.assertIs(coll.PathCollection.contains, mocked_coll_cont_func)
         self.assertIs(btk.FigureCanvasTkAgg.draw_idle, mocked_fig_draw_func)
         self.assertIs(txt.Text.get_visible, mocked_txt_get_vis_func)
         self.assertIs(txt.Text.set_visible, mocked_txt_set_vis_func)
-        self.assertIs(axs.Axes.annotate, mocked_ax_anno_func)    
+        self.assertIs(coll.PathCollection.contains, mocked_coll_cont_func)
         
         # create mock values
         mocked_ax = plt.gca()
         mocked_ax.set_xlim((0,1))
         mocked_ax.set_ylim((0,1))
-        mocked_scatter = mocked_ax.scatter(pd.Series([.7], dtype=float), pd.Series([.2], dtype=float))       
-        mocked_mouse_event = bb.MouseEvent('test', plt.gcf().canvas, .4, .2)
-        mocked_annotated_point = txt.Annotation('test-annotation', (.4, .2))
-        mocked_annotated_point.set_visible(True)
-        
-        # assign return values to mock (True -> mouse event contains point to annotate, [0] := 0th element of names-map)
-        mocked_coll_cont_func.return_value = False, {}
+        mocked_scatter = mocked_ax.scatter(pd.Series([.5], dtype=float), pd.Series([.5], dtype=float))   
+        mocked_plt_fig_func = MagicMock('plt.gcf', return_value=plt.gcf()) # mock using gcf() for scatter-plot 
+        mocked_coll_cont_func.return_value = False, {}        
+        mocked_mouse_event = bb.MouseEvent('mocked-mouse-event', plt.gcf().canvas, 100, 200) # (100, 200) := not on point(.5|.5)
+        mocked_annotated_point = txt.Annotation('dummy-annotation', (.5, .5))
+        mocked_txt_get_vis_func.return_value = True
 
         # create object
         main_sequence = createUUT()
@@ -108,15 +103,9 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
 
                 # assert function calls
                 mocked_coll_cont_func.assert_called_once()
-                mocked_ax_anno_func.assert_not_called()
                 mocked_txt_get_vis_func.assert_called() # called several times
                 mocked_txt_set_vis_func.assert_called() # called several times
                 mocked_fig_draw_func.assert_called_once()
-
-        # clear axes and figure to remove interference with method above
-        plt.cla()
-        plt.clf()
-        plt.close()
 
 
 class TestMainSequenceLayoutAx(unittest.TestCase):
