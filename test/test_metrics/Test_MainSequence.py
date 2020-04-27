@@ -67,7 +67,8 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
 
         # clear axes and figure to remove interference with method below
         plt.cla()
-        plt.clf()  
+        plt.clf()
+        plt.close()
 
     @patch('matplotlib.axes.Axes.annotate')
     @patch('matplotlib.text.Text.set_visible')
@@ -114,7 +115,8 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
 
         # clear axes and figure to remove interference with method above
         plt.cla()
-        plt.clf()   
+        plt.clf()
+        plt.close()
 
 
 class TestMainSequenceLayoutAx(unittest.TestCase):
