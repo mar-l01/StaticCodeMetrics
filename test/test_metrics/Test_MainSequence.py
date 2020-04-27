@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 import unittest
 from unittest.mock import patch
-from unittest.mock import MagicMock
 import sys
 import warnings
 
@@ -39,13 +38,13 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
         self.assertIs(txt.Text.set_visible, mocked_txt_vis_func)
         self.assertIs(axs.Axes.annotate, mocked_ax_anno_func)
         self.assertIs(coll.PathCollection.contains, mocked_coll_cont_func)
-        
+
         # create mock values
         mocked_ax = plt.gca()
         mocked_ax.set_xlim((0,1))
         mocked_ax.set_ylim((0,1))
-        mocked_scatter = mocked_ax.scatter(pd.Series([.5], dtype=float), pd.Series([.5], dtype=float))   
-        mocked_coll_cont_func.return_value = True, {'ind': np.array([0], dtype=int)}        
+        mocked_scatter = mocked_ax.scatter(pd.Series([.5], dtype=float), pd.Series([.5], dtype=float))
+        mocked_coll_cont_func.return_value = True, {'ind': np.array([0], dtype=int)}
         mocked_names_map = [('test-annotation', (.5, .5))]
         mocked_mouse_event = bb.MouseEvent('mocked-mouse-event', plt.gcf().canvas, 322, 242) # (322, 242) := on point(.5|.5)
         mocked_annotated_point = txt.Annotation('dummy-annotation', (.5, .5))
@@ -76,14 +75,13 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
         self.assertIs(txt.Text.get_visible, mocked_txt_get_vis_func)
         self.assertIs(txt.Text.set_visible, mocked_txt_set_vis_func)
         self.assertIs(coll.PathCollection.contains, mocked_coll_cont_func)
-        
+
         # create mock values
         mocked_ax = plt.gca()
         mocked_ax.set_xlim((0,1))
         mocked_ax.set_ylim((0,1))
-        mocked_scatter = mocked_ax.scatter(pd.Series([.5], dtype=float), pd.Series([.5], dtype=float))   
-        mocked_plt_fig_func = MagicMock('plt.gcf', return_value=plt.gcf()) # mock using gcf() for scatter-plot 
-        mocked_coll_cont_func.return_value = False, {}        
+        mocked_scatter = mocked_ax.scatter(pd.Series([.5], dtype=float), pd.Series([.5], dtype=float))
+        mocked_coll_cont_func.return_value = False, {}
         mocked_mouse_event = bb.MouseEvent('mocked-mouse-event', plt.gcf().canvas, 100, 200) # (100, 200) := not on point(.5|.5)
         mocked_annotated_point = txt.Annotation('dummy-annotation', (.5, .5))
         mocked_txt_get_vis_func.return_value = True
@@ -122,12 +120,12 @@ class TestMainSequenceLayoutAx(unittest.TestCase):
         self.assertIs(axs.Axes.annotate, mocked_ax_anno_func)
         self.assertIs(axs.Axes.set_xlabel, mocked_ax_xlabel_func)
         self.assertIs(axs.Axes.set_ylabel, mocked_ax_ylabel_func)
-        
+
         # create object and call function to test
         main_sequence = createUUT()
         returned_ax = main_sequence._layout_ax()
-        
-        # assert correct function calls        
+
+        # assert correct function calls
         mocked_ax_xlim_func.assert_called_once()
         mocked_ax_ylim_func.assert_called_once()
         mocked_ax_plot_func.assert_called_once()
@@ -156,34 +154,34 @@ class TestMainSequenceLayoutAx(unittest.TestCase):
         self.assertIs(axs.Axes.annotate, mocked_ax_anno_func)
         self.assertIs(axs.Axes.set_xlabel, mocked_ax_xlabel_func)
         self.assertIs(axs.Axes.set_ylabel, mocked_ax_ylabel_func)
-        
+
         # create object and call function to test
         main_sequence = createUUT()
         returned_ax = main_sequence._layout_ax()
-        
+
         # assert call-arguments (Axes.set_xlim)
         call_args, _ = mocked_ax_xlim_func.call_args
         self.assertEqual((0,1), call_args[0])
-        
+
         # assert call-arguments (Axes.set_ylim)
         call_args, _ = mocked_ax_ylim_func.call_args
         self.assertEqual((0,1), call_args[0])
-        
+
         # assert call-arguments (Axes.plot)
         (call_sp, call_ep), call_kwords = mocked_ax_plot_func.call_args
         self.assertEqual([0,1], call_sp)
         self.assertEqual([1,0], call_ep)
         self.assertEqual('x', call_kwords['marker'])
         self.assertEqual('red', call_kwords['color'])
-        
+
         # assert call-arguments (Axes.add_artist) (both calls)
         expected_add_artist_calls = [mocked_ax_add_art_func(plt.Circle((0, 0), .5, alpha=.3, color='r')), mocked_ax_add_art_func(plt.Circle((1, 1), .5, alpha=.3, color='r'))]
         mocked_ax_add_art_func.has_calls(expected_add_artist_calls)
-        
+
         # assert call-arguments (Axes.annotate) (both calls)
         expected_anno_calls = [mocked_ax_anno_func("Zone of Pain", xy=(.1, .2), fontsize=10), mocked_ax_anno_func("Zone of Uselessness", xy=(.65, .8), fontsize=10)]
         mocked_ax_anno_func.has_calls(expected_anno_calls)
-        
+
         # assert call-arguments (Axes.set_xlabel)
         call_args, call_kword = mocked_ax_xlabel_func.call_args
         self.assertEqual('[I]nstability', call_args[0])

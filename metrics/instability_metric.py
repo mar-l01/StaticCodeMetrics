@@ -21,7 +21,7 @@ class InstabilityMetric:
         self._dir_path = dir_path
         self._list_of_user_files = []
         self._include_matrix = pd.DataFrame()
-        
+
 
     def _get_includes_of_file(self, file_path):
         ''' return the files included with #include "..." and #include <...> in provided file
@@ -40,12 +40,12 @@ class InstabilityMetric:
                         # ignore ending > to get the pure filename
                         include_filename = line[len(PREFIX_STD_INCLUDE):].strip()[:-1]
                         stl_include_list.append(include_filename)
-                        
+
         except FileNotFoundError as ex:
             warnings.warn('{} ...returning default values'.format(ex))
 
         return user_include_list, stl_include_list
-    
+
 
     def _create_user_include_matrix(self):
         ''' create a 2D matrix with dim = m x n, where m is the number of user-included files '''
@@ -57,7 +57,7 @@ class InstabilityMetric:
 
     def _fill_include_matrix(self):
         ''' fill matrix by setting matrix[x,y] to 1 if x includes y for all user-included files, which
-        are indicated by #include "...". Additonally, stl-included files are also handled '''        
+        are indicated by #include "...". Additonally, stl-included files are also handled '''
         # check includes
         for filepath in self._list_of_user_files:
             # get filename which includes the following files
@@ -79,7 +79,7 @@ class InstabilityMetric:
         ''' In order to be able to handle included stl-files, each time an including_file includes stl-files
         (indicated by #include <...>), they are added to a member-list '''
         self._list_of_stl_libs = []
-        
+
         # check includes
         for filepath in self._list_of_user_files:
             # get filename which includes the following files
@@ -87,14 +87,14 @@ class InstabilityMetric:
 
             # get list of stl-includes
             _, stl_includes = self._get_includes_of_file(filepath)
-            
+
             # #include <...> usage, add stl-files to global list
             for stl_included_file in stl_includes:
                 self._list_of_stl_libs.append(stl_included_file)
 
-        # remove duplicates of global stl-files list 
+        # remove duplicates of global stl-files list
         self._list_of_stl_libs = list(set(self._list_of_stl_libs))
-        
+
         for stl_included_file in self._list_of_stl_libs:
             self._include_matrix.loc[:, stl_included_file] = pd.Series(np.zeros(len(self._include_matrix.index)), dtype=int)
 
@@ -129,7 +129,7 @@ class InstabilityMetric:
             if fan_out[index] == 0 and fan_in[index] == 0:
                 i[index] = 0
             else:
-                i[index] = fan_out[index] / (fan_in[index] + fan_out[index]) 
+                i[index] = fan_out[index] / (fan_in[index] + fan_out[index])
 
         return i
 

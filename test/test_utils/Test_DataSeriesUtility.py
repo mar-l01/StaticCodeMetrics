@@ -16,7 +16,7 @@ class TestDataSeriesUtilityGetInstabilityAndAbstractnessMetric(unittest.TestCase
     def testEmtpyFilePath(self):
         '''
         Test that an empty directory path does still result in two pd.Series types with dtype=float
-        '''        
+        '''
         returned_instability_metric, returned_abstractness_metric = dsu.get_instability_and_abstractness_metric('')
         self.assertIsInstance(returned_instability_metric, type(pd.Series(dtype=float)))
         self.assertIsInstance(returned_abstractness_metric, type(pd.Series(dtype=float)))
@@ -129,7 +129,7 @@ class TestReorderDataSeriesElements(unittest.TestCase):
         returned_reorderd_data_series = dsu.reorder_data_series_elements(data_series, data_series_to_reorder)
         self.assertEqual(returned_reorderd_data_series.size, data_series.size)
         for index in returned_reorderd_data_series.index:
-            self.assertEqual(returned_reorderd_data_series[index], data_series[index])    
+            self.assertEqual(returned_reorderd_data_series[index], data_series[index])
 
 
 # create TestSuite with above TestCases

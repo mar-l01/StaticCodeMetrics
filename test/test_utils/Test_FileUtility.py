@@ -35,13 +35,13 @@ class TestFileUtilityGetAllCodeFiles(unittest.TestCase):
             warnings.simplefilter("always")
 
             returned_type = fut.get_all_code_files('../', None)
-            
+
             self.assertIsInstance(returned_type, list)
-            self.assertEqual(returned_type, [])         
+            self.assertEqual(returned_type, [])
             self.assertEqual(len(w), 1)
             self.assertTrue('Returning empty list..' in str(w[-1].message))
 
-    
+
 class TestFileUtilityExtractFileName(unittest.TestCase):
     def testEmptyFilePath(self):
         '''

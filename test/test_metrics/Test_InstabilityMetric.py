@@ -331,8 +331,8 @@ class TestInstabilityMetricGetAllFanOut(unittest.TestCase):
 
             # assert correct return value
             self.assertTrue(returned_sum_matrix.equals(np.sum(instability_metric._include_matrix, axis=0)))
-            
-            
+
+
 class TestInstabilityMetricCalculateInstabilityForEachFile(unittest.TestCase):
     @patch('instability_metric.InstabilityMetric._get_all_fan_out')
     @patch('instability_metric.InstabilityMetric._get_all_fan_in')
@@ -343,19 +343,19 @@ class TestInstabilityMetricCalculateInstabilityForEachFile(unittest.TestCase):
         # assert mocks
         self.assertIs(InstabilityMetric._get_all_fan_in, mocked_i_func_in)
         self.assertIs(InstabilityMetric._get_all_fan_out, mocked_i_func_out)
-        
+
         # create matrix mock
         matrix_mock = pd.DataFrame(index=['file1', 'file2', 'file3'], columns=['file1', 'file2', 'file3', 'std_lib', 'std_out'], dtype=int)
         matrix_mock.loc['file1', :] = [0, 1, 0, 1, 0]
         matrix_mock.loc['file2', :] = [0, 0, 0, 0, 1]
         matrix_mock.loc['file3', :] = [1, 0, 0, 0, 0]
-        
+
         # define return values (a different one for each call to the mocks)
         expected_sum_fan_in = np.sum(matrix_mock, axis=1)
         expected_sum_fan_out = np.sum(matrix_mock, axis=0)
         mocked_i_func_in.return_value = expected_sum_fan_in
         mocked_i_func_out.return_value = expected_sum_fan_out
-        
+
         # create object and call function to test
         instability_metric = createUUT()
         returned_matrix = instability_metric._calculate_instability_for_each_file()
@@ -363,22 +363,22 @@ class TestInstabilityMetricCalculateInstabilityForEachFile(unittest.TestCase):
         # assert mock calls
         mocked_i_func_in.assert_called_once()
         mocked_i_func_out.assert_called_once()
-        
+
         # assert correct matrix shape (rows, 1)
         self.assertEqual(returned_matrix.shape, (len(matrix_mock.index),))
-        
+
         # assert correct computation of instability metric
         for i in range(len(returned_matrix.index)):
             self.assertEqual(returned_matrix[i], (expected_sum_fan_out[i] / (expected_sum_fan_in[i] + expected_sum_fan_out[i])))
-            
-      
+
+
 class TestInstabilityMetricComputeInstability(unittest.TestCase):
     @patch('FileUtility.get_all_code_files')
     @patch('instability_metric.InstabilityMetric._create_user_include_matrix')
     @patch('instability_metric.InstabilityMetric._add_stl_includes')
     @patch('instability_metric.InstabilityMetric._fill_include_matrix')
     @patch('instability_metric.InstabilityMetric._calculate_instability_for_each_file')
-    def testCorrectFunctionCallsWithEmptyFilePath(self, mocked_i_calc_func, mocked_i_fill_func, mocked_i_add_func, 
+    def testCorrectFunctionCallsWithEmptyFilePath(self, mocked_i_calc_func, mocked_i_fill_func, mocked_i_add_func,
     mocked_i_create_func, mocked_fut_get_func):
         '''
         Test that the correct functions are invoked when an empty filepath was provided
@@ -400,13 +400,13 @@ class TestInstabilityMetricComputeInstability(unittest.TestCase):
         mocked_i_add_func.assert_called_once()
         mocked_i_fill_func.assert_called_once()
         mocked_i_calc_func.assert_called_once()
-        
+
     @patch('FileUtility.get_all_code_files')
     @patch('instability_metric.InstabilityMetric._create_user_include_matrix')
     @patch('instability_metric.InstabilityMetric._add_stl_includes')
     @patch('instability_metric.InstabilityMetric._fill_include_matrix')
     @patch('instability_metric.InstabilityMetric._calculate_instability_for_each_file')
-    def testCorrectFunctionCallsWithNonEmptyFilePath(self, mocked_i_calc_func, mocked_i_fill_func, mocked_i_add_func, 
+    def testCorrectFunctionCallsWithNonEmptyFilePath(self, mocked_i_calc_func, mocked_i_fill_func, mocked_i_add_func,
     mocked_i_create_func, mocked_fut_get_func):
         '''
         Test that the correct functions are invoked when a correct filepath was provided
