@@ -92,9 +92,3 @@ class MainSequence:
         self._define_motion_annotation_callback(ax, sc)
 
         plt.show()
-
-
-if __name__ == '__main__':
-    directory_path = '../cppmodbus/src/cppmodbus/'
-    mainSequence = MainSequence(directory_path)
-    mainSequence.plot_metrics()
