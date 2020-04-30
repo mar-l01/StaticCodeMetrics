@@ -129,12 +129,3 @@ class TestDistanceIAPlotDistance(unittest.TestCase):
             call_args, call_kwords = mocked_ylabel_func.call_args
             self.assertEqual('[D]istance', call_args[0])
             self.assertEqual(18, call_kwords['fontsize'])
-
-
-# create TestSuite with above TestCases
-suite = unittest.TestSuite()
-suite.addTests(unittest.makeSuite(TestDistanceIACalculateDistance))
-suite.addTests(unittest.makeSuite(TestDistanceIAPlotDistance))
-
-# run TestSuite
-unittest.TextTestRunner(verbosity=2).run(suite)

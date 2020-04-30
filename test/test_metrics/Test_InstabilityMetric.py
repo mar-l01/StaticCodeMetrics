@@ -205,21 +205,16 @@ class TestInstabilityMetricFillIncludeMatrix(unittest.TestCase):
 
 
 class TestInstabilityMetricAddStlIncludes(unittest.TestCase):
-    @patch('FileUtility.extract_filename')
     @patch('instability_metric.InstabilityMetric._get_includes_of_file')
-    def testEmtpyStlIncludes(self, mocked_i_func, mocked_fut_func):
+    def testEmtpyStlIncludes(self, mocked_i_func):
         '''
         Test that no column is added to existing matrix if no STL includes are found
         '''
-        # assert mocks
-        self.assertIs(fut.extract_filename, mocked_fut_func)
+        # assert mock
         self.assertIs(InstabilityMetric._get_includes_of_file, mocked_i_func)
 
-        # define dummy return values (a different one for each call to the mocks)
-        expected_filenames = ['file{}'.format(i) for i in range(len(os.listdir(TEST_CODE_FILES)))]
-        mocked_fut_func.side_effect = expected_filenames
         # each pair defines the respective user or std-lib included files returned by mock
-        empty_user_and_std_include_list = [([], []) for i in range(len(expected_filenames))]
+        empty_user_and_std_include_list = [([], []) for i in range(3)]
         mocked_i_func.side_effect = empty_user_and_std_include_list
 
         mocked_include_matrix = pd.DataFrame(np.zeros((3, 3)), dtype=int)
@@ -232,24 +227,18 @@ class TestInstabilityMetricAddStlIncludes(unittest.TestCase):
                 instability_metric._add_stl_includes()
 
                 # assert that mocks are called and the matrix was not extended
-                mocked_fut_func.assert_called()
                 mocked_i_func.assert_called()
                 self.assertTrue(instability_metric._include_matrix.equals(expected_include_matrix))
                 self.assertEqual(instability_metric._include_matrix.shape, expected_include_matrix.shape)
 
-    @patch('FileUtility.extract_filename')
     @patch('instability_metric.InstabilityMetric._get_includes_of_file')
-    def testNonEmtpyStlIncludes(self, mocked_i_func, mocked_fut_func):
+    def testNonEmtpyStlIncludes(self, mocked_i_func):
         '''
         Test that columns are added to existing matrix if STL includes are found
         '''
-        # assert mocks
-        self.assertIs(fut.extract_filename, mocked_fut_func)
+        # assert mock
         self.assertIs(InstabilityMetric._get_includes_of_file, mocked_i_func)
 
-        # define dummy return values (a different one for each call to the mocks)
-        expected_filenames = ['file{}'.format(i) for i in range(len(os.listdir(TEST_CODE_FILES)))]
-        mocked_fut_func.side_effect = expected_filenames
         # each pair defines the respective user or std-lib included files returned by mock
         user_and_std_include_list = [([], ['std_lib']), (['file1'], []), (['file1', 'file2'], ['std_out'])]
         mocked_i_func.side_effect = user_and_std_include_list
@@ -264,23 +253,17 @@ class TestInstabilityMetricAddStlIncludes(unittest.TestCase):
                 instability_metric._add_stl_includes()
 
                 # assert that mocks are called and the matrix was extended by two columns
-                mocked_fut_func.assert_called()
                 mocked_i_func.assert_called()
                 self.assertEqual(instability_metric._include_matrix.shape, expected_include_matrix_shape)
 
-    @patch('FileUtility.extract_filename')
     @patch('instability_metric.InstabilityMetric._get_includes_of_file')
-    def testNoDuplicatedStlIncludes(self, mocked_i_func, mocked_fut_func):
+    def testNoDuplicatedStlIncludes(self, mocked_i_func):
         '''
         Test that duplicated stl-includes are added as a single column
         '''
         # assert mocks
-        self.assertIs(fut.extract_filename, mocked_fut_func)
         self.assertIs(InstabilityMetric._get_includes_of_file, mocked_i_func)
 
-        # define dummy return values (a different one for each call to the mocks)
-        expected_filenames = ['file{}'.format(i) for i in range(len(os.listdir(TEST_CODE_FILES)))]
-        mocked_fut_func.side_effect = expected_filenames
         # each pair defines the respective user or std-lib included files returned by mock
         user_and_std_include_list = [([], ['std_lib']), (['file1'], []), (['file1', 'file2'], ['std_lib'])]
         mocked_i_func.side_effect = user_and_std_include_list
@@ -295,7 +278,6 @@ class TestInstabilityMetricAddStlIncludes(unittest.TestCase):
                 instability_metric._add_stl_includes()
 
                 # assert that mocks are called and the matrix was extended by 1 column only
-                mocked_fut_func.assert_called()
                 mocked_i_func.assert_called()
                 self.assertEqual(instability_metric._include_matrix.shape, expected_include_matrix_shape)
 
@@ -429,18 +411,3 @@ class TestInstabilityMetricComputeInstability(unittest.TestCase):
         mocked_i_add_func.assert_called_once()
         mocked_i_fill_func.assert_called_once()
         mocked_i_calc_func.assert_called_once()
-
-
-# create TestSuite with above TestCases
-suite = unittest.TestSuite()
-suite.addTests(unittest.makeSuite(TestInstabilityMetricGetIncludesOfFile))
-suite.addTests(unittest.makeSuite(TestInstabilityMetricCreateUserIncludeMatrix))
-suite.addTests(unittest.makeSuite(TestInstabilityMetricFillIncludeMatrix))
-suite.addTests(unittest.makeSuite(TestInstabilityMetricAddStlIncludes))
-suite.addTests(unittest.makeSuite(TestInstabilityMetricGetAllFanIn))
-suite.addTests(unittest.makeSuite(TestInstabilityMetricGetAllFanOut))
-suite.addTests(unittest.makeSuite(TestInstabilityMetricCalculateInstabilityForEachFile))
-suite.addTests(unittest.makeSuite(TestInstabilityMetricComputeInstability))
-
-# run TestSuite
-unittest.TextTestRunner(verbosity=2).run(suite)

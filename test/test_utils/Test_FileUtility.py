@@ -66,12 +66,3 @@ class TestFileUtilityExtractFileName(unittest.TestCase):
         valid_path_with_wrong_delimiter = 'valid/path/to/filename'
         returned_name = fut.extract_filename(valid_path_with_wrong_delimiter)
         self.assertEqual(returned_name, 'valid/path/to/filename')
-
-
-# create TestSuite with above TestCases
-suite = unittest.TestSuite()
-suite.addTests(unittest.makeSuite(TestFileUtilityGetAllCodeFiles))
-suite.addTests(unittest.makeSuite(TestFileUtilityExtractFileName))
-
-# run TestSuite
-unittest.TextTestRunner(verbosity=2).run(suite)

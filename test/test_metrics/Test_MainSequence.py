@@ -351,14 +351,3 @@ class TestMainSequencePlotMetrics(unittest.TestCase):
             # assert call-arguments (MainSequence._define_motion_annotation_callback)
             call_args, _ = mocked_ms_cb_func.call_args
             self.assertEqual(call_args[0], mocked_scatter)
-
-
-# create TestSuite with above TestCases
-suite = unittest.TestSuite()
-suite.addTests(unittest.makeSuite(TestMainSequenceAnnotatePoint))
-suite.addTests(unittest.makeSuite(TestMainSequenceLayoutAx))
-suite.addTests(unittest.makeSuite(TestMainSequenceDefineMotionAnnotationCallback))
-suite.addTests(unittest.makeSuite(TestMainSequencePlotMetrics))
-
-# run TestSuite
-unittest.TextTestRunner(verbosity=2).run(suite)

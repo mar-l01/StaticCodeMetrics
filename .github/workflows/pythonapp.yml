@@ -32,10 +32,4 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with unittest
-      run: |
-        python test/test_utils/Test_FileUtility.py
-        python test/test_utils/Test_DataSeriesUtility.py
-        python test/test_metrics/Test_AbstractnessMetric.py
-        python test/test_metrics/Test_InstabilityMetric.py
-        python test/test_metrics/Test_DistanceIA.py
-        python test/test_metrics/Test_MainSequence.py
+      run: python test/run_all_tests.py

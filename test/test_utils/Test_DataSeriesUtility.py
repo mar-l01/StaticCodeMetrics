@@ -132,13 +132,3 @@ class TestReorderDataSeriesElements(unittest.TestCase):
         self.assertEqual(returned_reorderd_data_series.size, data_series.size)
         for index in returned_reorderd_data_series.index:
             self.assertEqual(returned_reorderd_data_series[index], data_series[index])
-
-
-# create TestSuite with above TestCases
-suite = unittest.TestSuite()
-suite.addTests(unittest.makeSuite(TestDataSeriesUtilityGetInstabilityAndAbstractnessMetric))
-suite.addTests(unittest.makeSuite(TestDataSeriesUtilityPadDataSeriesWithDefaultValues))
-suite.addTests(unittest.makeSuite(TestReorderDataSeriesElements))
-
-# run TestSuite
-unittest.TextTestRunner(verbosity=2).run(suite)

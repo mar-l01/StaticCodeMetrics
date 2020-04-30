@@ -182,14 +182,3 @@ class TestAbstractnessMetricComputeAbstractness(unittest.TestCase):
         mocked_fut_get_func.assert_called_once_with(TEST_CODE_FILES, ALLOWED_FILE_EXTENSIONS)
         mocked_a_search_func.assert_called_once()
         mocked_a_calc_func.assert_called_once()
-
-
-# create TestSuite with above TestCases
-suite = unittest.TestSuite()
-suite.addTests(unittest.makeSuite(TestAbstractnessMetricGetNumberOfInterfacesAndClassesOfFile))
-suite.addTests(unittest.makeSuite(TestAbstractnessMetricCalculateAbstractnessForEachFile))
-suite.addTests(unittest.makeSuite(TestAbstractnessMetricSearchFilesForInterfaces))
-suite.addTests(unittest.makeSuite(TestAbstractnessMetricComputeAbstractness))
-
-# run TestSuite
-unittest.TextTestRunner(verbosity=2).run(suite)
