@@ -13,6 +13,12 @@ The development of these algorithms was inspired by the book **Clean Architectur
 
 - Main Sequence: A linear line going from point _(0,1)_ to _(1,0)_, where the coordinates _(a,i)_ describe the value of Abstractness and the value of Instability, respectively. Both points given describe the most desireable points for a file / component: either maximal stable & abstract or maximal unstable & concrete. For all files / components given it is desireable to be on or close to the Main Sequence.
 
+## Usage
+The static code checker can be started using the command line:
+`python ./static_code_check.py -df <directory-path>`
+
+`<directory-path>`: Path to the directory which contains the code-files to check. This directory will be processed recursively.
+
 ## Development status
 Currently, the instability and abstractness metric can be computed on C++ files only.
 
