@@ -27,16 +27,16 @@ def createUUT():
 
 class TestMainSequenceAnnotatePoint(unittest.TestCase):
     @patch('matplotlib.collections.PathCollection.contains')
-    @patch('matplotlib.axes.Axes.annotate')
     @patch('matplotlib.text.Text.set_visible')
-    def testCorrectFunctionCallsIfPointSelected(self, mocked_txt_vis_func, mocked_ax_anno_func, \
+    @patch('matplotlib.text.Text.get_visible')
+    def testCorrectFunctionCallsIfPointSelected(self, mocked_txt_get_vis_func, mocked_txt_set_vis_func, \
         mocked_coll_cont_func):
         '''
         Test correct function calls if point is contained in scattered point
         '''
         # assert mocks
-        self.assertIs(txt.Text.set_visible, mocked_txt_vis_func)
-        self.assertIs(axs.Axes.annotate, mocked_ax_anno_func)
+        self.assertIs(txt.Text.get_visible, mocked_txt_get_vis_func)
+        self.assertIs(txt.Text.set_visible, mocked_txt_set_vis_func)
         self.assertIs(coll.PathCollection.contains, mocked_coll_cont_func)
 
         # create mock values
@@ -45,23 +45,22 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
         mocked_ax.set_ylim((0, 1))
         mocked_scatter = mocked_ax.scatter(pd.Series([.5], dtype=float), pd.Series([.5], dtype=float))
         mocked_coll_cont_func.return_value = True, {'ind': np.array([0], dtype=int)}
-        mocked_names_map = [('test-annotation', (.5, .5))]
+        mocked_annotation_points_list = [txt.Annotation('dummy-annotation1', (.5, .5), visible=False), \
+            txt.Annotation('dummy-annotation2', (.1, .5), visible=False), \
+            txt.Annotation('dummy-annotation3', (.7, .2), visible=False)]
         mocked_mouse_event = bb.MouseEvent('mocked-mouse-event', plt.gcf().canvas, 322, 242)  # on point (.5|.5)
-        mocked_annotated_point = txt.Annotation('dummy-annotation', (.5, .5))
-        mocked_annotated_point.set_visible(False)
 
         # create object
         main_sequence = createUUT()
-        with patch.object(main_sequence, '_annotated_point', mocked_annotated_point):
-            with patch.object(main_sequence, '_names_map', mocked_names_map):
-                with patch.object(mocked_mouse_event, 'inaxes', mocked_ax):
-                    # call function to test
-                    main_sequence._annotate_point(mocked_mouse_event, mocked_ax, mocked_scatter)
+        with patch.object(main_sequence, '_annotation_points', mocked_annotation_points_list):
+            # call function to test
+            main_sequence._annotate_point(mocked_mouse_event, mocked_scatter)
 
-                    # assert function calls
-                    mocked_coll_cont_func.assert_called_once()
-                    mocked_ax_anno_func.assert_called_once()
-                    mocked_txt_vis_func.assert_called() # called several times
+            # assert function calls
+            mocked_coll_cont_func.assert_called_once()
+            call_list = [mocked_txt_get_vis_func(), mocked_txt_get_vis_func(), mocked_txt_get_vis_func()]
+            mocked_txt_get_vis_func.has_calls(call_list) # called three times 
+            mocked_txt_set_vis_func.assert_called()
 
     @patch('matplotlib.collections.PathCollection.contains')
     @patch('matplotlib.text.Text.set_visible')
@@ -81,22 +80,24 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
         mocked_ax.set_xlim((0, 1))
         mocked_ax.set_ylim((0, 1))
         mocked_scatter = mocked_ax.scatter(pd.Series([.5], dtype=float), pd.Series([.5], dtype=float))
-        mocked_coll_cont_func.return_value = False, {}
+        mocked_coll_cont_func.return_value = False, {'ind': np.array([])}
+        mocked_annotation_points_list = [txt.Annotation('dummy-annotation', (.5, .5), visible=False), \
+            txt.Annotation('dummy-annotation2', (.1, .5), visible=False), \
+            txt.Annotation('dummy-annotation3', (.7, .2), visible=False)]
         mocked_mouse_event = bb.MouseEvent('mocked-mouse-event', plt.gcf().canvas, 100, 200)  # not on point (.5|.5)
-        mocked_annotated_point = txt.Annotation('dummy-annotation', (.5, .5))
         mocked_txt_get_vis_func.return_value = True
 
         # create object
         main_sequence = createUUT()
-        with patch.object(main_sequence, '_annotated_point', mocked_annotated_point):
-            with patch.object(mocked_mouse_event, 'inaxes', mocked_ax):
-                # call function to test
-                main_sequence._annotate_point(mocked_mouse_event, mocked_ax, mocked_scatter)
+        with patch.object(main_sequence, '_annotation_points', mocked_annotation_points_list):
+            # call function to test
+            main_sequence._annotate_point(mocked_mouse_event, mocked_scatter)
 
-                # assert function calls
-                mocked_coll_cont_func.assert_called_once()
-                mocked_txt_get_vis_func.assert_called() # called several times
-                mocked_txt_set_vis_func.assert_called() # called several times
+            # assert function calls
+            mocked_coll_cont_func.assert_called_once()
+            call_list = [mocked_txt_get_vis_func(), mocked_txt_get_vis_func(), mocked_txt_get_vis_func()]
+            mocked_txt_get_vis_func.has_calls(call_list) # called three times 
+            mocked_txt_set_vis_func.assert_called() # called several times
 
 
 class TestMainSequenceLayoutAx(unittest.TestCase):
@@ -197,34 +198,13 @@ class TestMainSequenceLayoutAx(unittest.TestCase):
 
 
 class TestMainSequenceDefineMotionAnnotationCallback(unittest.TestCase):
-    def testInitialSettingOfAnnotationPoint(self):
-        '''
-        Test that the annotation point is set initally and invisible
-        '''
-        # create mock values
-        mocked_ax = plt.gca()
-        mocked_scatter = mocked_ax.scatter(pd.Series(dtype=float), pd.Series(dtype=float))
-        mocked_names_map = [('test-annotation', (0, 1))]  # one element enough to test initial setting (:= [0])
-        expected_annotated_point = mocked_ax.annotate(*mocked_names_map[0])
-
-        # create object
-        main_sequence = createUUT()
-        with patch.object(main_sequence, '_names_map', mocked_names_map):
-            # call function to test
-            main_sequence._define_motion_annotation_callback(mocked_ax, mocked_scatter)
-
-            # assert correct setting of annotation point
-            self.assertEqual(expected_annotated_point.xy, main_sequence._annotated_point.xy)
-            self.assertEqual(expected_annotated_point.get_text(), main_sequence._annotated_point.get_text())
-            self.assertFalse(main_sequence._annotated_point.get_visible())
-
     @patch('matplotlib.backend_bases.FigureCanvasBase.mpl_connect')
     @patch('matplotlib.backend_bases.FigureCanvasBase.set_window_title')
     @patch('matplotlib.text.Text.set_visible')
     @patch('matplotlib.axes.Axes.annotate')
     def testEarlyReturnIfEmptyName(self, mocked_anno_func, mocked_vis_func, mocked_set_func, mocked_con_func):
         '''
-        Test that the function returns early if names-map is empty (no motion_event will be set)
+        Test that the function returns early if annotation-list is empty (no motion_event will be set)
         '''
         # assert mocks
         self.assertIs(axs.Axes.annotate, mocked_anno_func)
@@ -233,22 +213,21 @@ class TestMainSequenceDefineMotionAnnotationCallback(unittest.TestCase):
         self.assertIs(bb.FigureCanvasBase.mpl_connect, mocked_con_func)
 
         # create mock values
-        mocked_ax = plt.gca()
-        mocked_scatter = mocked_ax.scatter(pd.Series(dtype=float), pd.Series(dtype=float))
-        mocked_names_map = []  # empty names-map
+        mocked_scatter = plt.gca().scatter(pd.Series(dtype=float), pd.Series(dtype=float))
+        mocked_annotation_points_list = []
 
         # create object
         main_sequence = createUUT()
-        with patch.object(main_sequence, '_names_map', mocked_names_map):
+        with patch.object(main_sequence, '_annotation_points', mocked_annotation_points_list):
             with warnings.catch_warnings(record=True) as w:
                 # Cause all warnings to always be triggered.
                 warnings.simplefilter('always')
 
                 # call function to test
-                main_sequence._define_motion_annotation_callback(mocked_ax, mocked_scatter)
+                main_sequence._define_motion_annotation_callback(mocked_scatter)
 
                 # assert correct setting of warning and early returning of function
-                self.assertEqual(None, main_sequence._annotated_point)
+                self.assertEqual([], main_sequence._annotation_points)
                 self.assertEqual(len(w), 1)
                 self.assertTrue('"self._names_map" is empty...returning directly, no motion_notifiy_event connected' \
                     in str(w[-1].message))
@@ -268,15 +247,14 @@ class TestMainSequenceDefineMotionAnnotationCallback(unittest.TestCase):
         self.assertIs(bb.FigureCanvasBase.mpl_connect, mocked_con_func)
 
         # create mock values
-        mocked_ax = plt.gca()
-        mocked_scatter = mocked_ax.scatter(pd.Series(dtype=float), pd.Series(dtype=float))
-        mocked_names_map = [('test-annotation', (0, 1))]
+        mocked_scatter = plt.gca().scatter(pd.Series(dtype=float), pd.Series(dtype=float))
+        mocked_annotation_points_list = [txt.Annotation('dummy-annotation1', (.5, .5), visible=False)]
 
         # create object
         main_sequence = createUUT()
-        with patch.object(main_sequence, '_names_map', mocked_names_map):
+        with patch.object(main_sequence, '_annotation_points', mocked_annotation_points_list):
             # call function to test
-            main_sequence._define_motion_annotation_callback(mocked_ax, mocked_scatter)
+            main_sequence._define_motion_annotation_callback(mocked_scatter)
 
             # assert correct function call
             mocked_con_func.assert_called_once()
@@ -287,7 +265,7 @@ class TestMainSequenceDefineMotionAnnotationCallback(unittest.TestCase):
 
             # assert correct lambda connection by invoking it
             call_lambda(None)
-            mocked_ms_anno_func.assert_called_once_with(None, mocked_ax, mocked_scatter)
+            mocked_ms_anno_func.assert_called_once_with(None, mocked_scatter)
 
 
 class TestMainSequencePlotMetrics(unittest.TestCase):
@@ -311,7 +289,8 @@ class TestMainSequencePlotMetrics(unittest.TestCase):
         # create return values for mocked functions
         mocked_i_metric = pd.Series(np.array([.6, .0, .1, 1., .0, .5]))
         mocked_a_metric = pd.Series(np.array([.3, 1., .0, 1., .8, .2]))
-        mocked_names_map = [(n, (x, y)) for n, x, y in zip(mocked_i_metric.index, mocked_i_metric, mocked_a_metric)]
+        mocked_annotation_points_list = [plt.gca().annotate(n, (x,y), visible=False) for n, x, y in \
+            zip(mocked_i_metric.index, mocked_i_metric, mocked_a_metric)]
 
         # assign mocked return values to mocks
         mocked_dsu_func.return_value = mocked_i_metric, mocked_a_metric
@@ -319,7 +298,7 @@ class TestMainSequencePlotMetrics(unittest.TestCase):
 
         # create object and call function to test
         main_sequence = createUUT()
-        with patch.object(main_sequence, '_names_map', mocked_names_map):
+        with patch.object(main_sequence, '_annotation_points', mocked_annotation_points_list):
             main_sequence.plot_metrics()
 
             # assert calls (empty directory-path given for testing)
@@ -351,7 +330,8 @@ class TestMainSequencePlotMetrics(unittest.TestCase):
         mocked_a_metric = pd.Series(np.array([.3, 1., .0, 1., .8, .2]))
         mocked_ax = plt.gca()
         mocked_scatter = mocked_ax.scatter(mocked_i_metric, mocked_a_metric)
-        mocked_names_map = [(n, (x, y)) for n, x, y in zip(mocked_i_metric.index, mocked_i_metric, mocked_a_metric)]
+        mocked_annotation_points_list = [mocked_ax.annotate(n, (x,y), visible=False) for n, x, y in \
+            zip(mocked_i_metric.index, mocked_i_metric, mocked_a_metric)]
 
         # assign mocked return values to mocks
         mocked_dsu_func.return_value = mocked_i_metric, mocked_a_metric
@@ -360,7 +340,7 @@ class TestMainSequencePlotMetrics(unittest.TestCase):
 
         # create object and call function to test
         main_sequence = createUUT()
-        with patch.object(main_sequence, '_names_map', mocked_names_map):
+        with patch.object(main_sequence, '_annotation_points', mocked_annotation_points_list):
             main_sequence.plot_metrics()
 
             # assert call-arguments (ax.scatter)
@@ -369,9 +349,8 @@ class TestMainSequencePlotMetrics(unittest.TestCase):
             self.assertTrue(np.all(mocked_a_metric == call_a_metric))
 
             # assert call-arguments (MainSequence._define_motion_annotation_callback)
-            (call_ax, call_sc), _ = mocked_ms_cb_func.call_args
-            self.assertEqual(mocked_ax, call_ax)
-            self.assertEqual(mocked_scatter, call_sc)
+            call_args, _ = mocked_ms_cb_func.call_args
+            self.assertEqual(call_args[0], mocked_scatter)
 
 
 # create TestSuite with above TestCases
