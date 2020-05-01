@@ -103,9 +103,9 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
             mocked_txt_get_vis_func.has_calls(call_list)  # called three times
             mocked_txt_set_vis_func.assert_called()  # called several times
 
-    def testCorrectFunctionCallsIfMultiplePointsSelected(self):
+    def testCorrectSettingOfMultipleAnnotationPoints(self):
         '''
-        Test correct function calls if mouse hovers over multiple scattered points
+        Test correct setting of annotations if mouse hovers over multiple scattered points
         '''
         # create mock values
         mocked_ax = plt.gca()
@@ -147,6 +147,52 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
                 self.assertEqual(1, main_sequence._last_hov_anno_index)
                 self.assertTrue(main_sequence._annotation_points[1].get_visible())
 
+    def testCorrectSettingOfMultipleAnnotationPointsOfAnotherGroup(self):
+        '''
+        Test correct setting of annotations if mouse hovers from one group of annotation points to another
+        '''
+        # create mock values
+        mocked_ax = plt.gca()
+        mocked_ax.set_xlim((0, 1))
+        mocked_ax.set_ylim((0, 1))
+        mocked_scatter = mocked_ax.scatter(pd.Series([.5, .5, .25, .25], dtype=float), pd.Series([.5, .5, .25, .25], dtype=float))
+        # 2 annotations on same point
+        mocked_annotation_points_list = [
+            txt.Annotation('dummy-annotation1_1', (.5, .5), visible=False),
+            txt.Annotation('dummy-annotation1_2', (.5, .5), visible=False),
+            txt.Annotation('dummy-annotation2_1', (.25, .25), visible=False),
+            txt.Annotation('dummy-annotation2_2', (.25, .25), visible=False),            
+        ]
+        mocked_last_hov_index = -1
+        mocked_mouse_event_on_1 = bb.MouseEvent('mocked-mouse-event-on-1', plt.gcf().canvas, 322, 242)  # on point (.5|.5)
+        mocked_mouse_event_on_2 = bb.MouseEvent('mocked-mouse-event-on-2', plt.gcf().canvas, 205, 146)  # on point (.25|.25)
+        mocked_mouse_event_off = bb.MouseEvent('mocked-mouse-event-off', plt.gcf().canvas, 100, 100)  # off points
+
+        # create object
+        main_sequence = createUUT()
+        with patch.object(main_sequence, '_annotation_points', mocked_annotation_points_list):
+            with patch.object(main_sequence, '_last_hov_anno_index', mocked_last_hov_index):
+                # call function on point 1
+                main_sequence._annotate_point(mocked_mouse_event_on_1, mocked_scatter)
+
+                # assert last hovered index
+                self.assertEqual(0, main_sequence._last_hov_anno_index)
+                self.assertTrue(main_sequence._annotation_points[0].get_visible())
+
+                # call function off point
+                main_sequence._annotate_point(mocked_mouse_event_off, mocked_scatter)
+
+                # assert last hovered index (no change in index off point)
+                self.assertEqual(0, main_sequence._last_hov_anno_index)
+                self.assertFalse(main_sequence._annotation_points[0].get_visible())
+
+                # call function on point 2
+                main_sequence._annotate_point(mocked_mouse_event_on_2, mocked_scatter)
+
+                # assert last hovered index change
+                self.assertEqual(2, main_sequence._last_hov_anno_index)
+                self.assertTrue(main_sequence._annotation_points[2].get_visible())
+                
 
 class TestMainSequenceLayoutAx(unittest.TestCase):
     @patch('matplotlib.axes.Axes.set_xlim')
