@@ -155,13 +155,14 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
         mocked_ax = plt.gca()
         mocked_ax.set_xlim((0, 1))
         mocked_ax.set_ylim((0, 1))
-        mocked_scatter = mocked_ax.scatter(pd.Series([.5, .5, .25, .25], dtype=float), pd.Series([.5, .5, .25, .25], dtype=float))
+        mocked_scatter = mocked_ax.scatter(pd.Series([.5, .5, .25, .25], dtype=float),
+                                           pd.Series([.5, .5, .25, .25], dtype=float))
         # 2 annotations on same point
         mocked_annotation_points_list = [
             txt.Annotation('dummy-annotation1_1', (.5, .5), visible=False),
             txt.Annotation('dummy-annotation1_2', (.5, .5), visible=False),
             txt.Annotation('dummy-annotation2_1', (.25, .25), visible=False),
-            txt.Annotation('dummy-annotation2_2', (.25, .25), visible=False),            
+            txt.Annotation('dummy-annotation2_2', (.25, .25), visible=False),
         ]
         mocked_last_hov_index = -1
         mocked_mouse_event_on_1 = bb.MouseEvent('mocked-mouse-event-on-1', plt.gcf().canvas, 322, 242)  # on point (.5|.5)
@@ -192,7 +193,7 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
                 # assert last hovered index change
                 self.assertEqual(2, main_sequence._last_hov_anno_index)
                 self.assertTrue(main_sequence._annotation_points[2].get_visible())
-                
+
 
 class TestMainSequenceLayoutAx(unittest.TestCase):
     @patch('matplotlib.axes.Axes.set_xlim')
