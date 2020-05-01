@@ -27,7 +27,7 @@ class TestDataSeriesUtilityGetInstabilityAndAbstractnessMetric(unittest.TestCase
     @patch('DataSeriesUtility.pad_data_series_with_default_values')
     @patch('abstractness_metric.AbstractnessMetric.compute_abstractness')
     @patch('instability_metric.InstabilityMetric.compute_instability')
-    def testCorrectFunctionCallsWithEmptyFilePath(self, mocked_comp_i_func, mocked_comp_a_func, 
+    def testCorrectFunctionCallsWithEmptyFilePath(self, mocked_comp_i_func, mocked_comp_a_func,
                                                   mocked_pad_func, mocked_reorder_func):
         '''
         Test that the correct functions are invoked (or not invoked) when an empty filepath was provided
@@ -48,7 +48,7 @@ class TestDataSeriesUtilityGetInstabilityAndAbstractnessMetric(unittest.TestCase
     @patch('DataSeriesUtility.pad_data_series_with_default_values')
     @patch('abstractness_metric.AbstractnessMetric.compute_abstractness')
     @patch('instability_metric.InstabilityMetric.compute_instability')
-    def testCorrectFunctionCallsWithCorrectFilePath(self, mocked_comp_i_func, mocked_comp_a_func, 
+    def testCorrectFunctionCallsWithCorrectFilePath(self, mocked_comp_i_func, mocked_comp_a_func,
                                                     mocked_pad_func, mocked_reorder_func):
         '''
         Test that the correct functions are invoked when A and I of different size are returned by compute_X function

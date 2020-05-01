@@ -29,7 +29,7 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
     @patch('matplotlib.collections.PathCollection.contains')
     @patch('matplotlib.text.Text.set_visible')
     @patch('matplotlib.text.Text.get_visible')
-    def testCorrectFunctionCallsIfPointSelected(self, mocked_txt_get_vis_func, mocked_txt_set_vis_func, 
+    def testCorrectFunctionCallsIfPointSelected(self, mocked_txt_get_vis_func, mocked_txt_set_vis_func,
                                                 mocked_coll_cont_func):
         '''
         Test correct function calls if point is contained in scattered point
@@ -61,7 +61,7 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
             # assert function calls
             mocked_coll_cont_func.assert_called_once()
             call_list = [mocked_txt_get_vis_func(), mocked_txt_get_vis_func(), mocked_txt_get_vis_func()]
-            mocked_txt_get_vis_func.has_calls(call_list)  # called three times 
+            mocked_txt_get_vis_func.has_calls(call_list)  # called three times
             mocked_txt_set_vis_func.assert_called()
 
     @patch('matplotlib.collections.PathCollection.contains')
@@ -100,7 +100,7 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
             # assert function calls
             mocked_coll_cont_func.assert_called_once()
             call_list = [mocked_txt_get_vis_func(), mocked_txt_get_vis_func(), mocked_txt_get_vis_func()]
-            mocked_txt_get_vis_func.has_calls(call_list)  # called three times 
+            mocked_txt_get_vis_func.has_calls(call_list)  # called three times
             mocked_txt_set_vis_func.assert_called()  # called several times
 
 
