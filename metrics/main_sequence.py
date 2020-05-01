@@ -14,7 +14,7 @@ class MainSequence:
         self._annotation_points = []
         self._last_hov_anno_index = -1
 
-    def _annotate_point(self, event, sc):
+    def _annotate_point(self, event, sc):  # noqa: C901
         ''' displays a text, if a user hovers over a point with the mouse '''
         fig = plt.gcf()
         visibility_changed = False
