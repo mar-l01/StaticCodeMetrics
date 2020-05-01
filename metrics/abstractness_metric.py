@@ -12,15 +12,15 @@ ALLOWED_FILE_EXTENSIONS = ['hpp', 'h']
 
 # [\w()]* handles the __ declspec(dllexport)-part of class definition:
 # e.g. class __declspec(dllexport) ModbusTcpClient
-CLASS_IDENTIFIER = '\s*(class|struct)\s*[\w()]*\s*\w+\s*'
+CLASS_IDENTIFIER = '\s*(class|struct)\s*[\w()]*\s*\w+\s*'  # noqa: W605
 
 # abstract methods in C++ are typically denoted by setting a virtual method equal to 0:
 # e.g. virtual void anAbstractMethod() = 0;
 # it starts with (virtual) and ends with (= 0;)
-ABSTRACT_METHOD_IDENTIFIER = '^(\s*virtual)\s+\w+\s*\w*\((.|\s)*\)\s*\w*\s*(=\s*0\s*;)$'
+ABSTRACT_METHOD_IDENTIFIER = '^(\s*virtual)\s+\w+\s*\w*\((.|\s)*\)\s*\w*\s*(=\s*0\s*;)$'  # noqa: W605
 
 # namespaces are indicated by namespace namespaceX
-NAMESPACE_IDENTIFIER = '^(\s*namespace)\s*\w*\s*'
+NAMESPACE_IDENTIFIER = '^(\s*namespace)\s*\w*\s*'  # noqa: W605
 
 
 class AbstractnessMetric:
@@ -29,7 +29,7 @@ class AbstractnessMetric:
         self._interface_class_matrix = pd.DataFrame(index=['N_a', 'N_c'], dtype=int)
         self._list_of_files = []
 
-    def _get_number_of_interfaces_and_classes_of_file(self, file_path):
+    def _get_number_of_interfaces_and_classes_of_file(self, file_path):  # noqa: C901
         ''' return the number of interfaces or classes present in given file.
         In C++, interfaces/abstract classes are defined using the virtual-keyword and/or one or more
         method equal to 0 (virtual void methodX() = 0;
@@ -56,13 +56,13 @@ class AbstractnessMetric:
                     # find namespace
                     if re.match(NAMESPACE_IDENTIFIER, line):
                         counter_namespaces += 1
-                        
+
                     # find class
                     if re.match(CLASS_IDENTIFIER, line):
                         # indicate inside class definition
                         class_definition_found = True
                         nb_classes += 1
-                        
+
                     # find one abstract method
                     if class_definition_found:
                         if re.match(ABSTRACT_METHOD_IDENTIFIER, line):
@@ -103,7 +103,7 @@ class AbstractnessMetric:
                 a[index] = 0
             else:
                 a[index] = n_a[index] / n_c[index]
-                
+
         return a
 
     def compute_abstractness(self):

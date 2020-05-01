@@ -29,8 +29,8 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
     @patch('matplotlib.collections.PathCollection.contains')
     @patch('matplotlib.text.Text.set_visible')
     @patch('matplotlib.text.Text.get_visible')
-    def testCorrectFunctionCallsIfPointSelected(self, mocked_txt_get_vis_func, mocked_txt_set_vis_func, \
-        mocked_coll_cont_func):
+    def testCorrectFunctionCallsIfPointSelected(self, mocked_txt_get_vis_func, mocked_txt_set_vis_func, 
+                                                mocked_coll_cont_func):
         '''
         Test correct function calls if point is contained in scattered point
         '''
@@ -45,9 +45,11 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
         mocked_ax.set_ylim((0, 1))
         mocked_scatter = mocked_ax.scatter(pd.Series([.5], dtype=float), pd.Series([.5], dtype=float))
         mocked_coll_cont_func.return_value = True, {'ind': np.array([0], dtype=int)}
-        mocked_annotation_points_list = [txt.Annotation('dummy-annotation1', (.5, .5), visible=False), \
-            txt.Annotation('dummy-annotation2', (.1, .5), visible=False), \
-            txt.Annotation('dummy-annotation3', (.7, .2), visible=False)]
+        mocked_annotation_points_list = [
+            txt.Annotation('dummy-annotation1', (.5, .5), visible=False),
+            txt.Annotation('dummy-annotation2', (.1, .5), visible=False),
+            txt.Annotation('dummy-annotation3', (.7, .2), visible=False)
+        ]
         mocked_mouse_event = bb.MouseEvent('mocked-mouse-event', plt.gcf().canvas, 322, 242)  # on point (.5|.5)
 
         # create object
@@ -59,14 +61,14 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
             # assert function calls
             mocked_coll_cont_func.assert_called_once()
             call_list = [mocked_txt_get_vis_func(), mocked_txt_get_vis_func(), mocked_txt_get_vis_func()]
-            mocked_txt_get_vis_func.has_calls(call_list) # called three times 
+            mocked_txt_get_vis_func.has_calls(call_list)  # called three times 
             mocked_txt_set_vis_func.assert_called()
 
     @patch('matplotlib.collections.PathCollection.contains')
     @patch('matplotlib.text.Text.set_visible')
     @patch('matplotlib.text.Text.get_visible')
-    def testCorrectFunctionCallsIfPointNotSelected(self, mocked_txt_get_vis_func, mocked_txt_set_vis_func, \
-        mocked_coll_cont_func):
+    def testCorrectFunctionCallsIfPointNotSelected(self, mocked_txt_get_vis_func, mocked_txt_set_vis_func,
+                                                   mocked_coll_cont_func):
         '''
         Test correct function calls if point is not contained in any scattered point but in axes-view
         '''
@@ -81,9 +83,11 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
         mocked_ax.set_ylim((0, 1))
         mocked_scatter = mocked_ax.scatter(pd.Series([.5], dtype=float), pd.Series([.5], dtype=float))
         mocked_coll_cont_func.return_value = False, {'ind': np.array([])}
-        mocked_annotation_points_list = [txt.Annotation('dummy-annotation', (.5, .5), visible=False), \
-            txt.Annotation('dummy-annotation2', (.1, .5), visible=False), \
-            txt.Annotation('dummy-annotation3', (.7, .2), visible=False)]
+        mocked_annotation_points_list = [
+            txt.Annotation('dummy-annotation', (.5, .5), visible=False),
+            txt.Annotation('dummy-annotation2', (.1, .5), visible=False),
+            txt.Annotation('dummy-annotation3', (.7, .2), visible=False)
+        ]
         mocked_mouse_event = bb.MouseEvent('mocked-mouse-event', plt.gcf().canvas, 100, 200)  # not on point (.5|.5)
         mocked_txt_get_vis_func.return_value = True
 
@@ -96,8 +100,8 @@ class TestMainSequenceAnnotatePoint(unittest.TestCase):
             # assert function calls
             mocked_coll_cont_func.assert_called_once()
             call_list = [mocked_txt_get_vis_func(), mocked_txt_get_vis_func(), mocked_txt_get_vis_func()]
-            mocked_txt_get_vis_func.has_calls(call_list) # called three times 
-            mocked_txt_set_vis_func.assert_called() # called several times
+            mocked_txt_get_vis_func.has_calls(call_list)  # called three times 
+            mocked_txt_set_vis_func.assert_called()  # called several times
 
 
 class TestMainSequenceLayoutAx(unittest.TestCase):
@@ -108,8 +112,8 @@ class TestMainSequenceLayoutAx(unittest.TestCase):
     @patch('matplotlib.axes.Axes.annotate')
     @patch('matplotlib.axes.Axes.set_xlabel')
     @patch('matplotlib.axes.Axes.set_ylabel')
-    def testCorrectFunctionCalls(self, mocked_ax_ylabel_func, mocked_ax_xlabel_func, mocked_ax_anno_func, \
-        mocked_ax_add_art_func, mocked_ax_plot_func, mocked_ax_ylim_func, mocked_ax_xlim_func):
+    def testCorrectFunctionCalls(self, mocked_ax_ylabel_func, mocked_ax_xlabel_func, mocked_ax_anno_func,
+                                 mocked_ax_add_art_func, mocked_ax_plot_func, mocked_ax_ylim_func, mocked_ax_xlim_func):
         '''
         Test that correct functions are invoked
         '''
@@ -142,9 +146,9 @@ class TestMainSequenceLayoutAx(unittest.TestCase):
     @patch('matplotlib.axes.Axes.annotate')
     @patch('matplotlib.axes.Axes.set_xlabel')
     @patch('matplotlib.axes.Axes.set_ylabel')
-    def testCorrectFunctionCallArguments(self, mocked_ax_ylabel_func, mocked_ax_xlabel_func, \
-        mocked_ax_anno_func, mocked_ax_add_art_func, mocked_ax_plot_func, mocked_ax_ylim_func, \
-        mocked_ax_xlim_func):
+    def testCorrectFunctionCallArguments(self, mocked_ax_ylabel_func, mocked_ax_xlabel_func, mocked_ax_anno_func,
+                                         mocked_ax_add_art_func, mocked_ax_plot_func, mocked_ax_ylim_func,
+                                         mocked_ax_xlim_func):
         '''
         Test that correct functions are invoked
         '''
@@ -177,13 +181,13 @@ class TestMainSequenceLayoutAx(unittest.TestCase):
         self.assertEqual('red', call_kwords['color'])
 
         # assert call-arguments (Axes.add_artist) (both calls)
-        expected_add_artist_calls = [mocked_ax_add_art_func(plt.Circle((0, 0), .5, alpha=.3, color='r')), \
-            mocked_ax_add_art_func(plt.Circle((1, 1), .5, alpha=.3, color='r'))]
+        expected_add_artist_calls = [mocked_ax_add_art_func(plt.Circle((0, 0), .5, alpha=.3, color='r')),
+                                     mocked_ax_add_art_func(plt.Circle((1, 1), .5, alpha=.3, color='r'))]
         mocked_ax_add_art_func.has_calls(expected_add_artist_calls)
 
         # assert call-arguments (Axes.annotate) (both calls)
-        expected_anno_calls = [mocked_ax_anno_func("Zone of Pain", xy=(.1, .2), fontsize=10), \
-            mocked_ax_anno_func("Zone of Uselessness", xy=(.65, .8), fontsize=10)]
+        expected_anno_calls = [mocked_ax_anno_func("Zone of Pain", xy=(.1, .2), fontsize=10),
+                               mocked_ax_anno_func("Zone of Uselessness", xy=(.65, .8), fontsize=10)]
         mocked_ax_anno_func.has_calls(expected_anno_calls)
 
         # assert call-arguments (Axes.set_xlabel)
@@ -229,8 +233,8 @@ class TestMainSequenceDefineMotionAnnotationCallback(unittest.TestCase):
                 # assert correct setting of warning and early returning of function
                 self.assertEqual([], main_sequence._annotation_points)
                 self.assertEqual(len(w), 1)
-                self.assertTrue('"self._names_map" is empty...returning directly, no motion_notifiy_event connected' \
-                    in str(w[-1].message))
+                self.assertTrue('"self._names_map" is empty...returning directly, no motion_notifiy_event connected'
+                                in str(w[-1].message))
                 mocked_set_func.assert_called_once_with('Main Sequence')
                 mocked_anno_func.assert_not_called()
                 mocked_vis_func.assert_not_called()
@@ -274,8 +278,8 @@ class TestMainSequencePlotMetrics(unittest.TestCase):
     @patch('matplotlib.pyplot.show')
     @patch('main_sequence.MainSequence._define_motion_annotation_callback')
     @patch('main_sequence.MainSequence._layout_ax')
-    def testCorrectFunctionCalls(self, mocked_ms_func, mocked_ms_cb_func, mocked_show_func, mocked_scatter_func, \
-        mocked_dsu_func):
+    def testCorrectFunctionCalls(self, mocked_ms_func, mocked_ms_cb_func, mocked_show_func, mocked_scatter_func,
+                                 mocked_dsu_func):
         '''
         Test that functions inside this method are called correctly
         '''
@@ -289,8 +293,8 @@ class TestMainSequencePlotMetrics(unittest.TestCase):
         # create return values for mocked functions
         mocked_i_metric = pd.Series(np.array([.6, .0, .1, 1., .0, .5]))
         mocked_a_metric = pd.Series(np.array([.3, 1., .0, 1., .8, .2]))
-        mocked_annotation_points_list = [plt.gca().annotate(n, (x,y), visible=False) for n, x, y in \
-            zip(mocked_i_metric.index, mocked_i_metric, mocked_a_metric)]
+        mocked_annotation_points_list = [plt.gca().annotate(n, (x, y), visible=False) for n, x, y in
+                                         zip(mocked_i_metric.index, mocked_i_metric, mocked_a_metric)]
 
         # assign mocked return values to mocks
         mocked_dsu_func.return_value = mocked_i_metric, mocked_a_metric
@@ -313,8 +317,8 @@ class TestMainSequencePlotMetrics(unittest.TestCase):
     @patch('matplotlib.pyplot.show')
     @patch('main_sequence.MainSequence._define_motion_annotation_callback')
     @patch('main_sequence.MainSequence._layout_ax')
-    def testCorrectFunctionCallArguments(self, mocked_ms_func, mocked_ms_cb_func, mocked_show_func, mocked_scatter_func, \
-        mocked_dsu_func):
+    def testCorrectFunctionCallArguments(self, mocked_ms_func, mocked_ms_cb_func, mocked_show_func, mocked_scatter_func,
+                                         mocked_dsu_func):
         '''
         Test that functions inside this method are called with correct arguments
         '''
@@ -330,8 +334,8 @@ class TestMainSequencePlotMetrics(unittest.TestCase):
         mocked_a_metric = pd.Series(np.array([.3, 1., .0, 1., .8, .2]))
         mocked_ax = plt.gca()
         mocked_scatter = mocked_ax.scatter(mocked_i_metric, mocked_a_metric)
-        mocked_annotation_points_list = [mocked_ax.annotate(n, (x,y), visible=False) for n, x, y in \
-            zip(mocked_i_metric.index, mocked_i_metric, mocked_a_metric)]
+        mocked_annotation_points_list = [mocked_ax.annotate(n, (x, y), visible=False) for n, x, y in
+                                         zip(mocked_i_metric.index, mocked_i_metric, mocked_a_metric)]
 
         # assign mocked return values to mocks
         mocked_dsu_func.return_value = mocked_i_metric, mocked_a_metric

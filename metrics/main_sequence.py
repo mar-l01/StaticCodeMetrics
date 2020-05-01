@@ -1,6 +1,3 @@
-from instability_metric import InstabilityMetric
-from abstractness_metric import AbstractnessMetric
-
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
@@ -14,32 +11,31 @@ import DataSeriesUtility as dsu
 class MainSequence:
     def __init__(self, dir_path):
         self._dir_path = dir_path
-        self._annotated_point = None
         self._annotation_points = []
 
     def _annotate_point(self, event, sc):
         ''' displays a text, if a user hovers over a point with the mouse '''
         fig = plt.gcf()
         visibility_changed = False
-        
+
         if event.inaxes == plt.gca():
             anno_visible, ind = sc.contains(event)
             ind_array = ind['ind']
-            
+
             # check if not hovering over a point (empty index list)
             if ind_array.size == 0:
                 for annotation in self._annotation_points:
                     # make sure every annotation is invisible
-                    if annotation.get_visible() == True:
+                    if annotation.get_visible():
                         annotation.set_visible(False)
                         visibility_changed = True
             else:
                 # set all annotations visible which the mouse hovers over
                 for i, annotation in enumerate(self._annotation_points):
-                    if np.any(ind_array == i) and annotation.get_visible() == False:
+                    if np.any(ind_array == i) and not annotation.get_visible():
                         annotation.set_visible(True)
                         visibility_changed = True
-        
+
         if visibility_changed:
             fig.canvas.draw_idle()
 
@@ -89,10 +85,10 @@ class MainSequence:
 
         # create basic layout format
         ax = self._layout_ax()
-        
+
         # create a list which contains all annotations
-        self._annotation_points = [ax.annotate(n, (x,y), visible=False) for n, x, y in \
-            zip(self._instability_metric.index, self._instability_metric, self._abstractness_metric)]
+        self._annotation_points = [ax.annotate(n, (x, y), visible=False) for n, x, y in
+                                   zip(self._instability_metric.index, self._instability_metric, self._abstractness_metric)]
 
         # x = instability, y = abstractness
         sc = ax.scatter(self._instability_metric, self._abstractness_metric)

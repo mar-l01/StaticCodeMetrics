@@ -45,8 +45,8 @@ class TestDistanceIAPlotDistance(unittest.TestCase):
     @patch('matplotlib.pyplot.show')
     @patch('DataSeriesUtility.get_instability_and_abstractness_metric')
     @patch('distance_ia.DistanceIA._calculate_distance')
-    def testCorrectFunctionCalls(self, mocked_d_func, mocked_dsu_func, mocked_show_func, mocked_plot_func, \
-        mocked_xticks_func, mocked_ylabel_func):
+    def testCorrectFunctionCalls(self, mocked_d_func, mocked_dsu_func, mocked_show_func, mocked_plot_func,
+                                 mocked_xticks_func, mocked_ylabel_func):
         '''
         Test that functions inside this method are called correctly
         '''
@@ -84,8 +84,8 @@ class TestDistanceIAPlotDistance(unittest.TestCase):
     @patch('matplotlib.pyplot.show')
     @patch('DataSeriesUtility.get_instability_and_abstractness_metric')
     @patch('distance_ia.DistanceIA._calculate_distance')
-    def testCorrectFunctionCallArguments(self, mocked_d_func, mocked_dsu_func, mocked_show_func, \
-        mocked_plot_func, mocked_xticks_func, mocked_ylabel_func):
+    def testCorrectFunctionCallArguments(self, mocked_d_func, mocked_dsu_func, mocked_show_func,
+                                         mocked_plot_func, mocked_xticks_func, mocked_ylabel_func):
         '''
         Test that functions inside this method are called with correct arguments
         '''

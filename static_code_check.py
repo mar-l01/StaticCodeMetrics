@@ -10,8 +10,8 @@ from distance_ia import DistanceIA
 parser = argparse.ArgumentParser(description='Perform static code checks on a set of files.')
 
 # required argument (directory to check)
-parser.add_argument('-dp', '--directory-path', type=str, required=True, help='Path to the directory ' + \
-    'which contains the files to check. All files from the provided directory will be checked recursively.')
+parser.add_argument('-dp', '--directory-path', type=str, required=True, help='Path to the directory ' +
+                    'which contains the files to check. All files from the provided directory will be checked recursively.')
 
 # either main-sequence or distance can be displayed
 metrics_group = parser.add_mutually_exclusive_group(required=True)
