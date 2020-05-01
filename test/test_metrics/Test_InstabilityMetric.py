@@ -352,7 +352,7 @@ class TestInstabilityMetricCalculateInstabilityForEachFile(unittest.TestCase):
         # assert correct computation of instability metric
         for i in range(len(returned_matrix.index)):
             self.assertEqual(returned_matrix[i], (expected_sum_fan_out[i] / 
-                                                  expected_sum_fan_in[i] + expected_sum_fan_out[i])))
+                                                 (expected_sum_fan_in[i] + expected_sum_fan_out[i])))
 
 
 class TestInstabilityMetricComputeInstability(unittest.TestCase):
