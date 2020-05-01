@@ -12,6 +12,7 @@ class MainSequence:
     def __init__(self, dir_path):
         self._dir_path = dir_path
         self._annotation_points = []
+        self._last_hov_anno_index = -1
 
     def _annotate_point(self, event, sc):
         ''' displays a text, if a user hovers over a point with the mouse '''
@@ -29,12 +30,42 @@ class MainSequence:
                     if annotation.get_visible():
                         annotation.set_visible(False)
                         visibility_changed = True
+
+            # only one annotation available
+            elif ind_array.size == 1:
+                if not self._annotation_points[ind_array[0]].get_visible():
+                    self._annotation_points[ind_array[0]].set_visible(True)
+                    visibility_changed = True
+
+            # more than one annotation available (display only one)
             else:
-                # set all annotations visible which the mouse hovers over
-                for i, annotation in enumerate(self._annotation_points):
-                    if np.any(ind_array == i) and not annotation.get_visible():
-                        annotation.set_visible(True)
-                        visibility_changed = True
+                # again hovered over the same summary of points
+                if self._last_hov_anno_index in ind_array:
+                    # do not change annotation if mouse still is on point
+                    if self._annotation_points[self._last_hov_anno_index].get_visible():
+                        return
+
+                    # get array index and increment it
+                    arr_ind, = np.where(ind_array == self._last_hov_anno_index)
+                    next_arr_ind = arr_ind[0] + 1
+
+                    # start from beginning if end of array indices is reached
+                    if next_arr_ind == ind_array.size:
+                        next_arr_ind = 0
+
+                    # map array index to annotation index
+                    anno_ind = ind_array[next_arr_ind]
+
+                    # set respective annotation visible
+                    self._annotation_points[anno_ind].set_visible(True)
+                    visibility_changed = True
+                    self._last_hov_anno_index = anno_ind
+
+                # hovered over another summary of points
+                else:
+                    self._annotation_points[ind_array[0]].set_visible(True)
+                    visibility_changed = True
+                    self._last_hov_anno_index = ind_array[0]
 
         if visibility_changed:
             fig.canvas.draw_idle()
