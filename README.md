@@ -15,9 +15,11 @@ The development of these algorithms was inspired by the book **Clean Architectur
 
 ## Usage
 The static code checker can be started using the command line:
-`python ./static_code_check.py -df <directory-path>`
+`python ./static_code_check.py -df <directory-path> (-di | -ms)`
 
-`<directory-path>`: Path to the directory which contains the code-files to check. This directory will be processed recursively.
+`-df <directory-path>`: Path to the directory which contains the code-files to check. This directory will be processed recursively.  
+`-di`: Plot distance metric  
+`-ms`: Plot Main Sequence  
 
 ## Development status
 Currently, the instability and abstractness metric can be computed on C++ files only.
