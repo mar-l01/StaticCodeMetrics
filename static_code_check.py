@@ -15,8 +15,8 @@ parser.add_argument('-dp', '--directory-path', type=str, required=True, help='Pa
 
 # either main-sequence or distance can be displayed
 metrics_group = parser.add_mutually_exclusive_group(required=True)
-metrics_group.add_argument('-di', '--distance', action='store_true')
-metrics_group.add_argument('-ms', '--mainsequence', action='store_true')
+metrics_group.add_argument('-di', '--distance', action='store_true', help='Plot distance metric')
+metrics_group.add_argument('-ms', '--mainsequence', action='store_true', help='Plot Main Sequence')
 
 # parse arguments
 args = vars(parser.parse_args())
