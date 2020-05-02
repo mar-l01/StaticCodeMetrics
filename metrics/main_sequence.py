@@ -6,6 +6,7 @@ import warnings
 # make utility scripts visible
 sys.path.append('utils/')
 import DataSeriesUtility as dsu
+import FileUtility as fut
 
 
 class MainSequence:
@@ -13,6 +14,8 @@ class MainSequence:
         self._dir_path = dir_path
         self._annotation_points = []
         self._last_hov_anno_index = -1
+        self._instability_metric = None
+        self._abstractness_metric = None
 
     def _annotate_point(self, event, sc):  # noqa: C901
         ''' displays a text, if a user hovers over a point with the mouse '''
@@ -128,3 +131,13 @@ class MainSequence:
         self._define_motion_annotation_callback(sc)
 
         plt.show()
+
+    def save_metrics(self, dir_path=''):
+        ''' save both metrics to directory. If provided use user-defined directory '''
+        # if no already computed get metrics
+        if self._instability_metric is None or self._abstractness_metric is None:
+            self._instability_metric, self._abstractness_metric = dsu.get_instability_and_abstractness_metric(self._dir_path)
+
+        # save them
+        fut.save_metric_to_file(self._instability_metric, dir_path)
+        fut.save_metric_to_file(self._abstractness_metric, dir_path)
