@@ -43,6 +43,7 @@ suite.addTests(unittest.makeSuite(t_im.TestInstabilityMetricComputeInstability))
 # DistanceIA
 suite.addTests(unittest.makeSuite(t_dia.TestDistanceIACalculateDistance))
 suite.addTests(unittest.makeSuite(t_dia.TestDistanceIAPlotDistance))
+suite.addTests(unittest.makeSuite(t_dia.TestDistanceIASaveMetrics))
 
 # MainSequence
 suite.addTests(unittest.makeSuite(t_ms.TestMainSequenceAnnotatePoint))
