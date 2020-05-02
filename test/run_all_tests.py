@@ -17,11 +17,12 @@ suite = unittest.TestSuite()
 # FileUtility
 suite.addTests(unittest.makeSuite(t_fu.TestFileUtilityGetAllCodeFiles))
 suite.addTests(unittest.makeSuite(t_fu.TestFileUtilityExtractFileName))
+suite.addTests(unittest.makeSuite(t_fu.TestFileUtilitySaveMetricToFile))
 
 # DataSeriesUtility
 suite.addTests(unittest.makeSuite(t_dsu.TestDataSeriesUtilityGetInstabilityAndAbstractnessMetric))
 suite.addTests(unittest.makeSuite(t_dsu.TestDataSeriesUtilityPadDataSeriesWithDefaultValues))
-suite.addTests(unittest.makeSuite(t_dsu.TestReorderDataSeriesElements))
+suite.addTests(unittest.makeSuite(t_dsu.TestDataSeriesReorderDataSeriesElements))
 
 # AbstractnessMetric
 suite.addTests(unittest.makeSuite(t_am.TestAbstractnessMetricGetNumberOfInterfacesAndClassesOfFile))
@@ -42,12 +43,14 @@ suite.addTests(unittest.makeSuite(t_im.TestInstabilityMetricComputeInstability))
 # DistanceIA
 suite.addTests(unittest.makeSuite(t_dia.TestDistanceIACalculateDistance))
 suite.addTests(unittest.makeSuite(t_dia.TestDistanceIAPlotDistance))
+suite.addTests(unittest.makeSuite(t_dia.TestDistanceIASaveMetrics))
 
 # MainSequence
 suite.addTests(unittest.makeSuite(t_ms.TestMainSequenceAnnotatePoint))
 suite.addTests(unittest.makeSuite(t_ms.TestMainSequenceLayoutAx))
 suite.addTests(unittest.makeSuite(t_ms.TestMainSequenceDefineMotionAnnotationCallback))
 suite.addTests(unittest.makeSuite(t_ms.TestMainSequencePlotMetrics))
+suite.addTests(unittest.makeSuite(t_ms.TestMainSequenceSaveMetrics))
 
 # run TestSuite
 result = unittest.TextTestRunner(verbosity=2).run(suite)

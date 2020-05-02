@@ -5,6 +5,7 @@ import sys
 # make utility scripts visible
 sys.path.append('utils/')
 import DataSeriesUtility as dsu
+import FileUtility as fut
 
 
 class DistanceIA:
@@ -21,6 +22,9 @@ class DistanceIA:
         ...D of 1 indicating that the corresponding file/component lies far away from the Main Sequence '''
         self._distance = abs(self._abstractness_metric + self._instability_metric - 1)
 
+        # provide a name to data series required for saving it to a file
+        self._distance = self._distance.rename('Distance_IA')
+
     def plot_distance(self):
         ''' show a diagram picturing the distance in each components, where
         - y-axis denotes the distance
@@ -36,3 +40,12 @@ class DistanceIA:
         plt.ylabel('[D]istance', fontsize=18)
 
         plt.show()
+
+    def save_metric(self, dir_path=''):
+        ''' save distance metric to directory. If provided use user-defined directory '''
+        # if not already computed get distance
+        if self._distance is None:
+            self._calculate_distance()
+
+        # save it
+        fut.save_metric_to_file(self._distance, dir_path)

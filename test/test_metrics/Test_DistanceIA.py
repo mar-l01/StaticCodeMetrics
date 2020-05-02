@@ -8,6 +8,7 @@ import sys
 # make utility scripts visible
 sys.path.append('utils/')
 import DataSeriesUtility as dsu
+import FileUtility as fut
 
 sys.path.append('metrics/')
 from distance_ia import DistanceIA
@@ -129,3 +130,49 @@ class TestDistanceIAPlotDistance(unittest.TestCase):
             call_args, call_kwords = mocked_ylabel_func.call_args
             self.assertEqual('[D]istance', call_args[0])
             self.assertEqual(18, call_kwords['fontsize'])
+
+
+class TestDistanceIASaveMetrics(unittest.TestCase):
+    @patch('FileUtility.save_metric_to_file')
+    def testCorrectFunctionCallsIfMetricIsExisting(self, mocked_fut_save_func):
+        '''
+        Test that correct functions are invoked if metric is already existing
+        '''
+        # assert mocks
+        self.assertIs(fut.save_metric_to_file, mocked_fut_save_func)
+
+        # create mock value
+        mocked_dist_metric = pd.Series([.5], dtype=float)
+
+        # create object to test
+        distance_ia = createUUT()
+        with patch.object(distance_ia, '_distance', mocked_dist_metric):
+            # call function to test
+            distance_ia.save_metric('')
+
+            # assert call
+            mocked_fut_save_func.assert_called_once()
+
+    @patch('FileUtility.save_metric_to_file')
+    @patch('distance_ia.DistanceIA._calculate_distance')
+    def testCorrectFunctionCallsIfMetricNotExisting(self, mocked_d_calc_func, mocked_fut_save_func):
+        '''
+        Test that correct functions are invoked if metrics is not existing
+        '''
+        # assert mocks
+        self.assertIs(DistanceIA._calculate_distance, mocked_d_calc_func)
+        self.assertIs(fut.save_metric_to_file, mocked_fut_save_func)
+
+        # create mock values
+        mocked_dist_metric = None
+        mocked_d_calc_func.return_value = pd.Series([.5], dtype=float)
+
+        # create object to test
+        distance_ia = createUUT()
+        with patch.object(distance_ia, '_distance', mocked_dist_metric):
+            # call function to test
+            distance_ia.save_metric()
+
+            # assert calls and function arguments
+            mocked_d_calc_func.assert_called_once()
+            mocked_fut_save_func.assert_called_once()

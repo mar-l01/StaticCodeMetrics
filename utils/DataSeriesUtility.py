@@ -55,7 +55,7 @@ def reorder_data_series_elements(data_series, data_series_to_reorder):
        not isinstance(data_series_to_reorder, type(pd.Series(dtype=float))):
         return pd.Series(dtype=float)
 
-    ordered_data_series = pd.Series(dtype=float)
+    ordered_data_series = pd.Series(name=data_series_to_reorder.name, dtype=float)
     for index_name in data_series.index:
         ordered_data_series[index_name] = data_series_to_reorder[index_name]
 

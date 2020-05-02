@@ -106,7 +106,7 @@ class TestDataSeriesUtilityPadDataSeriesWithDefaultValues(unittest.TestCase):
         self.assertEqual(returned_padded_data_series[3], dsu.DEFAULT_PADDING_VALUE)
 
 
-class TestReorderDataSeriesElements(unittest.TestCase):
+class TestDataSeriesReorderDataSeriesElements(unittest.TestCase):
     def testEmtpyFunctionArguments(self):
         '''
         Test that if either first or second argument are not of type pd.Series an empty pd.Series

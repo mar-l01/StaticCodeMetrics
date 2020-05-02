@@ -13,6 +13,7 @@ import warnings
 # make utility scripts visible
 sys.path.append('utils/')
 import DataSeriesUtility as dsu
+import FileUtility as fut
 
 sys.path.append('metrics/')
 from main_sequence import MainSequence
@@ -446,3 +447,57 @@ class TestMainSequencePlotMetrics(unittest.TestCase):
             # assert call-arguments (MainSequence._define_motion_annotation_callback)
             call_args, _ = mocked_ms_cb_func.call_args
             self.assertEqual(call_args[0], mocked_scatter)
+
+
+class TestMainSequenceSaveMetrics(unittest.TestCase):
+    @patch('FileUtility.save_metric_to_file')
+    def testCorrectFunctionCallsIfMetricsAreExisting(self, mocked_fut_save_func):
+        '''
+        Test that correct functions are invoked if metrics are already existing
+        '''
+        # assert mocks
+        self.assertIs(fut.save_metric_to_file, mocked_fut_save_func)
+
+        # create mock values
+        mocked_ins_metric = pd.Series([.5], dtype=float)
+        mocked_abs_metric = pd.Series([.4], dtype=float)
+
+        # create object to test
+        main_sequence = createUUT()
+        with patch.object(main_sequence, '_instability_metric', mocked_ins_metric):
+            with patch.object(main_sequence, '_abstractness_metric', mocked_abs_metric):
+                # call function to test
+                main_sequence.save_metrics('')
+
+                # assert calls and function arguments
+                call_list = [mocked_fut_save_func(mocked_ins_metric, ''),
+                             mocked_fut_save_func(mocked_abs_metric, '')]
+                mocked_fut_save_func.has_calls(call_list)
+
+    @patch('DataSeriesUtility.get_instability_and_abstractness_metric')
+    @patch('FileUtility.save_metric_to_file')
+    def testCorrectFunctionCallsIfMetricsNotExisting(self, mocked_fut_save_func, mocked_dsu_get_func):
+        '''
+        Test that correct functions are invoked if metrics are not existing
+        '''
+        # assert mocks
+        self.assertIs(fut.save_metric_to_file, mocked_fut_save_func)
+        self.assertIs(dsu.get_instability_and_abstractness_metric, mocked_dsu_get_func)
+
+        # create mock values
+        mocked_ins_metric = None
+        mocked_abs_metric = None
+        mocked_dsu_get_func.return_value = pd.Series([.5], dtype=float), pd.Series([.4], dtype=float)
+
+        # create object to test
+        main_sequence = createUUT()
+        with patch.object(main_sequence, '_instability_metric', mocked_ins_metric):
+            with patch.object(main_sequence, '_abstractness_metric', mocked_abs_metric):
+                # call function to test
+                main_sequence.save_metrics()
+
+                # assert calls and function arguments
+                mocked_dsu_get_func.assert_called_once()
+                func_calls = [mocked_fut_save_func(mocked_ins_metric, ''),
+                              mocked_fut_save_func(mocked_abs_metric, '')]
+                mocked_fut_save_func.has_calls(func_calls)
