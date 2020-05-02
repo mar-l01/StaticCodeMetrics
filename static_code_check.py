@@ -39,7 +39,7 @@ if show_distance:
 
     # save metric if desired
     if save_metric:
-        dist.save_metric(save_metric_path if save_metric_path != None else '')
+        dist.save_metric(save_metric_path if save_metric_path is not None else '')
 
 elif show_main_sequence:
     main_seq = MainSequence(dir_path)
@@ -47,4 +47,4 @@ elif show_main_sequence:
 
     # save metric if desired
     if save_metric:
-        main_seq.save_metrics(save_metric_path if save_metric_path != None else '')
+        main_seq.save_metrics(save_metric_path if save_metric_path is not None else '')
