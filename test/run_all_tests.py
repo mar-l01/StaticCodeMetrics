@@ -17,6 +17,7 @@ suite = unittest.TestSuite()
 # FileUtility
 suite.addTests(unittest.makeSuite(t_fu.TestFileUtilityGetAllCodeFiles))
 suite.addTests(unittest.makeSuite(t_fu.TestFileUtilityExtractFileName))
+suite.addTests(unittest.makeSuite(t_fu.TestFileUtilitySaveMetricToFile))
 
 # DataSeriesUtility
 suite.addTests(unittest.makeSuite(t_dsu.TestDataSeriesUtilityGetInstabilityAndAbstractnessMetric))

@@ -1,4 +1,7 @@
+import pandas as pd
+from pathlib import Path
 import unittest
+from unittest.mock import patch
 import warnings
 import sys
 
@@ -66,3 +69,58 @@ class TestFileUtilityExtractFileName(unittest.TestCase):
         valid_path_with_wrong_delimiter = 'valid/path/to/filename'
         returned_name = fut.extract_filename(valid_path_with_wrong_delimiter)
         self.assertEqual(returned_name, 'valid/path/to/filename')
+
+
+class TestFileUtilitySaveMetricToFile(unittest.TestCase):
+    @patch('pathlib.Path.is_dir')
+    @patch('pathlib.Path.mkdir')
+    @patch('pathlib.Path.joinpath')
+    @patch('pandas.Series.to_csv')
+    def testSaveIfEmptyDirectory(self, mocked_pd_csv, mocked_pl_join, mocked_pl_mkdir, mocked_pl_isdir):
+        '''
+        Test that metric is saved correctly with an empty directory path given
+        '''
+        # assert mocks
+        self.assertIs(pd.Series.to_csv, mocked_pd_csv)
+        self.assertIs(Path.mkdir, mocked_pl_mkdir)
+        self.assertIs(Path.joinpath, mocked_pl_join)
+        self.assertIs(Path.is_dir, mocked_pl_isdir)
+
+        # create mock values
+        mocked_metric = pd.Series([.1, .2, .3], name='metric-mock', dtype=float)
+        mocked_pl_isdir.return_value = False  # create default directory
+        mocked_pl_join.return_value = Path('default/directory/file')
+
+        # call function to test
+        fut.save_metric_to_file(mocked_metric)  # save to default directory
+
+        # assert calls
+        mocked_pl_isdir.assert_called()  # called twice
+        mocked_pl_mkdir.assert_called_once()
+        mocked_pl_join.assert_called()  # called twice
+        mocked_pd_csv.assert_called_once()
+
+    @patch('pathlib.Path.is_dir')
+    @patch('pathlib.Path.joinpath')
+    @patch('pandas.Series.to_csv')
+    def testSaveIfExistingDirectory(self, mocked_pd_csv, mocked_pl_join, mocked_pl_isdir):
+        '''
+        Test that metric is saved correctly given an existing directory path
+        '''
+        # assert mocks
+        self.assertIs(pd.Series.to_csv, mocked_pd_csv)
+        self.assertIs(Path.joinpath, mocked_pl_join)
+        self.assertIs(Path.is_dir, mocked_pl_isdir)
+
+        # create mock values
+        mocked_metric = pd.Series([.1, .2, .3], name='metric-mock', dtype=float)
+        mocked_pl_isdir.return_value = True  # given directory given
+        mocked_pl_join.return_value = Path('default/directory/file')
+
+        # call function to test
+        fut.save_metric_to_file(mocked_metric, 'dummy/directory')
+
+        # assert calls
+        mocked_pl_isdir.assert_called_once()
+        mocked_pl_join.assert_called_once()
+        mocked_pd_csv.assert_called_once()

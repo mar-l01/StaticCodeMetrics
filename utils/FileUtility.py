@@ -46,6 +46,9 @@ def save_metric_to_file(metric, directory_path=''):
         # create default directory if not already existing
         if not Path(directory_path).is_dir():
             Path(directory_path).mkdir(parents=True, exist_ok=True)
+    else:
+        # create Path object otw.
+        directory_path = Path(directory_path)
 
     filename = '{}_{}.csv'.format(metric.name.lower(), datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
     filepath = Path.joinpath(directory_path, filename)
