@@ -15,11 +15,13 @@ The development of these algorithms was inspired by the book **Clean Architectur
 
 ## Usage
 The static code checker can be started using the command line:  
-`python ./static_code_check.py -df <directory-path> (-di | -ms)`
+`python ./static_code_check.py -df <directory-path> (-di | -ms) [-s] [-sp <save-path>]`
 
 `-df <directory-path>`: Path to the directory which contains the code-files to check. This directory will be processed recursively.  
 `-di`: Plot distance metric  
 `-ms`: Plot Main Sequence  
+`-s`: Save computed metrics (either instability and abstractness or distance in default directory)  
+`-sp`: Computed metrics are saved within provided <save-path> (if it exists)
 
 ## Testing
 Tests are written using Python's unittest library and can be locally executed using following command:  
