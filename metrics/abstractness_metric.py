@@ -58,6 +58,8 @@ class AbstractnessMetric:
 
         except FileNotFoundError as ex:
             warnings.warn('{} ...returning default values'.format(ex))
+        except plc.LanguageOptionError as ex:
+            warnings.warn(ex.args)
 
         return nb_interfaces, nb_classes
 
@@ -97,7 +99,13 @@ class AbstractnessMetric:
         1) get all code file which are considered for calculating the metric
         2) extract all interfaces/abstract classed from those files
         3) calculate the abstractness metric '''
-        self._list_of_files = fut.get_all_code_files(self._dir_path, plc.get_file_extensions_am())
+        allowed_file_extensions = []
+        try:
+            allowed_file_extensions = plc.get_file_extensions_am()
+        except plc.LanguageOptionError as ex:
+            warnings.warn(ex.args)
+            
+        self._list_of_files = fut.get_all_code_files(self._dir_path, allowed_file_extensions)
         self._search_files_for_interfaces()
         abstractness_metric = self._calculate_abstractness_for_each_file()
 

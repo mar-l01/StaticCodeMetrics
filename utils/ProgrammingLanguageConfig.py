@@ -34,7 +34,7 @@ def get_interface_identifier():
 
 def get_abstract_method_identifier():
     if PROGRAMMING_LANGUAGE == 'c++':
-        return plconst.CPP_CLASS_IDENTIFIER
+        return plconst.CPP_ABSTRACT_METHOD_IDENTIFIER
     else:
         raise LanguageOptionError("Programming language '{}' is currently not supported!".format(PROGRAMMING_LANGUAGE))
 

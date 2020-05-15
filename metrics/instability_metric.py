@@ -35,6 +35,8 @@ class InstabilityMetric:
 
         except FileNotFoundError as ex:
             warnings.warn('{} ...returning default values'.format(ex))
+        except plc.LanguageOptionError as ex:
+            warnings.warn(ex.args)
 
         return user_include_list, stl_include_list
 
@@ -118,7 +120,13 @@ class InstabilityMetric:
 
     def compute_instability(self):
         ''' encapsulate all methods necessary to compute the instability values for each component '''
-        self._list_of_user_files = fut.get_all_code_files(self._dir_path, plc.get_file_extensions_im())
+        allowed_file_extensions = []
+        try:
+            allowed_file_extensions = plc.get_file_extensions_im()
+        except plc.LanguageOptionError as ex:
+            warnings.warn(ex.args)
+            
+        self._list_of_user_files = fut.get_all_code_files(self._dir_path, allowed_file_extensions)
         self._create_user_include_matrix()
         self._add_stl_includes()
         self._fill_include_matrix()

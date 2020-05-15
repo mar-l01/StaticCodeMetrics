@@ -32,12 +32,14 @@ args = vars(parser.parse_args())
 
 # extract given arguments
 dir_path = args['directory_path']
-plc.PROGRAMMING_LANGUAGE = args['programming_language']
+prog_lang = args['programming_language']
 show_distance = args['distance']
 show_main_sequence = args['mainsequence']
 save_metric = args['save']
 save_metric_path = args['save_path']
 
+# set chosen programming language
+plc.PROGRAMMING_LANGUAGE = prog_lang
 
 # start respective application
 if show_distance:
