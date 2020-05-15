@@ -6,12 +6,17 @@ sys.path.append('metrics/')
 from main_sequence import MainSequence
 from distance_ia import DistanceIA
 
+sys.path.append('utils/')
+import ProgrammingLanguageConfig as plc
+
 # init parser
 parser = argparse.ArgumentParser(description='Perform static code checks on a set of files.')
 
-# required argument (directory to check)
+# required arguments (directory to check, programming language)
 parser.add_argument('-dp', '--directory-path', type=str, required=True, help='Path to the directory ' +
                     'which contains the files to check. All files from the provided directory will be checked recursively.')
+parser.add_argument('-pl', '--programming-language', type=str, required=True, help='Programming language ' +
+                    'which is used in files to check. Currently only "c++" is supported.')
 
 # either main-sequence or distance can be displayed
 metrics_group = parser.add_mutually_exclusive_group(required=True)
@@ -27,10 +32,12 @@ args = vars(parser.parse_args())
 
 # extract given arguments
 dir_path = args['directory_path']
+plc.PROGRAMMING_LANGUAGE = args['programming_language']
 show_distance = args['distance']
 show_main_sequence = args['mainsequence']
 save_metric = args['save']
 save_metric_path = args['save_path']
+
 
 # start respective application
 if show_distance:
