@@ -4,6 +4,7 @@ import sys
 sys.path.append('test/test_utils/')
 import Test_FileUtility as t_fu
 import Test_DataSeriesUtility as t_dsu
+import Test_ProgrammingLanguageConfig as t_plc
 
 sys.path.append('test/test_metrics')
 import Test_AbstractnessMetric as t_am
@@ -23,6 +24,9 @@ suite.addTests(unittest.makeSuite(t_fu.TestFileUtilitySaveMetricToFile))
 suite.addTests(unittest.makeSuite(t_dsu.TestDataSeriesUtilityGetInstabilityAndAbstractnessMetric))
 suite.addTests(unittest.makeSuite(t_dsu.TestDataSeriesUtilityPadDataSeriesWithDefaultValues))
 suite.addTests(unittest.makeSuite(t_dsu.TestDataSeriesReorderDataSeriesElements))
+
+# ProgrammingLanguageConfig
+suite.addTests(unittest.makeSuite(t_plc.TestProgrammingLanguageConfigAllGetterMethodsCPP))
 
 # AbstractnessMetric
 suite.addTests(unittest.makeSuite(t_am.TestAbstractnessMetricGetNumberOfInterfacesAndClassesOfFile))

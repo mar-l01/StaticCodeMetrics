@@ -5,7 +5,14 @@ PROGRAMMING_LANGUAGE = ''
 class LanguageOptionError(RuntimeError):
     ''' user-defined exception used if getter is not applicable to certain languages'''
     def __init__(self, arg):
-      self.args = arg
+        self.args = arg
+
+    def __str__(self):
+        error_string = ''
+        for chr in self.args:
+            error_string += chr
+
+        return "LanguageOptionError: {}".format(error_string)
 
 
 def get_file_extensions_im():
