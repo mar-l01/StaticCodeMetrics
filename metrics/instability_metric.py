@@ -125,7 +125,7 @@ class InstabilityMetric:
             allowed_file_extensions = plc.get_file_extensions_im()
         except plc.LanguageOptionError as ex:
             warnings.warn(ex.args)
-            
+
         self._list_of_user_files = fut.get_all_code_files(self._dir_path, allowed_file_extensions)
         self._create_user_include_matrix()
         self._add_stl_includes()

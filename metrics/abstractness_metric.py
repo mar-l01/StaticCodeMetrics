@@ -104,7 +104,7 @@ class AbstractnessMetric:
             allowed_file_extensions = plc.get_file_extensions_am()
         except plc.LanguageOptionError as ex:
             warnings.warn(ex.args)
-            
+
         self._list_of_files = fut.get_all_code_files(self._dir_path, allowed_file_extensions)
         self._search_files_for_interfaces()
         abstractness_metric = self._calculate_abstractness_for_each_file()
