@@ -6,13 +6,7 @@ import warnings
 # make utility scripts visible
 sys.path.append('utils/')
 import FileUtility as fut
-
-
-ALLOWED_FILE_EXTENSIONS = ['cpp', 'hpp', 'c', 'h']
-
-# includes-libraries (user/std) in C++ files
-PREFIX_STD_INCLUDE = '#include <'
-PREFIX_USER_INCLUDE = '#include "'
+import ProgrammingLanguageConfig as plc
 
 
 class InstabilityMetric:
@@ -30,17 +24,19 @@ class InstabilityMetric:
         try:
             with open(file_path, 'r') as file:
                 for line in file:
-                    if line.startswith(PREFIX_USER_INCLUDE):
+                    if line.startswith(plc.get_prefix_user_include_identifier()):
                         # ignore ending " to get the pure filename
-                        include_filename = line[len(PREFIX_USER_INCLUDE):].strip()[:-1]
+                        include_filename = line[len(plc.get_prefix_user_include_identifier()):].strip()[:-1]
                         user_include_list.append(include_filename)
-                    elif line.startswith(PREFIX_STD_INCLUDE):
+                    elif line.startswith(plc.get_prefix_standard_include_identifier()):
                         # ignore ending > to get the pure filename
-                        include_filename = line[len(PREFIX_STD_INCLUDE):].strip()[:-1]
+                        include_filename = line[len(plc.get_prefix_standard_include_identifier()):].strip()[:-1]
                         stl_include_list.append(include_filename)
 
         except FileNotFoundError as ex:
             warnings.warn('{} ...returning default values'.format(ex))
+        except plc.LanguageOptionError as ex:
+            warnings.warn(ex.args)
 
         return user_include_list, stl_include_list
 
@@ -124,7 +120,13 @@ class InstabilityMetric:
 
     def compute_instability(self):
         ''' encapsulate all methods necessary to compute the instability values for each component '''
-        self._list_of_user_files = fut.get_all_code_files(self._dir_path, ALLOWED_FILE_EXTENSIONS)
+        allowed_file_extensions = []
+        try:
+            allowed_file_extensions = plc.get_file_extensions_im()
+        except plc.LanguageOptionError as ex:
+            warnings.warn(ex.args)
+
+        self._list_of_user_files = fut.get_all_code_files(self._dir_path, allowed_file_extensions)
         self._create_user_include_matrix()
         self._add_stl_includes()
         self._fill_include_matrix()

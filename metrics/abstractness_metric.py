@@ -6,21 +6,7 @@ import warnings
 # make utility scripts visible
 sys.path.append('utils/')
 import FileUtility as fut
-
-
-ALLOWED_FILE_EXTENSIONS = ['hpp', 'h']
-
-# [\w()]* handles the __ declspec(dllexport)-part of class definition:
-# e.g. class __declspec(dllexport) ModbusTcpClient
-CLASS_IDENTIFIER = '\s*(class|struct)\s*[\w()]*\s*\w+\s*'  # noqa: W605
-
-# abstract methods in C++ are typically denoted by setting a virtual method equal to 0:
-# e.g. virtual void anAbstractMethod() = 0;
-# it starts with (virtual) and ends with (= 0;)
-ABSTRACT_METHOD_IDENTIFIER = '^(\s*virtual)\s+\w+\s*\w*\((.|\s)*\)\s*\w*\s*(=\s*0\s*;)$'  # noqa: W605
-
-# namespaces are indicated by namespace namespaceX
-NAMESPACE_IDENTIFIER = '^(\s*namespace)\s*\w*\s*'  # noqa: W605
+import ProgrammingLanguageConfig as plc
 
 
 class AbstractnessMetric:
@@ -54,24 +40,26 @@ class AbstractnessMetric:
                             class_definition_found = False
 
                     # find namespace
-                    if re.match(NAMESPACE_IDENTIFIER, line):
+                    if re.match(plc.get_namespace_identifier(), line):
                         counter_namespaces += 1
 
                     # find class
-                    if re.match(CLASS_IDENTIFIER, line):
+                    if re.match(plc.get_class_identifier(), line):
                         # indicate inside class definition
                         class_definition_found = True
                         nb_classes += 1
 
                     # find one abstract method
                     if class_definition_found:
-                        if re.match(ABSTRACT_METHOD_IDENTIFIER, line):
+                        if re.match(plc.get_abstract_method_identifier(), line):
                             # one virtual = 0 method is sufficient for an abstract class
                             nb_interfaces += 1
                             class_definition_found = False
 
         except FileNotFoundError as ex:
             warnings.warn('{} ...returning default values'.format(ex))
+        except plc.LanguageOptionError as ex:
+            warnings.warn(ex.args)
 
         return nb_interfaces, nb_classes
 
@@ -111,7 +99,13 @@ class AbstractnessMetric:
         1) get all code file which are considered for calculating the metric
         2) extract all interfaces/abstract classed from those files
         3) calculate the abstractness metric '''
-        self._list_of_files = fut.get_all_code_files(self._dir_path, ALLOWED_FILE_EXTENSIONS)
+        allowed_file_extensions = []
+        try:
+            allowed_file_extensions = plc.get_file_extensions_am()
+        except plc.LanguageOptionError as ex:
+            warnings.warn(ex.args)
+
+        self._list_of_files = fut.get_all_code_files(self._dir_path, allowed_file_extensions)
         self._search_files_for_interfaces()
         abstractness_metric = self._calculate_abstractness_for_each_file()
 

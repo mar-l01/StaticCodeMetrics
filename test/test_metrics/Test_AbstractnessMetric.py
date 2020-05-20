@@ -7,15 +7,18 @@ import warnings
 
 sys.path.append('utils/')
 import FileUtility as fut
+import ProgrammingLanguageConfig as plc
 
 sys.path.append('metrics/')
 from abstractness_metric import AbstractnessMetric
-from abstractness_metric import ALLOWED_FILE_EXTENSIONS
 
 # constants
 TEST_CODE_FILES = 'test/files/abstractness_metric_test_files/'
 ABSTRACT_CLASS_FILE = TEST_CODE_FILES + 'abstract_class.h'
 NON_ABSTRACT_CLASS_FILE = TEST_CODE_FILES + 'non_abstract_class.h'
+
+# set programming language to c++
+plc.PROGRAMMING_LANGUAGE = 'c++'
 
 
 def createUUT(dir_path=''):
@@ -179,6 +182,6 @@ class TestAbstractnessMetricComputeAbstractness(unittest.TestCase):
         abstractness_metric.compute_abstractness()
 
         # assert function calls
-        mocked_fut_get_func.assert_called_once_with(TEST_CODE_FILES, ALLOWED_FILE_EXTENSIONS)
+        mocked_fut_get_func.assert_called_once_with(TEST_CODE_FILES, plc.get_file_extensions_am())
         mocked_a_search_func.assert_called_once()
         mocked_a_calc_func.assert_called_once()
