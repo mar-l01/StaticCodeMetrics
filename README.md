@@ -22,7 +22,7 @@ The static code checker can be started using the command line:
 `-di`: Plot distance metric  
 `-ms`: Plot Main Sequence  
 `-s`: Save computed metrics (either instability and abstractness or distance in default directory)  
-`-sp`: Computed metrics are saved within provided <save-path> (if it exists)
+`-sp <save-path>`: Computed metrics are saved within provided path (but only if it exists)
 
 ## Testing
 Tests are written using Python's unittest library and can be locally executed using following command:  
