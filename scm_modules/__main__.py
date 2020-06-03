@@ -15,8 +15,8 @@ def main():
     parser = argparse.ArgumentParser(description='Perform static code checks on a set of files.')
 
     # required arguments (directory to check, programming language)
-    parser.add_argument('-dp', '--directory-path', type=str, required=True, help='Path to the directory ' +
-                        'which contains the files to check. All files from the provided directory will be checked recursively.')
+    parser.add_argument('-dp', '--directory-path', type=str, required=True, help='Path to the directory which' +
+                        'contains the files to check. All files from the provided directory will be checked recursively.')
     parser.add_argument('-pl', '--programming-language', type=str, required=True, help='Programming language ' +
                         'which is used in files to check. Currently only "c++" is supported.')
 
@@ -59,8 +59,8 @@ def main():
         # save metric if desired
         if save_metric:
             main_seq.save_metrics(save_metric_path if save_metric_path is not None else '')
-    
-    
+
+
 if __name__ == '__main__':
     main()
 

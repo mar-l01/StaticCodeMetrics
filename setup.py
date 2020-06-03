@@ -12,7 +12,7 @@ setup(
     author='Markus Loipfinger',
     author_email='m.loipfinger@hotmail.de',
     url='https://github.com/Markus2101/StaticCodeMetrics',
-    version='1.0.0',
+    version='1.0.1',
     license='GPL-3.0',
     classifiers=[
         'Programming Language :: Python :: 3',
