@@ -6,11 +6,11 @@ from unittest.mock import patch
 import sys
 
 # make utility scripts visible
-sys.path.append('utils/')
+sys.path.append('scm_modules/utils/')
 import DataSeriesUtility as dsu
 import FileUtility as fut
 
-sys.path.append('metrics/')
+sys.path.append('scm_modules/metrics/')
 from distance_ia import DistanceIA
 
 

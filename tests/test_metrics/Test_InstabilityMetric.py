@@ -6,14 +6,14 @@ from unittest.mock import patch
 import sys
 import warnings
 
-sys.path.append('utils/')
+sys.path.append('scm_modules/utils/')
 import FileUtility as fut
 
-sys.path.append('metrics/')
+sys.path.append('scm_modules/metrics/')
 from instability_metric import InstabilityMetric
 
 # constants
-TEST_CODE_FILES = 'test/files/instability_metric_test_files/'
+TEST_CODE_FILES = 'tests/files/instability_metric_test_files/'
 STD_LIB_INCLUDE_FILE = TEST_CODE_FILES + 'lib1.hpp'
 USER_LIB_INCLUDE_FILE = TEST_CODE_FILES + 'lib2.hpp'
 SOURCE_FILE = TEST_CODE_FILES + 'source.cpp'

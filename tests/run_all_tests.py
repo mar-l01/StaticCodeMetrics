@@ -1,12 +1,12 @@
 import unittest
 import sys
 
-sys.path.append('test/test_utils/')
+sys.path.append('tests/test_utils/')
 import Test_FileUtility as t_fu
 import Test_DataSeriesUtility as t_dsu
 import Test_ProgrammingLanguageConfig as t_plc
 
-sys.path.append('test/test_metrics')
+sys.path.append('tests/test_metrics')
 import Test_AbstractnessMetric as t_am
 import Test_InstabilityMetric as t_im
 import Test_DistanceIA as t_dia
