@@ -4,7 +4,7 @@ import sys
 import warnings
 
 # make utility scripts visible
-sys.path.append('utils/')
+sys.path.append('scm_modules/utils/')
 import DataSeriesUtility as dsu
 import FileUtility as fut
 

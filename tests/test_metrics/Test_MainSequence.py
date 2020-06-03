@@ -11,11 +11,11 @@ import sys
 import warnings
 
 # make utility scripts visible
-sys.path.append('utils/')
+sys.path.append('scm_modules/utils/')
 import DataSeriesUtility as dsu
 import FileUtility as fut
 
-sys.path.append('metrics/')
+sys.path.append('scm_modules/metrics/')
 from main_sequence import MainSequence
 
 

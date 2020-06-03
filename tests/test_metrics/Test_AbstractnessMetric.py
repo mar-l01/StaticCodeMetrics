@@ -5,15 +5,15 @@ from unittest.mock import patch
 import sys
 import warnings
 
-sys.path.append('utils/')
+sys.path.append('scm_modules/utils/')
 import FileUtility as fut
 import ProgrammingLanguageConfig as plc
 
-sys.path.append('metrics/')
+sys.path.append('scm_modules/metrics/')
 from abstractness_metric import AbstractnessMetric
 
 # constants
-TEST_CODE_FILES = 'test/files/abstractness_metric_test_files/'
+TEST_CODE_FILES = 'tests/files/abstractness_metric_test_files/'
 ABSTRACT_CLASS_FILE = TEST_CODE_FILES + 'abstract_class.h'
 NON_ABSTRACT_CLASS_FILE = TEST_CODE_FILES + 'non_abstract_class.h'
 
