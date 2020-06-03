@@ -1,8 +1,8 @@
 import pathlib
 from setuptools import setup
 
-# for long description, use REAMDE.md
-README = (pathlib.Path(__file__).parent / "README.md").read_text()
+# for long description, use README_PyPi.md
+README = (pathlib.Path(__file__).parent / "README_PyPi.md").read_text()
 
 setup(
     name='staticcodemetric-scm-pkg',
