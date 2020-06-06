@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import sys
 import warnings
 
 from scm_modules.utils import FileUtility, ProgrammingLanguageConfig

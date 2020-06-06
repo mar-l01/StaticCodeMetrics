@@ -1,5 +1,4 @@
 import pandas as pd
-import sys
 
 from scm_modules.metrics.instability_metric import InstabilityMetric
 from scm_modules.metrics.abstractness_metric import AbstractnessMetric

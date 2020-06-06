@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import sys
 
 from scm_modules.utils import DataSeriesUtility, FileUtility
 
