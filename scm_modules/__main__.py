@@ -1,13 +1,7 @@
 import argparse
-import sys
 
-# make main-sequence script visible
-sys.path.append('scm_modules/metrics/')
-from main_sequence import MainSequence
-from distance_ia import DistanceIA
-
-sys.path.append('scm_modules/utils/')
-import ProgrammingLanguageConfig as plc
+from scm_modules.metrics import main_sequence, distance_ia
+from scm_modules.utils import ProgrammingLanguageConfig
 
 
 def main():
@@ -41,11 +35,11 @@ def main():
     save_metric_path = args['save_path']
 
     # set chosen programming language
-    plc.PROGRAMMING_LANGUAGE = prog_lang
+    ProgrammingLanguageConfig.PROGRAMMING_LANGUAGE = prog_lang
 
     # start respective application
     if show_distance:
-        dist = DistanceIA(dir_path)
+        dist = distance_ia.DistanceIA(dir_path)
         dist.plot_distance()
 
         # save metric if desired
@@ -53,7 +47,7 @@ def main():
             dist.save_metric(save_metric_path if save_metric_path is not None else '')
 
     elif show_main_sequence:
-        main_seq = MainSequence(dir_path)
+        main_seq = main_sequence.MainSequence(dir_path)
         main_seq.plot_metrics()
 
         # save metric if desired

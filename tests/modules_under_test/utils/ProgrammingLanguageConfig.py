@@ -1,4 +1,4 @@
-from scm_modules.utils import ProgrammingLanguageConstants
+from utils import ProgrammingLanguageConstants
 
 PROGRAMMING_LANGUAGE = ''
 

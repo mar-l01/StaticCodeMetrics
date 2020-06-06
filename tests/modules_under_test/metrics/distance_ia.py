@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from scm_modules.utils import DataSeriesUtility, FileUtility
+import sys
+sys.path.append('tests/modules_under_test/')
+from utils import DataSeriesUtility, FileUtility
 
 
 class DistanceIA:

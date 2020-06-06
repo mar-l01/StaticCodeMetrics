@@ -12,13 +12,13 @@ setup(
     author='Markus Loipfinger',
     author_email='m.loipfinger@hotmail.de',
     url='https://github.com/Markus2101/StaticCodeMetrics',
-    version='1.0.1',
+    version='1.0.2',
     license='GPL-3.0',
     classifiers=[
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7',
     ],
-    packages=['scm_modules', 'scm_modules/metrics', 'scm_modules/utils'],
+    packages=['scm_modules', 'scm_modules.metrics', 'scm_modules.utils'],
     install_requires=['numpy', 'pandas', 'matplotlib'],
     entry_points={'console_scripts': ['staticcodemetric=scm_modules.__main__:main']}
 )

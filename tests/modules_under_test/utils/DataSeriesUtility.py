@@ -1,7 +1,9 @@
 import pandas as pd
 
-from scm_modules.metrics.instability_metric import InstabilityMetric
-from scm_modules.metrics.abstractness_metric import AbstractnessMetric
+import sys
+sys.path.append('tests/modules_under_test/metrics/')
+from instability_metric import InstabilityMetric
+from abstractness_metric import AbstractnessMetric
 
 
 # default value used to pad data-sequences to required size

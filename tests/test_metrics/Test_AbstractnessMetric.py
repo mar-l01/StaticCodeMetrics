@@ -2,23 +2,17 @@ import os
 import pandas as pd
 import unittest
 from unittest.mock import patch
-import sys
 import warnings
 
-sys.path.append('scm_modules/utils/')
-import FileUtility as fut
-import ProgrammingLanguageConfig as plc
+import utils.FileUtility as fut
+import utils.ProgrammingLanguageConfig as plc
 
-sys.path.append('scm_modules/metrics/')
-from abstractness_metric import AbstractnessMetric
+from metrics.abstractness_metric import AbstractnessMetric
 
 # constants
 TEST_CODE_FILES = 'tests/files/abstractness_metric_test_files/'
 ABSTRACT_CLASS_FILE = TEST_CODE_FILES + 'abstract_class.h'
 NON_ABSTRACT_CLASS_FILE = TEST_CODE_FILES + 'non_abstract_class.h'
-
-# set programming language to c++
-plc.PROGRAMMING_LANGUAGE = 'c++'
 
 
 def createUUT(dir_path=''):
@@ -75,7 +69,7 @@ class TestAbstractnessMetricGetNumberOfInterfacesAndClassesOfFile(unittest.TestC
 
 
 class TestAbstractnessMetricSearchFilesForInterfaces(unittest.TestCase):
-    @patch('abstractness_metric.AbstractnessMetric._get_number_of_interfaces_and_classes_of_file')
+    @patch('metrics.abstractness_metric.AbstractnessMetric._get_number_of_interfaces_and_classes_of_file')
     def testCorrectNumberOfFunctionCalls(self, mocked_a_get_func):
         '''
         Test that mocked function is called as often as files are present in the given directory
@@ -95,8 +89,8 @@ class TestAbstractnessMetricSearchFilesForInterfaces(unittest.TestCase):
             expected_nb_method_calls = len(os.listdir(TEST_CODE_FILES))
             self.assertEqual(mocked_a_get_func.call_count, expected_nb_method_calls)
 
-    @patch('abstractness_metric.AbstractnessMetric._get_number_of_interfaces_and_classes_of_file')
-    @patch('FileUtility.extract_filename')
+    @patch('metrics.abstractness_metric.AbstractnessMetric._get_number_of_interfaces_and_classes_of_file')
+    @patch('utils.FileUtility.extract_filename')
     def testCorrectSettingOfCellsInMatrix(self, mocked_fut_func, mocked_a_get_func):
         '''
         Test that a correct cell is set in the member-matrix
@@ -144,9 +138,9 @@ class TestAbstractnessMetricCalculateAbstractnessForEachFile(unittest.TestCase):
 
 
 class TestAbstractnessMetricComputeAbstractness(unittest.TestCase):
-    @patch('FileUtility.get_all_code_files')
-    @patch('abstractness_metric.AbstractnessMetric._search_files_for_interfaces')
-    @patch('abstractness_metric.AbstractnessMetric._calculate_abstractness_for_each_file')
+    @patch('utils.FileUtility.get_all_code_files')
+    @patch('metrics.abstractness_metric.AbstractnessMetric._search_files_for_interfaces')
+    @patch('metrics.abstractness_metric.AbstractnessMetric._calculate_abstractness_for_each_file')
     def testCorrectFunctionCallsWithEmptyFilePath(self, mocked_a_calc_func, mocked_a_search_func, mocked_fut_get_func):
         '''
         Test that the correct functions are invoked when an empty filepath was provided
@@ -165,9 +159,9 @@ class TestAbstractnessMetricComputeAbstractness(unittest.TestCase):
         mocked_a_search_func.assert_called_once()
         mocked_a_calc_func.assert_called_once()
 
-    @patch('FileUtility.get_all_code_files')
-    @patch('abstractness_metric.AbstractnessMetric._search_files_for_interfaces')
-    @patch('abstractness_metric.AbstractnessMetric._calculate_abstractness_for_each_file')
+    @patch('utils.FileUtility.get_all_code_files')
+    @patch('metrics.abstractness_metric.AbstractnessMetric._search_files_for_interfaces')
+    @patch('metrics.abstractness_metric.AbstractnessMetric._calculate_abstractness_for_each_file')
     def testCorrectFunctionCallsWithNonEmptyFilePath(self, mocked_a_calc_func, mocked_a_search_func, mocked_fut_get_func):
         '''
         Test that the correct functions are invoked when a non-empty filepath was provided

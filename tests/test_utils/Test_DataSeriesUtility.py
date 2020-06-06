@@ -4,10 +4,10 @@ import unittest
 from unittest.mock import patch
 import sys
 
-sys.path.append('scm_modules/utils/')
+sys.path.append('tests/modules_under_test/utils/')
 import DataSeriesUtility as dsu
 
-sys.path.append('scm_modules/metrics/')
+sys.path.append('tests/modules_under_test/metrics/')
 from instability_metric import InstabilityMetric
 from abstractness_metric import AbstractnessMetric
 

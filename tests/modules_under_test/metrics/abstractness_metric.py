@@ -2,7 +2,9 @@ import pandas as pd
 import re
 import warnings
 
-from scm_modules.utils import FileUtility, ProgrammingLanguageConfig
+import sys
+sys.path.append('tests/modules_under_test/')
+from utils import FileUtility, ProgrammingLanguageConfig
 
 
 class AbstractnessMetric:
