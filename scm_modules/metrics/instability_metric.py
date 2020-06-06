@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import warnings
 
-from scm_modules.utils import FileUtility, ProgrammingLanguageConfig as plc
+from scm_modules.utils import FileUtility, ProgrammingLanguageConfig
 
 
 class InstabilityMetric:

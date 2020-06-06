@@ -135,7 +135,7 @@ class MainSequence:
         ''' save both metrics to directory. If provided use user-defined directory '''
         # if not already computed get metrics
         if self._instability_metric is None or self._abstractness_metric is None:
-            self._instability_metric, self._abstractness_metric =
+            self._instability_metric, self._abstractness_metric = \
                 DataSeriesUtility.get_instability_and_abstractness_metric(self._dir_path)
 
         # save them
