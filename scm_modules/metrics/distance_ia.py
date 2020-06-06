@@ -2,10 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 
-# make utility scripts visible
-sys.path.append('scm_modules/utils/')
-import DataSeriesUtility as dsu
-import FileUtility as fut
+from scm_modules.utils import DataSeriesUtility, FileUtility
 
 
 class DistanceIA:
@@ -29,7 +26,7 @@ class DistanceIA:
         ''' show a diagram picturing the distance in each components, where
         - y-axis denotes the distance
         - x-axis denotes the different files/components '''
-        self._instability_metric, self._abstractness_metric = dsu.get_instability_and_abstractness_metric(self._dir_path)
+        self._instability_metric, self._abstractness_metric = DataSeriesUtility.get_instability_and_abstractness_metric(self._dir_path)
         self._calculate_distance()
 
         ind = np.arange(self._distance.size)
@@ -48,4 +45,4 @@ class DistanceIA:
             self._calculate_distance()
 
         # save it
-        fut.save_metric_to_file(self._distance, dir_path)
+        FileUtility.save_metric_to_file(self._distance, dir_path)

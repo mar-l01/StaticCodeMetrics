@@ -3,10 +3,7 @@ import re
 import sys
 import warnings
 
-# make utility scripts visible
-sys.path.append('scm_modules/utils/')
-import FileUtility as fut
-import ProgrammingLanguageConfig as plc
+from scm_modules.utils import FileUtility, ProgrammingLanguageConfig
 
 
 class AbstractnessMetric:
@@ -40,25 +37,25 @@ class AbstractnessMetric:
                             class_definition_found = False
 
                     # find namespace
-                    if re.match(plc.get_namespace_identifier(), line):
+                    if re.match(ProgrammingLanguageConfig.get_namespace_identifier(), line):
                         counter_namespaces += 1
 
                     # find class
-                    if re.match(plc.get_class_identifier(), line):
+                    if re.match(ProgrammingLanguageConfig.get_class_identifier(), line):
                         # indicate inside class definition
                         class_definition_found = True
                         nb_classes += 1
 
                     # find one abstract method
                     if class_definition_found:
-                        if re.match(plc.get_abstract_method_identifier(), line):
+                        if re.match(ProgrammingLanguageConfig.get_abstract_method_identifier(), line):
                             # one virtual = 0 method is sufficient for an abstract class
                             nb_interfaces += 1
                             class_definition_found = False
 
         except FileNotFoundError as ex:
             warnings.warn('{} ...returning default values'.format(ex))
-        except plc.LanguageOptionError as ex:
+        except ProgrammingLanguageConfig.LanguageOptionError as ex:
             warnings.warn(ex.args)
 
         return nb_interfaces, nb_classes
@@ -69,7 +66,7 @@ class AbstractnessMetric:
             nb_interfaces, nb_classes = self._get_number_of_interfaces_and_classes_of_file(file)
 
             # add amount of interfaces and classes to matrix
-            self._interface_class_matrix[fut.extract_filename(file)] = [nb_interfaces, nb_classes]
+            self._interface_class_matrix[FileUtility.extract_filename(file)] = [nb_interfaces, nb_classes]
 
     def _calculate_abstractness_for_each_file(self):
         ''' calculate the abstractness metric using A = Na / Nc:
@@ -101,11 +98,11 @@ class AbstractnessMetric:
         3) calculate the abstractness metric '''
         allowed_file_extensions = []
         try:
-            allowed_file_extensions = plc.get_file_extensions_am()
-        except plc.LanguageOptionError as ex:
+            allowed_file_extensions = ProgrammingLanguageConfig.get_file_extensions_am()
+        except ProgrammingLanguageConfig.LanguageOptionError as ex:
             warnings.warn(ex.args)
 
-        self._list_of_files = fut.get_all_code_files(self._dir_path, allowed_file_extensions)
+        self._list_of_files = FileUtility.get_all_code_files(self._dir_path, allowed_file_extensions)
         self._search_files_for_interfaces()
         abstractness_metric = self._calculate_abstractness_for_each_file()
 

@@ -1,4 +1,4 @@
-import ProgrammingLanguageConstants as plconst
+from scm_modules.utils import ProgrammingLanguageConstants
 
 PROGRAMMING_LANGUAGE = ''
 
@@ -18,21 +18,21 @@ class LanguageOptionError(RuntimeError):
 
 def get_file_extensions_im():
     if PROGRAMMING_LANGUAGE == 'c++':
-        return plconst.CPP_ALLOWED_FILE_EXTENSIONS_IM
+        return ProgrammingLanguageConstants.CPP_ALLOWED_FILE_EXTENSIONS_IM
     else:
         raise LanguageOptionError("Programming language '{}' is currently not supported!".format(PROGRAMMING_LANGUAGE))
 
 
 def get_file_extensions_am():
     if PROGRAMMING_LANGUAGE == 'c++':
-        return plconst.CPP_ALLOWED_FILE_EXTENSIONS_AM
+        return ProgrammingLanguageConstants.CPP_ALLOWED_FILE_EXTENSIONS_AM
     else:
         raise LanguageOptionError("Programming language '{}' is currently not supported!".format(PROGRAMMING_LANGUAGE))
 
 
 def get_class_identifier():
     if PROGRAMMING_LANGUAGE == 'c++':
-        return plconst.CPP_CLASS_IDENTIFIER
+        return ProgrammingLanguageConstants.CPP_CLASS_IDENTIFIER
     else:
         raise LanguageOptionError("Programming language '{}' is currently not supported!".format(PROGRAMMING_LANGUAGE))
 
@@ -46,27 +46,27 @@ def get_interface_identifier():
 
 def get_abstract_method_identifier():
     if PROGRAMMING_LANGUAGE == 'c++':
-        return plconst.CPP_ABSTRACT_METHOD_IDENTIFIER
+        return ProgrammingLanguageConstants.CPP_ABSTRACT_METHOD_IDENTIFIER
     else:
         raise LanguageOptionError("Programming language '{}' is currently not supported!".format(PROGRAMMING_LANGUAGE))
 
 
 def get_namespace_identifier():
     if PROGRAMMING_LANGUAGE == 'c++':
-        return plconst.CPP_NAMESPACE_IDENTIFIER
+        return ProgrammingLanguageConstants.CPP_NAMESPACE_IDENTIFIER
     else:
         raise LanguageOptionError("Programming language '{}' is currently not supported!".format(PROGRAMMING_LANGUAGE))
 
 
 def get_prefix_user_include_identifier():
     if PROGRAMMING_LANGUAGE == 'c++':
-        return plconst.CPP_PREFIX_USER_INCLUDE
+        return ProgrammingLanguageConstants.CPP_PREFIX_USER_INCLUDE
     else:
         raise LanguageOptionError("Programming language '{}' is currently not supported!".format(PROGRAMMING_LANGUAGE))
 
 
 def get_prefix_standard_include_identifier():
     if PROGRAMMING_LANGUAGE == 'c++':
-        return plconst.CPP_PREFIX_STD_INCLUDE
+        return ProgrammingLanguageConstants.CPP_PREFIX_STD_INCLUDE
     else:
         raise LanguageOptionError("Programming language '{}' is currently not supported!".format(PROGRAMMING_LANGUAGE))

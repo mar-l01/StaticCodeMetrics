@@ -3,10 +3,7 @@ import pandas as pd
 import sys
 import warnings
 
-# make utility scripts visible
-sys.path.append('scm_modules/utils/')
-import FileUtility as fut
-import ProgrammingLanguageConfig as plc
+from scm_modules.utils import FileUtility, ProgrammingLanguageConfig
 
 
 class InstabilityMetric:
@@ -24,18 +21,18 @@ class InstabilityMetric:
         try:
             with open(file_path, 'r') as file:
                 for line in file:
-                    if line.startswith(plc.get_prefix_user_include_identifier()):
+                    if line.startswith(ProgrammingLanguageConfig.get_prefix_user_include_identifier()):
                         # ignore ending " to get the pure filename
-                        include_filename = line[len(plc.get_prefix_user_include_identifier()):].strip()[:-1]
+                        include_filename = line[len(ProgrammingLanguageConfig.get_prefix_user_include_identifier()):].strip()[:-1]
                         user_include_list.append(include_filename)
-                    elif line.startswith(plc.get_prefix_standard_include_identifier()):
+                    elif line.startswith(ProgrammingLanguageConfig.get_prefix_standard_include_identifier()):
                         # ignore ending > to get the pure filename
-                        include_filename = line[len(plc.get_prefix_standard_include_identifier()):].strip()[:-1]
+                        include_filename = line[len(ProgrammingLanguageConfig.get_prefix_standard_include_identifier()):].strip()[:-1]
                         stl_include_list.append(include_filename)
 
         except FileNotFoundError as ex:
             warnings.warn('{} ...returning default values'.format(ex))
-        except plc.LanguageOptionError as ex:
+        except ProgrammingLanguageConfig.LanguageOptionError as ex:
             warnings.warn(ex.args)
 
         return user_include_list, stl_include_list
@@ -44,7 +41,7 @@ class InstabilityMetric:
         ''' create a 2D matrix with dim = m x n, where m is the number of user-included files '''
         m = len(self._list_of_user_files)
         null_matrix = np.zeros((m, m), dtype=int)
-        names = [fut.extract_filename(filepath) for filepath in self._list_of_user_files]
+        names = [FileUtility.extract_filename(filepath) for filepath in self._list_of_user_files]
         self._include_matrix = pd.DataFrame(null_matrix, index=names, columns=names)
 
     def _fill_include_matrix(self):
@@ -53,7 +50,7 @@ class InstabilityMetric:
         # check includes
         for filepath in self._list_of_user_files:
             # get filename which includes the following files
-            including_file = fut.extract_filename(filepath)
+            including_file = FileUtility.extract_filename(filepath)
 
             # get list of user-includes
             user_includes, stl_includes = self._get_includes_of_file(filepath)
@@ -122,11 +119,11 @@ class InstabilityMetric:
         ''' encapsulate all methods necessary to compute the instability values for each component '''
         allowed_file_extensions = []
         try:
-            allowed_file_extensions = plc.get_file_extensions_im()
-        except plc.LanguageOptionError as ex:
+            allowed_file_extensions = ProgrammingLanguageConfig.get_file_extensions_im()
+        except ProgrammingLanguageConfig.LanguageOptionError as ex:
             warnings.warn(ex.args)
 
-        self._list_of_user_files = fut.get_all_code_files(self._dir_path, allowed_file_extensions)
+        self._list_of_user_files = FileUtility.get_all_code_files(self._dir_path, allowed_file_extensions)
         self._create_user_include_matrix()
         self._add_stl_includes()
         self._fill_include_matrix()

@@ -1,10 +1,8 @@
 import pandas as pd
 import sys
 
-# make metric scripts visible
-sys.path.append('scm_modules/metrics/')
-from instability_metric import InstabilityMetric
-from abstractness_metric import AbstractnessMetric
+from scm_modules.metrics.instability_metric import InstabilityMetric
+from scm_modules.metrics.abstractness_metric import AbstractnessMetric
 
 
 # default value used to pad data-sequences to required size
