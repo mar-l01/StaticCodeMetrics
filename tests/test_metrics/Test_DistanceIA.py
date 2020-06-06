@@ -3,15 +3,11 @@ import numpy as np
 import pandas as pd
 import unittest
 from unittest.mock import patch
-import sys
 
-# make utility scripts visible
-sys.path.append('scm_modules/utils/')
-import DataSeriesUtility as dsu
-import FileUtility as fut
+import utils.DataSeriesUtility as dsu
+import utils.FileUtility as fut
 
-sys.path.append('scm_modules/metrics/')
-from distance_ia import DistanceIA
+from metrics.distance_ia import DistanceIA
 
 
 def createUUT():
@@ -44,8 +40,8 @@ class TestDistanceIAPlotDistance(unittest.TestCase):
     @patch('matplotlib.pyplot.xticks')
     @patch('matplotlib.pyplot.plot')
     @patch('matplotlib.pyplot.show')
-    @patch('DataSeriesUtility.get_instability_and_abstractness_metric')
-    @patch('distance_ia.DistanceIA._calculate_distance')
+    @patch('utils.DataSeriesUtility.get_instability_and_abstractness_metric')
+    @patch('metrics.distance_ia.DistanceIA._calculate_distance')
     def testCorrectFunctionCalls(self, mocked_d_func, mocked_dsu_func, mocked_show_func, mocked_plot_func,
                                  mocked_xticks_func, mocked_ylabel_func):
         '''
@@ -83,8 +79,8 @@ class TestDistanceIAPlotDistance(unittest.TestCase):
     @patch('matplotlib.pyplot.xticks')
     @patch('matplotlib.pyplot.plot')
     @patch('matplotlib.pyplot.show')
-    @patch('DataSeriesUtility.get_instability_and_abstractness_metric')
-    @patch('distance_ia.DistanceIA._calculate_distance')
+    @patch('utils.DataSeriesUtility.get_instability_and_abstractness_metric')
+    @patch('metrics.distance_ia.DistanceIA._calculate_distance')
     def testCorrectFunctionCallArguments(self, mocked_d_func, mocked_dsu_func, mocked_show_func,
                                          mocked_plot_func, mocked_xticks_func, mocked_ylabel_func):
         '''
@@ -133,7 +129,7 @@ class TestDistanceIAPlotDistance(unittest.TestCase):
 
 
 class TestDistanceIASaveMetrics(unittest.TestCase):
-    @patch('FileUtility.save_metric_to_file')
+    @patch('utils.FileUtility.save_metric_to_file')
     def testCorrectFunctionCallsIfMetricIsExisting(self, mocked_fut_save_func):
         '''
         Test that correct functions are invoked if metric is already existing
@@ -153,8 +149,8 @@ class TestDistanceIASaveMetrics(unittest.TestCase):
             # assert call
             mocked_fut_save_func.assert_called_once()
 
-    @patch('FileUtility.save_metric_to_file')
-    @patch('distance_ia.DistanceIA._calculate_distance')
+    @patch('utils.FileUtility.save_metric_to_file')
+    @patch('metrics.distance_ia.DistanceIA._calculate_distance')
     def testCorrectFunctionCallsIfMetricNotExisting(self, mocked_d_calc_func, mocked_fut_save_func):
         '''
         Test that correct functions are invoked if metrics is not existing

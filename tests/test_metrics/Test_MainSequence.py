@@ -7,16 +7,12 @@ import numpy as np
 import pandas as pd
 import unittest
 from unittest.mock import patch
-import sys
 import warnings
 
-# make utility scripts visible
-sys.path.append('scm_modules/utils/')
-import DataSeriesUtility as dsu
-import FileUtility as fut
+import utils.DataSeriesUtility as dsu
+import utils.FileUtility as fut
 
-sys.path.append('scm_modules/metrics/')
-from main_sequence import MainSequence
+from metrics.main_sequence import MainSequence
 
 
 def createUUT():
@@ -333,7 +329,7 @@ class TestMainSequenceDefineMotionAnnotationCallback(unittest.TestCase):
                 mocked_con_func.assert_not_called()
 
     @patch('matplotlib.backend_bases.FigureCanvasBase.mpl_connect')
-    @patch('main_sequence.MainSequence._annotate_point')
+    @patch('metrics.main_sequence.MainSequence._annotate_point')
     def testCallbackConnectionToMotionEvent(self, mocked_ms_anno_func, mocked_con_func):
         '''
         Test that the annotation-callback is correctly connected to Figure.Canvas
@@ -365,11 +361,11 @@ class TestMainSequenceDefineMotionAnnotationCallback(unittest.TestCase):
 
 
 class TestMainSequencePlotMetrics(unittest.TestCase):
-    @patch('DataSeriesUtility.get_instability_and_abstractness_metric')
+    @patch('utils.DataSeriesUtility.get_instability_and_abstractness_metric')
     @patch('matplotlib.axes.Axes.scatter')
     @patch('matplotlib.pyplot.show')
-    @patch('main_sequence.MainSequence._define_motion_annotation_callback')
-    @patch('main_sequence.MainSequence._layout_ax')
+    @patch('metrics.main_sequence.MainSequence._define_motion_annotation_callback')
+    @patch('metrics.main_sequence.MainSequence._layout_ax')
     def testCorrectFunctionCalls(self, mocked_ms_func, mocked_ms_cb_func, mocked_show_func, mocked_scatter_func,
                                  mocked_dsu_func):
         '''
@@ -404,11 +400,11 @@ class TestMainSequencePlotMetrics(unittest.TestCase):
             mocked_ms_cb_func.assert_called_once()
             mocked_show_func.assert_called_once()
 
-    @patch('DataSeriesUtility.get_instability_and_abstractness_metric')
+    @patch('utils.DataSeriesUtility.get_instability_and_abstractness_metric')
     @patch('matplotlib.axes.Axes.scatter')
     @patch('matplotlib.pyplot.show')
-    @patch('main_sequence.MainSequence._define_motion_annotation_callback')
-    @patch('main_sequence.MainSequence._layout_ax')
+    @patch('metrics.main_sequence.MainSequence._define_motion_annotation_callback')
+    @patch('metrics.main_sequence.MainSequence._layout_ax')
     def testCorrectFunctionCallArguments(self, mocked_ms_func, mocked_ms_cb_func, mocked_show_func, mocked_scatter_func,
                                          mocked_dsu_func):
         '''
@@ -450,7 +446,7 @@ class TestMainSequencePlotMetrics(unittest.TestCase):
 
 
 class TestMainSequenceSaveMetrics(unittest.TestCase):
-    @patch('FileUtility.save_metric_to_file')
+    @patch('utils.FileUtility.save_metric_to_file')
     def testCorrectFunctionCallsIfMetricsAreExisting(self, mocked_fut_save_func):
         '''
         Test that correct functions are invoked if metrics are already existing
@@ -474,8 +470,8 @@ class TestMainSequenceSaveMetrics(unittest.TestCase):
                              mocked_fut_save_func(mocked_abs_metric, '')]
                 mocked_fut_save_func.has_calls(call_list)
 
-    @patch('DataSeriesUtility.get_instability_and_abstractness_metric')
-    @patch('FileUtility.save_metric_to_file')
+    @patch('utils.DataSeriesUtility.get_instability_and_abstractness_metric')
+    @patch('utils.FileUtility.save_metric_to_file')
     def testCorrectFunctionCallsIfMetricsNotExisting(self, mocked_fut_save_func, mocked_dsu_get_func):
         '''
         Test that correct functions are invoked if metrics are not existing

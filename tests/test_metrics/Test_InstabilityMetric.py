@@ -3,14 +3,11 @@ import os
 import pandas as pd
 import unittest
 from unittest.mock import patch
-import sys
 import warnings
 
-sys.path.append('scm_modules/utils/')
-import FileUtility as fut
+import utils.FileUtility as fut
 
-sys.path.append('scm_modules/metrics/')
-from instability_metric import InstabilityMetric
+from metrics.instability_metric import InstabilityMetric
 
 # constants
 TEST_CODE_FILES = 'tests/files/instability_metric_test_files/'
@@ -83,7 +80,7 @@ class TestInstabilityMetricGetIncludesOfFile(unittest.TestCase):
 
 
 class TestInstabilityMetricCreateUserIncludeMatrix(unittest.TestCase):
-    @patch('FileUtility.extract_filename')
+    @patch('utils.FileUtility.extract_filename')
     def testCorrectSizeOfMatrix(self, mocked_fut_func):
         '''
         Test that the size of the returned matrix is correct
@@ -102,7 +99,7 @@ class TestInstabilityMetricCreateUserIncludeMatrix(unittest.TestCase):
             # assert correct size of matrix
             self.assertEqual(instability_metric._include_matrix.shape, instability_metric._include_matrix.shape)
 
-    @patch('FileUtility.extract_filename')
+    @patch('utils.FileUtility.extract_filename')
     def testCorrectIndexAndColumnLabelsOfMatrix(self, mocked_fut_func):
         '''
         Test that the rows and columns are labeled correctly depending on the filenames
@@ -127,8 +124,8 @@ class TestInstabilityMetricCreateUserIncludeMatrix(unittest.TestCase):
 
 
 class TestInstabilityMetricFillIncludeMatrix(unittest.TestCase):
-    @patch('FileUtility.extract_filename')
-    @patch('instability_metric.InstabilityMetric._get_includes_of_file')
+    @patch('utils.FileUtility.extract_filename')
+    @patch('metrics.instability_metric.InstabilityMetric._get_includes_of_file')
     def testCheckMatrixIfNoIncludes(self, mocked_i_func, mocked_fut_func):
         '''
         Test that the member-matrix remains unchanged (only 0s), if no include files are found
@@ -158,8 +155,8 @@ class TestInstabilityMetricFillIncludeMatrix(unittest.TestCase):
                 mocked_i_func.assert_called()
                 self.assertTrue(instability_metric._include_matrix.equals(expected_include_matrix))
 
-    @patch('FileUtility.extract_filename')
-    @patch('instability_metric.InstabilityMetric._get_includes_of_file')
+    @patch('utils.FileUtility.extract_filename')
+    @patch('metrics.instability_metric.InstabilityMetric._get_includes_of_file')
     def testCheckMatrixIfIncludes(self, mocked_i_func, mocked_fut_func):
         '''
         Test that the correct member-matrix is returned, if include files are found
@@ -205,7 +202,7 @@ class TestInstabilityMetricFillIncludeMatrix(unittest.TestCase):
 
 
 class TestInstabilityMetricAddStlIncludes(unittest.TestCase):
-    @patch('instability_metric.InstabilityMetric._get_includes_of_file')
+    @patch('metrics.instability_metric.InstabilityMetric._get_includes_of_file')
     def testEmtpyStlIncludes(self, mocked_i_func):
         '''
         Test that no column is added to existing matrix if no STL includes are found
@@ -231,7 +228,7 @@ class TestInstabilityMetricAddStlIncludes(unittest.TestCase):
                 self.assertTrue(instability_metric._include_matrix.equals(expected_include_matrix))
                 self.assertEqual(instability_metric._include_matrix.shape, expected_include_matrix.shape)
 
-    @patch('instability_metric.InstabilityMetric._get_includes_of_file')
+    @patch('metrics.instability_metric.InstabilityMetric._get_includes_of_file')
     def testNonEmtpyStlIncludes(self, mocked_i_func):
         '''
         Test that columns are added to existing matrix if STL includes are found
@@ -256,7 +253,7 @@ class TestInstabilityMetricAddStlIncludes(unittest.TestCase):
                 mocked_i_func.assert_called()
                 self.assertEqual(instability_metric._include_matrix.shape, expected_include_matrix_shape)
 
-    @patch('instability_metric.InstabilityMetric._get_includes_of_file')
+    @patch('metrics.instability_metric.InstabilityMetric._get_includes_of_file')
     def testNoDuplicatedStlIncludes(self, mocked_i_func):
         '''
         Test that duplicated stl-includes are added as a single column
@@ -315,8 +312,8 @@ class TestInstabilityMetricGetAllFanOut(unittest.TestCase):
 
 
 class TestInstabilityMetricCalculateInstabilityForEachFile(unittest.TestCase):
-    @patch('instability_metric.InstabilityMetric._get_all_fan_out')
-    @patch('instability_metric.InstabilityMetric._get_all_fan_in')
+    @patch('metrics.instability_metric.InstabilityMetric._get_all_fan_out')
+    @patch('metrics.instability_metric.InstabilityMetric._get_all_fan_in')
     def testCorrectCalculation(self, mocked_i_func_in, mocked_i_func_out):
         '''
         Test that a the instability metric is computed correctly
@@ -356,11 +353,11 @@ class TestInstabilityMetricCalculateInstabilityForEachFile(unittest.TestCase):
 
 
 class TestInstabilityMetricComputeInstability(unittest.TestCase):
-    @patch('FileUtility.get_all_code_files')
-    @patch('instability_metric.InstabilityMetric._create_user_include_matrix')
-    @patch('instability_metric.InstabilityMetric._add_stl_includes')
-    @patch('instability_metric.InstabilityMetric._fill_include_matrix')
-    @patch('instability_metric.InstabilityMetric._calculate_instability_for_each_file')
+    @patch('utils.FileUtility.get_all_code_files')
+    @patch('metrics.instability_metric.InstabilityMetric._create_user_include_matrix')
+    @patch('metrics.instability_metric.InstabilityMetric._add_stl_includes')
+    @patch('metrics.instability_metric.InstabilityMetric._fill_include_matrix')
+    @patch('metrics.instability_metric.InstabilityMetric._calculate_instability_for_each_file')
     def testCorrectFunctionCallsWithEmptyFilePath(self, mocked_i_calc_func, mocked_i_fill_func, mocked_i_add_func,
                                                   mocked_i_create_func, mocked_fut_get_func):
         '''
@@ -384,11 +381,11 @@ class TestInstabilityMetricComputeInstability(unittest.TestCase):
         mocked_i_fill_func.assert_called_once()
         mocked_i_calc_func.assert_called_once()
 
-    @patch('FileUtility.get_all_code_files')
-    @patch('instability_metric.InstabilityMetric._create_user_include_matrix')
-    @patch('instability_metric.InstabilityMetric._add_stl_includes')
-    @patch('instability_metric.InstabilityMetric._fill_include_matrix')
-    @patch('instability_metric.InstabilityMetric._calculate_instability_for_each_file')
+    @patch('utils.FileUtility.get_all_code_files')
+    @patch('metrics.instability_metric.InstabilityMetric._create_user_include_matrix')
+    @patch('metrics.instability_metric.InstabilityMetric._add_stl_includes')
+    @patch('metrics.instability_metric.InstabilityMetric._fill_include_matrix')
+    @patch('metrics.instability_metric.InstabilityMetric._calculate_instability_for_each_file')
     def testCorrectFunctionCallsWithNonEmptyFilePath(self, mocked_i_calc_func, mocked_i_fill_func, mocked_i_add_func,
                                                      mocked_i_create_func, mocked_fut_get_func):
         '''

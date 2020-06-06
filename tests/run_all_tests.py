@@ -12,6 +12,11 @@ import Test_InstabilityMetric as t_im
 import Test_DistanceIA as t_dia
 import Test_MainSequence as t_ms
 
+# append path to include all modules to test
+sys.path.append('tests/modules_under_test/')
+from utils import ProgrammingLanguageConfig as plc
+plc.PROGRAMMING_LANGUAGE = 'c++'
+
 # create TestSuite with all testcases
 suite = unittest.TestSuite()
 

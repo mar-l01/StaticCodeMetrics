@@ -5,7 +5,7 @@ from unittest.mock import patch
 import warnings
 import sys
 
-sys.path.append('scm_modules/utils/')
+sys.path.append('tests/modules_under_test/utils/')
 import FileUtility as fut
 
 

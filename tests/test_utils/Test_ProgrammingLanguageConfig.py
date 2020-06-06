@@ -1,7 +1,7 @@
 import unittest
 import sys
 
-sys.path.append('scm_modules/utils/')
+sys.path.append('tests/modules_under_test/utils/')
 import ProgrammingLanguageConfig as plc
 import ProgrammingLanguageConstants as plconst
 
