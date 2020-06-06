@@ -113,7 +113,8 @@ class MainSequence:
         ''' show a diagram picturing the Main Sequence, where
         - y-axis denotes the Abstractness
         - x-axis denotes the Instability '''
-        self._instability_metric, self._abstractness_metric = DataSeriesUtility.get_instability_and_abstractness_metric(self._dir_path)
+        self._instability_metric, self._abstractness_metric =
+            DataSeriesUtility.get_instability_and_abstractness_metric(self._dir_path)
 
         # create basic layout format
         ax = self._layout_ax()
@@ -134,7 +135,8 @@ class MainSequence:
         ''' save both metrics to directory. If provided use user-defined directory '''
         # if not already computed get metrics
         if self._instability_metric is None or self._abstractness_metric is None:
-            self._instability_metric, self._abstractness_metric = DataSeriesUtility.get_instability_and_abstractness_metric(self._dir_path)
+            self._instability_metric, self._abstractness_metric =
+                DataSeriesUtility.get_instability_and_abstractness_metric(self._dir_path)
 
         # save them
         FileUtility.save_metric_to_file(self._instability_metric, dir_path)

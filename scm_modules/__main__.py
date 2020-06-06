@@ -1,5 +1,4 @@
 import argparse
-import sys
 
 from scm_modules.metrics import main_sequence, distance_ia
 from scm_modules.utils import ProgrammingLanguageConfig

@@ -25,7 +25,8 @@ class DistanceIA:
         ''' show a diagram picturing the distance in each components, where
         - y-axis denotes the distance
         - x-axis denotes the different files/components '''
-        self._instability_metric, self._abstractness_metric = DataSeriesUtility.get_instability_and_abstractness_metric(self._dir_path)
+        self._instability_metric, self._abstractness_metric =
+            DataSeriesUtility.get_instability_and_abstractness_metric(self._dir_path)
         self._calculate_distance()
 
         ind = np.arange(self._distance.size)
