@@ -113,7 +113,7 @@ class MainSequence:
         ''' show a diagram picturing the Main Sequence, where
         - y-axis denotes the Abstractness
         - x-axis denotes the Instability '''
-        self._instability_metric, self._abstractness_metric =
+        self._instability_metric, self._abstractness_metric = \
             DataSeriesUtility.get_instability_and_abstractness_metric(self._dir_path)
 
         # create basic layout format

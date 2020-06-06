@@ -22,12 +22,12 @@ class InstabilityMetric:
                 for line in file:
                     if line.startswith(ProgrammingLanguageConfig.get_prefix_user_include_identifier()):
                         # ignore ending " to get the pure filename
-                        include_filename =
+                        include_filename = \
                             line[len(ProgrammingLanguageConfig.get_prefix_user_include_identifier()):].strip()[:-1]
                         user_include_list.append(include_filename)
                     elif line.startswith(ProgrammingLanguageConfig.get_prefix_standard_include_identifier()):
                         # ignore ending > to get the pure filename
-                        include_filename =
+                        include_filename = \
                             line[len(ProgrammingLanguageConfig.get_prefix_standard_include_identifier()):].strip()[:-1]
                         stl_include_list.append(include_filename)
 
