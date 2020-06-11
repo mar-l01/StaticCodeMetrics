@@ -3,8 +3,12 @@ from pathlib import Path
 import shutil
 import sys
 
+# constants
+DELIMITER = '\\'
+
+# directory constants
 SRC_DIR_METRICS = 'scm_modules/metrics'
-SRC_DIR_UTILS = 'scm_modules/metrics'
+SRC_DIR_UTILS = 'scm_modules/utils'
 DEST_DIR_METRICS = 'tests/testmodules/metrics'
 DEST_DIR_UTILS = 'tests/testmodules/utils'
 
@@ -36,6 +40,7 @@ def _get_utils_files():
     return utils_files
 
 
+
 def _copy_files():
     metrics_files = _get_metrics_files()
     utils_files = _get_utils_files()
@@ -44,16 +49,22 @@ def _copy_files():
         # __init__.py should not be considered
         if not '__init__.py' in m_file:
             try:
-                shutil.copy(m_file, DEST_DIR_METRICS)
+                filename = m_file.split(DELIMITER)[-1]
+                dest_file_path = Path.joinpath(Path.cwd().absolute(), DEST_DIR_METRICS + DELIMITER + filename)
+                shutil.copyfile(m_file, dest_file_path)
+                print('Copied file {} to directory {}..'.format(filename, DEST_DIR_METRICS))
             except Exception as ex:
                 print('Failed to copy file {} to directory {}'.format(m_file, DEST_DIR_METRICS))
                 return 1
-                
+
     for u_file in utils_files:
         # __init__.py should not be considered
         if not '__init__.py' in u_file:
             try:
-                shutil.copy(u_file, DEST_DIR_UTILS)
+                filename = u_file.split(DELIMITER)[-1]
+                dest_file_path = Path.joinpath(Path.cwd().absolute(), DEST_DIR_UTILS + DELIMITER + filename)
+                shutil.copyfile(u_file, dest_file_path)
+                print('Copied file {} to directory {}..'.format(filename, DEST_DIR_UTILS))
             except Exception as ex:
                 print('Failed to copy file {} to directory {}'.format(u_file, DEST_DIR_UTILS))
                 return 1
