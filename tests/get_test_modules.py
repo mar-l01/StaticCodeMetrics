@@ -40,33 +40,32 @@ def _get_utils_files():
     return utils_files
 
 
-
 def _copy_files():
     metrics_files = _get_metrics_files()
     utils_files = _get_utils_files()
 
     for m_file in metrics_files:
         # __init__.py should not be considered
-        if not '__init__.py' in m_file:
+        if '__init__.py' not in m_file:
             try:
                 filename = m_file.split(DELIMITER)[-1]
                 dest_file_path = Path.joinpath(Path.cwd().absolute(), DEST_DIR_METRICS + DELIMITER + filename)
                 shutil.copyfile(m_file, dest_file_path)
                 print('Copied file {} to directory {}..'.format(filename, DEST_DIR_METRICS))
             except Exception as ex:
-                print('Failed to copy file {} to directory {}'.format(m_file, DEST_DIR_METRICS))
+                print('Failed to copy file {} to directory {} with error {}!'.format(m_file, DEST_DIR_METRICS, ex))
                 return 1
 
     for u_file in utils_files:
         # __init__.py should not be considered
-        if not '__init__.py' in u_file:
+        if '__init__.py' not in u_file:
             try:
                 filename = u_file.split(DELIMITER)[-1]
                 dest_file_path = Path.joinpath(Path.cwd().absolute(), DEST_DIR_UTILS + DELIMITER + filename)
                 shutil.copyfile(u_file, dest_file_path)
                 print('Copied file {} to directory {}..'.format(filename, DEST_DIR_UTILS))
             except Exception as ex:
-                print('Failed to copy file {} to directory {}'.format(u_file, DEST_DIR_UTILS))
+                print('Failed to copy file {} to directory {} with error {}!'.format(u_file, DEST_DIR_UTILS, ex))
                 return 1
 
     return 0
