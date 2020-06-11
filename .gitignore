@@ -29,6 +29,7 @@ MANIFEST
 
 # default created folder
 saved_metrics/
+tests/testmodules/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
