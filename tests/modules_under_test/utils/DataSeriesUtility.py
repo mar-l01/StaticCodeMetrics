@@ -3,8 +3,7 @@ import pandas as pd
 import sys
 sys.path.append('tests/modules_under_test/metrics/')
 from instability_metric import InstabilityMetric
-
-
+from abstractness_metric import AbstractnessMetric
 
 # default value used to pad data-sequences to required size
 DEFAULT_PADDING_VALUE = 0

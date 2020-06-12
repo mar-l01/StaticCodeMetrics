@@ -7,7 +7,6 @@ sys.path.append('tests/modules_under_test/')
 from utils import DataSeriesUtility, FileUtility
 
 
-
 class MainSequence:
     def __init__(self, dir_path):
         self._dir_path = dir_path
