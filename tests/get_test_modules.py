@@ -9,12 +9,14 @@ DELIMITER = '\\'
 # directory constants
 SRC_DIR_METRICS = 'scm_modules/metrics'
 SRC_DIR_UTILS = 'scm_modules/utils'
-DEST_DIR_METRICS = 'tests/testmodules/metrics'
-DEST_DIR_UTILS = 'tests/testmodules/utils'
+DEST_DIR_METRICS = 'tests/modules_under_test/metrics'
+DEST_DIR_UTILS = 'tests/modules_under_test/utils'
 
 # file edit constants
 IMPORT_METRICS_RE = '^from scm_modules.metrics.\w+ import'
 IMPORT_UTILS_RE = '^from scm_modules.utils import'
+IMPORT_PATH_METRICS = 'tests/modules_under_test/metrics/'
+IMPORT_PATH_UTILS = 'tests/modules_under_test/'
 
 
 def _create_env():
@@ -41,24 +43,24 @@ def _get_import_statements(import_definition):
     '''
     split up import-path into its different paths, e.g.
     [from] [scm_modules.utils] [import] [FileUtility, ProgrammingLanguageConfig]
-    
+
     return tests/testmodules/, utils, [FileUtility, ProgrammingLanguageConfig]
     '''
     import_stmnt = import_definition.split(' ')
-    
+
     # import paths are defined as point-separated module-names
     import_path = import_stmnt[1].split('.')
     import_module = import_path[-1].strip()
-    
+
     # modules are appended as comma-separated list
     modules = import_stmnt[3:]
-    
+
     # here: metrics import is different from utils import
     if 'metrics' in import_path:
-        import_path = 'tests/testmodules/metrics/'
+        import_path = IMPORT_PATH_METRICS
     else:
-        import_path = 'tests/testmodules/'
-        
+        import_path = IMPORT_PATH_UTILS
+
     return import_path, import_module, modules
 
 
@@ -69,19 +71,19 @@ def _get_lines_to_add(import_path, import_module, modules):
     lines_to_add = 'import sys\n'
     lines_to_add += "sys.path.append('{}')\n".format(import_path)
     lines_to_add += "from {} import ".format(import_module)
-    
+
     for module in modules:
         lines_to_add += module.strip(', ')
         lines_to_add += ', '
-        
+
     # remove last ', '
     return lines_to_add.strip(', ')
-    
+
 
 def _edit_file(file_in, file_out):
     '''
     use file_in and write edited file to file_out
-    
+
     find 'from scm_modules.utils import' and replace it with
         import sys
         sys.path.append('tests/modules_under_test/')
@@ -92,6 +94,8 @@ def _edit_file(file_in, file_out):
         sys.path.append('tests/modules_under_test/metrics/')
         from instability_metric import InstabilityMetric
     '''
+    sys_already_added = False
+
     with open(file_in, 'r') as f_in:
         with open(file_out, 'w') as f_out:
             for line in f_in:
@@ -99,13 +103,20 @@ def _edit_file(file_in, file_out):
                 if re.match(IMPORT_METRICS_RE, line) or re.match(IMPORT_UTILS_RE, line):
                     # get import path and modules
                     import_path, import_module, modules = _get_import_statements(line)
-                     
+
                     # create altered import statements
                     altered_imports = _get_lines_to_add(import_path, import_module, modules)
-                    f_out.write(altered_imports)
+
+                    # do not add import sys and sys.path.append() twice
+                    if sys_already_added:
+                        f_out.write(altered_imports.split('\n')[-2])
+                    else:
+                        f_out.write(altered_imports)
+                        sys_already_added = True
+
                 else:
-                    f_out.write(line)      
-    
+                    f_out.write(line)
+
 
 def _copy_module_files(module_files, dest_dir):
     '''
@@ -123,17 +134,17 @@ def _copy_module_files(module_files, dest_dir):
             except Exception as ex:
                 print('Failed to copy file {} to directory {} with error {}!'.format(file, dest_dir, ex))
                 return 1
-    
+
     return 0
 
 
 def _copy_files():
     metrics_files = _get_module_files(SRC_DIR_METRICS)
     utils_files = _get_module_files(SRC_DIR_UTILS)
-    
+
     if _copy_module_files(metrics_files, DEST_DIR_METRICS) or _copy_module_files(utils_files, DEST_DIR_UTILS):
         return 1
-    
+
     return 0
 
 
