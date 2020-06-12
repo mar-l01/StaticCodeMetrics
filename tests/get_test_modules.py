@@ -48,10 +48,10 @@ def _get_import_statements(import_definition):
     
     # import paths are defined as point-separated module-names
     import_path = import_stmnt[1].split('.')
-    import_upper_module = import_path[-1]
+    import_module = import_path[-1].strip()
     
     # modules are appended as comma-separated list
-    import_modules = import_stmnt[3:]
+    modules = import_stmnt[3:]
     
     # here: metrics import is different from utils import
     if 'metrics' in import_path:
@@ -59,8 +59,24 @@ def _get_import_statements(import_definition):
     else:
         import_path = 'tests/testmodules/'
         
-    return import_path, import_upper_module, import_modules
+    return import_path, import_module, modules
 
+
+def _get_lines_to_add(import_path, import_module, modules):
+    '''
+    use provided data to return a string to be written to a file
+    '''
+    lines_to_add = 'import sys\n'
+    lines_to_add += "sys.path.append('{}')\n".format(import_path)
+    lines_to_add += "from {} import ".format(import_module)
+    
+    for module in modules:
+        lines_to_add += module.strip(', ')
+        lines_to_add += ', '
+        
+    # remove last ', '
+    return lines_to_add.strip(', ')
+    
 
 def _edit_file(file_in, file_out):
     '''
@@ -85,9 +101,8 @@ def _edit_file(file_in, file_out):
                     import_path, import_module, modules = _get_import_statements(line)
                      
                     # create altered import statements
-                    f_out.write('import sys')
-                    f_out.write('sys.path.append({})'.format(import_path))
-                    f_out.write('from {} import {}'.format(import_module, modules))
+                    altered_imports = _get_lines_to_add(import_path, import_module, modules)
+                    f_out.write(altered_imports)
                 else:
                     f_out.write(line)      
     
