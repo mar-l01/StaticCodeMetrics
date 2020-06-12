@@ -1,6 +1,6 @@
 import glob
 from pathlib import Path
-import shutil
+import re
 import sys
 
 # constants
@@ -11,6 +11,10 @@ SRC_DIR_METRICS = 'scm_modules/metrics'
 SRC_DIR_UTILS = 'scm_modules/utils'
 DEST_DIR_METRICS = 'tests/testmodules/metrics'
 DEST_DIR_UTILS = 'tests/testmodules/utils'
+
+# file edit constants
+IMPORT_METRICS_RE = '^from scm_modules.metrics.\w+ import'
+IMPORT_UTILS_RE = '^from scm_modules.utils import'
 
 
 def _create_env():
@@ -33,15 +37,74 @@ def _get_module_files(src_dir):
     return metrics_files
 
 
+def _get_import_statements(import_definition):
+    '''
+    split up import-path into its different paths, e.g.
+    [from] [scm_modules.utils] [import] [FileUtility, ProgrammingLanguageConfig]
+    
+    return tests/testmodules/, utils, [FileUtility, ProgrammingLanguageConfig]
+    '''
+    import_stmnt = import_definition.split(' ')
+    
+    # import paths are defined as point-separated module-names
+    import_path = import_stmnt[1].split('.')
+    import_upper_module = import_path[-1]
+    
+    # modules are appended as comma-separated list
+    import_modules = import_stmnt[3:]
+    
+    # here: metrics import is different from utils import
+    if 'metrics' in import_path:
+        import_path = 'tests/testmodules/metrics/'
+    else:
+        import_path = 'tests/testmodules/'
+        
+    return import_path, import_upper_module, import_modules
+
+
+def _edit_file(file_in, file_out):
+    '''
+    use file_in and write edited file to file_out
+    
+    find 'from scm_modules.utils import' and replace it with
+        import sys
+        sys.path.append('tests/modules_under_test/')
+        from utils import FileUtility, ProgrammingLanguageConfig
+    OR
+    find 'from scm_modules.metrics.instability_metric import' replace it with:
+        import sys
+        sys.path.append('tests/modules_under_test/metrics/')
+        from instability_metric import InstabilityMetric
+    '''
+    with open(file_in, 'r') as f_in:
+        with open(file_out, 'w') as f_out:
+            for line in f_in:
+                # find import statements
+                if re.match(IMPORT_METRICS_RE, line) or re.match(IMPORT_UTILS_RE, line):
+                    # get import path and modules
+                    import_path, import_module, modules = _get_import_statements(line)
+                     
+                    # create altered import statements
+                    f_out.write('import sys')
+                    f_out.write('sys.path.append({})'.format(import_path))
+                    f_out.write('from {} import {}'.format(import_module, modules))
+                else:
+                    f_out.write(line)      
+    
+
 def _copy_module_files(module_files, dest_dir):
+    '''
+    since Python-files need to be altered before copied to new path, copying is done
+    by editing and writing the file to copy to the new path
+    '''
     for file in module_files:
         # __init__.py should not be considered
         if '__init__.py' not in file:
             try:
                 filename = file.split(DELIMITER)[-1]
                 dest_file_path = Path.joinpath(Path.cwd().absolute(), dest_dir + DELIMITER + filename)
-                shutil.copyfile(file, dest_file_path)
-                print('Copied file {} to directory {}..'.format(filename, dest_dir))
+                _edit_file(file, dest_file_path)
+                print('Edited and copied file {} to directory {}..'.format(filename, dest_dir))
             except Exception as ex:
                 print('Failed to copy file {} to directory {} with error {}!'.format(file, dest_dir, ex))
                 return 1
