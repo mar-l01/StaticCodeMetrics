@@ -3,8 +3,6 @@ from pathlib import Path
 import re
 import sys
 
-# constants
-DELIMITER = '\\'
 
 # directory constants
 SRC_DIR_METRICS = 'scm_modules/metrics'
@@ -127,8 +125,9 @@ def _copy_module_files(module_files, dest_dir):
         # __init__.py should not be considered
         if '__init__.py' not in file:
             try:
-                filename = file.split(DELIMITER)[-1]
-                dest_file_path = Path.joinpath(Path.cwd().absolute(), dest_dir + DELIMITER + filename)
+                filename = Path(file).name
+                rel_file_path = Path(dest_dir).joinpath(filename)
+                dest_file_path = Path.joinpath(Path.cwd().absolute(), rel_file_path)
                 _edit_file(file, dest_file_path)
                 print('Edited and copied file {} to directory {}..'.format(filename, dest_dir))
             except Exception as ex:

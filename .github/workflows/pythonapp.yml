@@ -31,5 +31,7 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # GitHub editor is 127 chars wide, import not at top-level is ignored
         flake8 . --count --max-complexity=10 --max-line-length=127 --statistics --extend-ignore=E402
+    - name: Edit and copy modules under tests
+      run: python tests/get_test_modules.py
     - name: Test with unittest
       run: python tests/run_all_tests.py
