@@ -4,7 +4,7 @@ import re
 import sys
 
 # constants
-DELIMITER = '\\'
+DELIMITER = '/'
 
 # directory constants
 SRC_DIR_METRICS = 'scm_modules/metrics'
