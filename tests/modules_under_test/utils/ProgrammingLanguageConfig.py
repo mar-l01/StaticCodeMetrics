@@ -1,3 +1,5 @@
+import sys
+sys.path.append('tests/modules_under_test/')
 from utils import ProgrammingLanguageConstants
 
 PROGRAMMING_LANGUAGE = ''
