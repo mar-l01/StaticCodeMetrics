@@ -26,48 +26,36 @@ def _create_env():
     return 0
 
 
-def _get_metrics_files():
-    metrics_dir = Path.joinpath(Path.cwd().absolute(), SRC_DIR_METRICS)
+def _get_module_files(src_dir):
+    metrics_dir = Path.joinpath(Path.cwd().absolute(), src_dir)
     metrics_files = [file for file in glob.glob(str(metrics_dir) + '**/*.py', recursive=True)]
 
     return metrics_files
 
 
-def _get_utils_files():
-    utils_dir = Path.joinpath(Path.cwd().absolute(), SRC_DIR_UTILS)
-    utils_files = [file for file in glob.glob(str(utils_dir) + '**/*.py', recursive=True)]
-
-    return utils_files
+def _copy_module_files(module_files, dest_dir):
+    for file in module_files:
+        # __init__.py should not be considered
+        if '__init__.py' not in file:
+            try:
+                filename = file.split(DELIMITER)[-1]
+                dest_file_path = Path.joinpath(Path.cwd().absolute(), dest_dir + DELIMITER + filename)
+                shutil.copyfile(file, dest_file_path)
+                print('Copied file {} to directory {}..'.format(filename, dest_dir))
+            except Exception as ex:
+                print('Failed to copy file {} to directory {} with error {}!'.format(file, dest_dir, ex))
+                return 1
+    
+    return 0
 
 
 def _copy_files():
-    metrics_files = _get_metrics_files()
-    utils_files = _get_utils_files()
-
-    for m_file in metrics_files:
-        # __init__.py should not be considered
-        if '__init__.py' not in m_file:
-            try:
-                filename = m_file.split(DELIMITER)[-1]
-                dest_file_path = Path.joinpath(Path.cwd().absolute(), DEST_DIR_METRICS + DELIMITER + filename)
-                shutil.copyfile(m_file, dest_file_path)
-                print('Copied file {} to directory {}..'.format(filename, DEST_DIR_METRICS))
-            except Exception as ex:
-                print('Failed to copy file {} to directory {} with error {}!'.format(m_file, DEST_DIR_METRICS, ex))
-                return 1
-
-    for u_file in utils_files:
-        # __init__.py should not be considered
-        if '__init__.py' not in u_file:
-            try:
-                filename = u_file.split(DELIMITER)[-1]
-                dest_file_path = Path.joinpath(Path.cwd().absolute(), DEST_DIR_UTILS + DELIMITER + filename)
-                shutil.copyfile(u_file, dest_file_path)
-                print('Copied file {} to directory {}..'.format(filename, DEST_DIR_UTILS))
-            except Exception as ex:
-                print('Failed to copy file {} to directory {} with error {}!'.format(u_file, DEST_DIR_UTILS, ex))
-                return 1
-
+    metrics_files = _get_module_files(SRC_DIR_METRICS)
+    utils_files = _get_module_files(SRC_DIR_UTILS)
+    
+    if _copy_module_files(metrics_files, DEST_DIR_METRICS) or _copy_module_files(utils_files, DEST_DIR_UTILS):
+        return 1
+    
     return 0
 
 
