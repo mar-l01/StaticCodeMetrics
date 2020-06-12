@@ -13,8 +13,8 @@ DEST_DIR_METRICS = 'tests/modules_under_test/metrics'
 DEST_DIR_UTILS = 'tests/modules_under_test/utils'
 
 # file edit constants
-IMPORT_METRICS_RE = '^from scm_modules.metrics.\w+ import'
-IMPORT_UTILS_RE = '^from scm_modules.utils import'
+IMPORT_METRICS_RE = '^from scm_modules.metrics.\w+ import'  # noqa: W605
+IMPORT_UTILS_RE = '^from scm_modules.utils import'  # noqa: W605
 IMPORT_PATH_METRICS = 'tests/modules_under_test/metrics/'
 IMPORT_PATH_UTILS = 'tests/modules_under_test/'
 
