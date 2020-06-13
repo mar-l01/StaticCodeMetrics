@@ -53,10 +53,12 @@ Following options are available (required or optional):
 `-sp <save-path>`: Computed metrics are saved within provided path (but only if it exists)
 
 ## Testing
-Tests are written using Python's unittest library and can be locally executed using following command from the root-directory:  
+Tests are written using Python's [unittest](https://docs.python.org/3/library/unittest.html) library and can be locally executed using following commands from the root-directory:  
 ```sh
+$ python .\tests\get_test_modules.py
 $ python .\tests\run_all_tests.py
 ```  
+Running the first script is required in order to copy all modules which are used for testing to a pre-defined folder. The tests which are executed by the latter script refer to this pre-defined folder. This workaround was necessary due to some dependency errors.
 
 ## Development status
 Currently, the metrics defined above can only be computed for C++ files.
