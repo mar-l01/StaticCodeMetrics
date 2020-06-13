@@ -3,8 +3,6 @@ import glob
 from pathlib import Path
 import warnings
 
-# glob extends paths with \
-PATH_DELIMITER = '\\'
 
 # default directory for saved metric
 DEFAULT_DIRECTORY = 'saved_metrics'
@@ -31,7 +29,7 @@ def get_all_code_files(directory_path, allowed_file_extensions):
 def extract_filename(filepath):
     ''' return solely the filename including the extension '''
     # get last part of file_path
-    filename = filepath.split(PATH_DELIMITER)[-1]
+    filename = Path(filepath).stem
 
     return filename
 
