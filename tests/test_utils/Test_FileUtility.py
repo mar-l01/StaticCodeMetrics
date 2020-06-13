@@ -54,21 +54,21 @@ class TestFileUtilityExtractFileName(unittest.TestCase):
         returned_name = fut.extract_filename('')
         self.assertEqual(returned_name, '')
 
-    def testValidFilePath(self):
+    def testValidFilePathWindows(self):
         '''
-        Test that the last element is returned if a valid path is given
+        Test that the last element is returned if a Windows path is given
         '''
-        valid_path = 'valid\\path\\to\\filename'
+        valid_path = 'valid\\path\\to\\filename.py'
         returned_name = fut.extract_filename(valid_path)
         self.assertEqual(returned_name, 'filename')
 
-    def testValidFilePathWrongDelimiter(self):
+    def testValidFilePathUnix(self):
         '''
-        Test that a wrong delimiter does return the whole filepath
+        Test that the last element is returned if a Unix path is given
         '''
-        valid_path_with_wrong_delimiter = 'valid/path/to/filename'
-        returned_name = fut.extract_filename(valid_path_with_wrong_delimiter)
-        self.assertEqual(returned_name, 'valid/path/to/filename')
+        valid_path = 'valid/path/to/filename.py'
+        returned_name = fut.extract_filename(valid_path)
+        self.assertEqual(returned_name, 'filename')
 
 
 class TestFileUtilitySaveMetricToFile(unittest.TestCase):
