@@ -53,7 +53,7 @@ Following options are available (required or optional):
 `-sp <save-path>`: Computed metrics are saved within provided path (but only if it exists)
 
 ## Testing
-Tests are written using Python's [![unittest-lib]unittest](https://docs.python.org/3/library/unittest.html) library and can be locally executed using following commands from the root-directory:  
+Tests are written using Python's [unittest](https://docs.python.org/3/library/unittest.html) library and can be locally executed using following commands from the root-directory:  
 ```sh
 $ python .\tests\get_test_modules.py
 $ python .\tests\run_all_tests.py
