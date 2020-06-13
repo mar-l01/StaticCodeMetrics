@@ -54,17 +54,9 @@ class TestFileUtilityExtractFileName(unittest.TestCase):
         returned_name = fut.extract_filename('')
         self.assertEqual(returned_name, '')
 
-    def testValidFilePathWindows(self):
+    def testValidFilePath(self):
         '''
-        Test that the last element is returned if a Windows path is given
-        '''
-        valid_path = 'valid\\path\\to\\filename.py'
-        returned_name = fut.extract_filename(valid_path)
-        self.assertEqual(returned_name, 'filename')
-
-    def testValidFilePathUnix(self):
-        '''
-        Test that the last element is returned if a Unix path is given
+        Test that the last element is returned if a valid path is given
         '''
         valid_path = 'valid/path/to/filename.py'
         returned_name = fut.extract_filename(valid_path)
