@@ -27,9 +27,9 @@ def get_all_code_files(directory_path, allowed_file_extensions):
 
 
 def extract_filename(filepath):
-    ''' return solely the filename including the extension '''
+    ''' return the filename including the extension '''
     # get last part of file_path
-    filename = Path(filepath).stem
+    filename = Path(filepath).name
 
     return filename
 
