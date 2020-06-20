@@ -1,4 +1,4 @@
-[![version 1.0.1](https://img.shields.io/badge/version-1.0.1-informational)](https://github.com/Markus2101/StaticCodeMetrics/releases) ![Python application](https://github.com/Markus2101/StaticCodeMetrics/workflows/Python%20application/badge.svg?branch=master)
+[![version 1.0.1](https://img.shields.io/badge/version-1.0.2-informational)](https://github.com/Markus2101/StaticCodeMetrics/releases) ![Python application](https://github.com/Markus2101/StaticCodeMetrics/workflows/Python%20application/badge.svg?branch=master)
 
 ## Requirements
 Following packages are required for this application to be executed successfully:
