@@ -60,7 +60,7 @@ class TestFileUtilityExtractFileName(unittest.TestCase):
         '''
         valid_path = 'valid/path/to/filename.py'
         returned_name = fut.extract_filename(valid_path)
-        self.assertEqual(returned_name, 'filename')
+        self.assertEqual(returned_name, 'filename.py')
 
 
 class TestFileUtilitySaveMetricToFile(unittest.TestCase):
