@@ -41,7 +41,7 @@ class InstabilityMetric:
         return user_include_list, stl_include_list
 
     def _create_user_include_matrix(self):
-        ''' create a 2D matrix with dim = m x n, where m is the number of user-included files '''
+        ''' create a 2D matrix with dim = m x m, where m is the number of user-included files '''
         m = len(self._list_of_user_files)
         null_matrix = np.zeros((m, m), dtype=int)
         names = [FileUtility.extract_filename(filepath) for filepath in self._list_of_user_files]
