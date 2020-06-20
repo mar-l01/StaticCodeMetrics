@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from pathlib import Path
 import warnings
 
 from scm_modules.utils import FileUtility, ProgrammingLanguageConfig
@@ -24,11 +25,15 @@ class InstabilityMetric:
                         # ignore ending " to get the pure filename
                         include_filename = \
                             line[len(ProgrammingLanguageConfig.get_prefix_user_include_identifier()):].strip()[:-1]
+                        # use filename (incl. extension) only, e.g. transform domain/namespace/header.hpp to header.hpp
+                        include_filename = Path(include_filename).name
                         user_include_list.append(include_filename)
                     elif line.startswith(ProgrammingLanguageConfig.get_prefix_standard_include_identifier()):
                         # ignore ending > to get the pure filename
                         include_filename = \
                             line[len(ProgrammingLanguageConfig.get_prefix_standard_include_identifier()):].strip()[:-1]
+                        # use filename (incl. extension) only, e.g. transform domain/namespace/header.hpp to header.hpp
+                        include_filename = Path(include_filename).name
                         stl_include_list.append(include_filename)
 
         except FileNotFoundError as ex:
