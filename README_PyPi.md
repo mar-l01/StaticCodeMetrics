@@ -1,4 +1,4 @@
-[![version 1.0.1](https://img.shields.io/badge/version-1.0.2-informational)](https://github.com/Markus2101/StaticCodeMetrics/releases) ![Python application](https://github.com/Markus2101/StaticCodeMetrics/workflows/Python%20application/badge.svg?branch=master)
+[![version 1.0.3](https://img.shields.io/badge/version-1.0.3-informational)](https://github.com/Markus2101/StaticCodeMetrics/releases) ![Python application](https://github.com/Markus2101/StaticCodeMetrics/workflows/Python%20application/badge.svg?branch=master)
 
 ## Requirements
 Following packages are required for this application to be executed successfully:
@@ -9,7 +9,9 @@ Following packages are required for this application to be executed successfully
 
 ## Usage
 The static code checker can be started directly from the command line:  
-`staticcodemetric -df <directory-path> -pl <programming-language> (-di | -ms) [-s] [-sp <save-path>]`
+```sh
+$ staticcodemetric -df <directory-path> -pl <programming-language> (-di | -ms) [-s] [-sp <save-path>]
+```
 
 Following options are available (required or optional):  
 `-df <directory-path>`: Path to the directory which contains the code-files to check. This directory will be processed recursively.  
